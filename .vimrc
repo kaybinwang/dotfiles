@@ -1,19 +1,19 @@
 " General Settings {{{
-set nocompatible		" vim, not vi [must be first]
-syntax on			" syntax highlightling
-filetype plugin indent on	" filetype plugin indentation
-set hidden			" hides buffers even with changes
+set nocompatible                " vim, not vi [must be first]
+syntax on                       " syntax highlightling
+filetype plugin indent on       " filetype plugin indentation
+set hidden                      " hides buffers even with changes
 
-setlocal foldmethod=marker	" hides markers within vim config
+setlocal foldmethod=marker      " hides markers within vim config
 setlocal foldlevel=0
 setlocal modelines=1
 "}}}
 
 " Interface {{{
-set number			" line numbers
-set colorcolumn=81		" hard line at 81 characters
-set cursorline			" highlight current line
-set showcmd			" show command in status bar
+set number                      " line numbers
+set colorcolumn=81              " hard line at 81 characters
+set cursorline                  " highlight current line
+set showcmd                     " show command in status bar
 set scrolloff=5                 " keep at least 5 lines above/below
 set shortmess+=aAIsT            " disable welcome screen and other messages
 set showcmd                     " show any commands
@@ -24,19 +24,21 @@ set splitright                  " create new splits to the right
 set wildmenu                    " enable wildmenu
 set wildmode=longest:full,full  " configure wildmenu
 set nostartofline               " keeps cursor in place when switching buffers
-set ruler			" show relative line/pos at bottom
-set laststatus=2		" extra status (lightline)
-set noshowmode			" hide the mode (lightline)
-set showmatch			" show unmatched parens
+set ruler                       " show relative line/pos at bottom
+set laststatus=2                " extra status (lightline)
+set noshowmode                  " hide the mode (lightline)
+set showmatch                   " show unmatched parens
+set lazyredraw                  " don't draw everything
+set spell                       " spell checking
 "}}}
 
 " Whitespace {{{
 set expandtab                   " use tabs instead of spaces
 set nojoinspaces                " use one space, not two, after punctuation
 set shiftround                  " shift to next tabstop
-set shiftwidth=4                " amount of space used for indentation
-set softtabstop=4               " appearance of tabs
-set tabstop=4                   " use two spaces for tabs
+set shiftwidth=2                " amount of space used for indentation
+set softtabstop=2               " appearance of tabs
+set tabstop=2                   " use two spaces for tabs
 "}}}
 
 " Text appearance {{{
@@ -46,38 +48,37 @@ set nowrap
 "}}}
 
 " Interaction {{{
-set backspace=2                       " make backspace work like most other apps
-set whichwrap=b,s,h,l,<,>,[,]         " backspace and cursor keys wrap too
-set esckeys                           " allow cursor keys in insert mode
+set backspace=2                 " make backspace work like most other apps
+set whichwrap=b,s,h,l,<,>,[,]   " backspace and cursor keys wrap too
 "}}}
 
 " Searching {{{
-set hlsearch                          " highlight search matches
-set ignorecase                        " set case insensitive searching
-set incsearch                         " find as you type search
-set smartcase                         " case sensitive searching when not all lowercase
+set hlsearch                    " highlight search matches
+set ignorecase                  " set case insensitive searching
+set incsearch                   " find as you type search
+set smartcase                   " case sensitive searching when not all lowercase
 "}}}
 
 " Background {{{
-set autoread                          " update file when changed outside of vim
-set autoindent                        " copy indentation from the previous line for new line
-set clipboard=unnamed                 " use native clipboard
-set history=200                       " store last 200 commands as history
-set nobackup                          " don't save backups
-set noerrorbells                      " no error bells please
-set noswapfile                        " no swapfiles
-set nowritebackup                     " don't save a backup while editing
-set ttyfast                           " indicates a fast terminal connection
-set undodir=~/.vim/undodir            " set undofile location
-set undofile                          " maintain undo history between sessions
-set undolevels=1000                   " store 1000 undos
+set autoread                    " update file when changed outside of vim
+set autoindent                  " copy indentation from the previous line for new line
+set clipboard=unnamed           " use native clipboard
+set history=200                 " store last 200 commands as history
+set nobackup                    " don't save backups
+set noerrorbells                " no error bells please
+set noswapfile                  " no swapfiles
+set nowritebackup               " don't save a backup while editing
+set ttyfast                     " indicates a fast terminal connection
+set undodir=~/.vim/undodir      " set undofile location
+set undofile                    " maintain undo history between sessions
+set undolevels=1000             " store 1000 undos
 "}}}
 
 " Encoding {{{
 if !&readonly && &modifiable
-  set fileencoding=utf-8              " the encoding written to file
+  set fileencoding=utf-8        " the encoding written to file
 endif
-set encoding=utf-8                    " the encoding displayed
+set encoding=utf-8              " the encoding displayed
 "}}}
 
 " Mappings {{{
@@ -91,17 +92,6 @@ nnoremap <C-H> <C-W><C-H>
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-J> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
-
-" Training Wheels
-noremap <Up> <nop>
-noremap <Down> <nop>
-noremap <Left> <nop>
-noremap <Right> <nop>
-inoremap <Up> <nop>
-inoremap <Down> <nop>
-inoremap <Left> <nop>
-inoremap <Right> <nop>
-inoremap <Esc> <nop>
 
 " Toggle relative line numbers
 nnoremap <silent> <C-n> :call RelativeNumberToggle()<cr>
@@ -147,10 +137,15 @@ nnoremap <leader>v guiW
 
 " File Settings {{{
 au BufRead,BufNewFile  *.sig set filetype=sml
-au FileType java setl colorcolumn=100
+au FileType c setl shiftwidth=4 softtabstop=4 tabstop=4
+au FileType python setl shiftwidth=4 softtabstop=4 tabstop=4
+au FileType java setl colorcolumn=100 shiftwidth=4 softtabstop=4 tabstop=4
 au BufRead,BufNewFile *.txt setl textwidth=80 wrap
 au BufRead,BufNewFile *.tex setl textwidth=80 wrap
-au BufRead,BufNewFile *.html setl shiftwidth=2 softtabstop=2 tabstop=2
-au BufRead,BufNewFile *.js setl shiftwidth=2 softtabstop=2 tabstop=2
-au BufRead,BufNewFile *.css setl shiftwidth=2 softtabstop=2 tabstop=2
+"}}}
+
+" Plugin Settings {{{
+
+execute pathogen#infect()
+
 "}}}
