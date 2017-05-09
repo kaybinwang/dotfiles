@@ -1,0 +1,3 @@
+# kaybinwang's dotfiles
+
+## Installation
