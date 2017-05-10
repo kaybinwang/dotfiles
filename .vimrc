@@ -29,16 +29,15 @@ set laststatus=2                " extra status (lightline)
 set noshowmode                  " hide the mode (lightline)
 set showmatch                   " show unmatched parens
 set lazyredraw                  " don't draw everything
-set spell                       " spell checking
 "}}}
 
 " Whitespace {{{
 set expandtab                   " use tabs instead of spaces
 set nojoinspaces                " use one space, not two, after punctuation
 set shiftround                  " shift to next tabstop
-set shiftwidth=2                " amount of space used for indentation
-set softtabstop=2               " appearance of tabs
-set tabstop=2                   " use two spaces for tabs
+set shiftwidth=4                " amount of space used for indentation
+set softtabstop=4               " appearance of tabs
+set tabstop=4                   " use two spaces for tabs
 "}}}
 
 " Text appearance {{{
@@ -101,10 +100,7 @@ nnoremap <cr> o<esc>
 
 " Toggle paste mode
 set pastetoggle=<F2>
-nnoremap <leader>p <F2>
-
-" Toggle file explorer
-nmap <leader>d :NERDTreeToggle<CR>
+nnoremap <silent> <leader>p :set paste<CR>"*p:set nopaste<CR>
 
 " Sort
 vnoremap <leader>s :sort<CR>
@@ -122,7 +118,7 @@ nnoremap <leader>sv :source $MYVIMRC<CR>
 nnoremap <Leader>w :w<CR>
 
 " Clear search
-nnoremap <leader>c :let @/ = ""<CR>
+nnoremap <leader>c :noh<CR>
 
 " Select all
 nnoremap <leader>a ggVG<CR>
@@ -136,16 +132,63 @@ nnoremap <leader>v guiW
 "}}}
 
 " File Settings {{{
-au BufRead,BufNewFile  *.sig set filetype=sml
-au FileType c setl shiftwidth=4 softtabstop=4 tabstop=4
-au FileType python setl shiftwidth=4 softtabstop=4 tabstop=4
-au FileType java setl colorcolumn=100 shiftwidth=4 softtabstop=4 tabstop=4
-au BufRead,BufNewFile *.txt setl textwidth=80 wrap
-au BufRead,BufNewFile *.tex setl textwidth=80 wrap
+au BufRead,BufNewFile  *.sig setl filetype=sml
+au FileType html, javascript setl sts=2 sw=2 ts=2
+au FileType java setl colorcolumn=100
+au FileType txt setl textwidth=80 wrap
+au FileType tex setl textwidth=80 wrap
+au FileType markdown setl wrap
 "}}}
 
 " Plugin Settings {{{
 
-execute pathogen#infect()
+" Automatically install vim-plug and run PlugInstall if vim-plug not found
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall | source $MYVIMRC
+endif
+
+" Plugin list {{{
+call plug#begin('~/.vim/plugged')
+Plug 'itchyny/lightline'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'scrooloose/nerdcommenter'
+Plug 'maralla/completor.vim'
+Plug 'artur-shaik/vim-javacomplete2'
+Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
+call plug#end()
+"}}}
+
+" Ctrl-P {{{
+" index current directory
+let g:ctrlp_working_path_mode = '0'
+
+" ignore files
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
+set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll)$',
+  \ }
+"}}}
+
+" completor.vim {{{
+let g:completor_java_omni_trigger = "\\w+$|[\\w\\)\\]\\}'\"]+\\.\\w*$"
+" tab cycling
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
+let g:completor_python_binary = '/usr/local/bin/python'
+"}}}
+
+" javacomplete2 {{{
+au FileType java setl omnifunc=javacomplete#Complete
+"}}}
+
+" NERD Commenter {{{
+let NERDSpaceDelims=1
+"}}}
 
 "}}}
