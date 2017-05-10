@@ -12,7 +12,11 @@ brew install tmux
 brew install node
 brew install python
 brew install python3
+brew install reattach-to-user-namespace
+brew install screenfetch
 
 # Install apps
-brew cask install dropbox
 brew cask install google-chrome
+brew cask install dropbox
+brew cask install iterm2
+brew cask install evernote
