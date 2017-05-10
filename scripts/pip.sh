@@ -1,3 +1,4 @@
-#!usr/bin/bash
+#!/bin/bash
 
 pip install jedi
+pip install pylint
