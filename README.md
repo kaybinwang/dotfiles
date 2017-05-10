@@ -2,8 +2,17 @@
 The configuration I use on MacOS.
 
 ## Installation
-1. Clone to `~`.
+Note these are the steps I take for a clean install on a new system. Please backup your existing environment before you overwrite any files.
+
+1. Clone the repository to `~`.
+```
+git clone https://github.com/kaybinwang/dotfiles.git ~/
+```
 2. Execute `install.sh`.
+```
+cd
+./scripts/install.sh
+```
 
 If you're using a terminal without true color support, comment out the line `set termguicolors` in `.vimrc`.
 
