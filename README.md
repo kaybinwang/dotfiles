@@ -13,6 +13,7 @@ git clone https://github.com/kaybinwang/dotfiles.git ~/
 cd
 ./scripts/install.sh
 ```
+3. Apply a [Nerd Font](https://github.com/ryanoasis/nerd-fonts) to terminal.
 
 If you're using a terminal without true color support, comment out the line `set termguicolors` in `.vimrc`.
 
@@ -20,7 +21,7 @@ If you're using a terminal without true color support, comment out the line `set
 Information about some of the stuff I use.
 
 ### Terminal
-Currently using `iTerm 2.0`.
+Currently using [iTerm 2.0](https://www.iterm2.com).
 
 ### Vim
 - Version: 8.0
