@@ -84,7 +84,7 @@ set encoding=utf-8              " the encoding displayed
 let mapleader = " "
 
 " Esc from insert mode using jj fast
-inoremap jj <Esc>
+inoremap jj <esc>
 
 " Shorter window nagivation
 nnoremap <C-H> <C-W><C-H>
@@ -100,31 +100,31 @@ nnoremap <cr> o<esc>
 
 " Toggle paste mode
 set pastetoggle=<F2>
-nnoremap <silent> <leader>p :set paste<CR>"*p:set nopaste<CR>
+nnoremap <silent> <leader>p :set paste<cr>"*p:set nopaste<cr>
 
 " Sort
-vnoremap <leader>s :sort<CR>
+vnoremap <leader>s :sort<cr>
 
 " Fix tabs to settings
-nnoremap <Leader>t :retab<CR>
+nnoremap <Leader>t :retab<cr>
 
 " Edit vimrc
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 
 " Source vimrc 
-nnoremap <leader>sv :source $MYVIMRC<CR>
+nnoremap <leader>sv :source $MYVIMRC<cr>
 
 " Save
-nnoremap <Leader>w :w<CR>
+nnoremap <leader>w :w<cr>
 
 " Clear search
-nnoremap <leader>c :noh<CR>
+nnoremap <return> :noh<cr><esc>
 
 " Select all
-nnoremap <leader>a ggVG<CR>
+nnoremap <leader>a ggVG<cr>
 
 " Copy all
-nnoremap <leader>y ggVGy<CR>
+nnoremap <leader>y ggVGy<cr>
 
 " Upper or lowercase the current word
 nnoremap <leader>^ gUiW
@@ -139,6 +139,18 @@ au FileType java setl colorcolumn=100
 au FileType txt setl textwidth=80 wrap
 au FileType tex setl textwidth=80 wrap
 au FileType markdown setl wrap
+"}}}
+
+" Helper Functions {{{
+
+function! RelativeNumberToggle()
+  if(&relativenumber == 1)
+    set norelativenumber
+  else
+    set relativenumber
+  endif
+endfunc
+
 "}}}
 
 " Plugin list {{{

@@ -14,6 +14,7 @@ brew install python
 brew install python3
 brew install reattach-to-user-namespace
 brew install screenfetch
+brew install htop
 
 # Install apps
 brew cask install google-chrome
