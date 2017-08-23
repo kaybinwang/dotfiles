@@ -1,20 +1,60 @@
+## a quick way to get out of current directory ##
+alias ..='cd ..'
+alias ...='cd ../../'
+alias ....='cd ../../../'
+alias .....='cd ../../../'
+alias .2='cd ../../'
+alias .3='cd ../../../'
+alias .4='cd ../../../../'
+alias .5='cd ../../../../..'
+
+ 
+## Show hidden files ##
+alias ls='ls -G'
 alias la='ls -a'
-alias ll='ls -FGlAhp'                       # ls with info
-alias mkdir='mkdir -p'                      # mkdir with parents
+alias ll='ls -FGlAhprt'                       # ls with info
+alias mkdir='mkdir -pv'                      # mkdir with parents
 alias less='less -FSRXc'                    # Preferred 'less' implementation
+
+alias c='clear'
 
 # Binary aliases
 alias tmux='tmux -2'                        # tmux with 256 colors
 alias vim='vi'                              # homebrew's vim
 
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
 # Git aliases
 alias g='git'
 alias gs='git status'
 alias ga='git add'
+alias gau='git add -u'
 alias gb='git branch'
+alias gbd='git branch -d'
+alias gbD='git branch -D'
 alias gc='git commit'
 alias gco='git checkout'
 alias gcob='git checkout -b'
+alias gf='git fetch'
+alias gd='git diff'
+alias gr='git rebase'
+alias gri='git rebase -i'
+alias gl='git log'
+alias gls='git ls'
+alias gm='git merge'
+alias gpoh='git push origin HEAD'
+alias gpfoh='git push -f origin HEAD'
+alias gsh='git show'
+alias gg='git grep'
+
+ECLIPSE_HOME='/Applications/Eclipse.app/Contents/Eclipse'
+alias eclimd="$ECLIPSE_HOME/eclimd"
+
+EVERNOTE_DIR="$HOME/projects/evernote"
+
+alias buildweb="$EVERNOTE_DIR/web/web/src/main/scripts/build.sh"
 
 pdf () {
   pdflatex "$1".tex && rm "$1".out "$1".log "$1".aux && open "$1".pdf;

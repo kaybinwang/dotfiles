@@ -11,7 +11,6 @@ setlocal modelines=1
 
 " Interface {{{
 set number                      " line numbers
-set colorcolumn=81              " hard line at 81 characters
 set cursorline                  " highlight current line
 set showcmd                     " show command in status bar
 set scrolloff=5                 " keep at least 5 lines above/below
@@ -35,9 +34,9 @@ set lazyredraw                  " don't draw everything
 set expandtab                   " use tabs instead of spaces
 set nojoinspaces                " use one space, not two, after punctuation
 set shiftround                  " shift to next tabstop
-set shiftwidth=4                " amount of space used for indentation
-set softtabstop=4               " appearance of tabs
-set tabstop=4                   " use two spaces for tabs
+set shiftwidth=2                " amount of space used for indentation
+set softtabstop=2               " appearance of tabs
+set tabstop=2                   " use two spaces for tab
 "}}}
 
 " Text appearance {{{
@@ -99,14 +98,14 @@ nnoremap <silent> <C-n> :call RelativeNumberToggle()<cr>
 nnoremap <cr> o<esc>
 
 " Toggle paste mode
-set pastetoggle=<F2>
-nnoremap <silent> <leader>p :set paste<cr>"*p:set nopaste<cr>
+"set pastetoggle=<F2>
+"nnoremap <silent> <leader>p :set paste<cr>"*p:set nopaste<cr>
 
 " Sort
 vnoremap <leader>s :sort<cr>
 
 " Fix tabs to settings
-nnoremap <Leader>t :retab<cr>
+"nnoremap <Leader>t :retab<cr>
 
 " Edit vimrc
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
@@ -114,11 +113,22 @@ nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 " Source vimrc 
 nnoremap <leader>sv :source $MYVIMRC<cr>
 
-" Save
-nnoremap <leader>w :w<cr>
+" 
+nmap <silent> <Leader>t <Plug>(CommandT)
+nmap <silent> <Leader>b <Plug>(CommandTBuffer)
+"nmap <silent> <Leader>j <Plug>(CommandTJump)
 
 " Clear search
 nnoremap <return> :noh<cr><esc>
+
+" Fugitive Git commands
+nnoremap <leader>gb :Gblame<cr><esc>
+nnoremap <leader>gs :Gstatus<cr><esc>
+
+nnoremap <c-j> :GitGutterNextHunk<cr><esc>
+nnoremap <c-k> :GitGutterPrevHunk<cr><esc>
+
+nnoremap <leader>f :NERDTreeToggle<cr><esc>
 
 " Select all
 nnoremap <leader>a ggVG<cr>
@@ -135,10 +145,43 @@ nnoremap <leader>v guiW
 au BufRead,BufNewFile  *.sig setl filetype=sml
 au FileType html setl sts=2 sw=2 ts=2
 au FileType javascript setl sts=2 sw=2 ts=2
-au FileType java setl colorcolumn=100
-au FileType txt setl textwidth=80 wrap
-au FileType tex setl textwidth=80 wrap
+au FileType java call JavaFileSettings()
+au FileType txt setl textwidth=80 wrap linebreak
+au FileType tex setl textwidth=80 wrap linebreak
+au FileType go call GoFileSettings()
 au FileType markdown setl wrap
+au BufRead,BufNewFile *.jsp call JspFileSettings()
+au BufRead,BufNewFile *.thrift call JavaFileSettings()
+au BufRead,BufNewFile *.bsh setl syntax=java
+au BufRead,BufNewFile *.tmpl call TmplFileSettings()
+
+function! JspFileSettings()
+  setl syntax=html
+  setl sts=2 sw=2 ts=2
+endfunc
+
+function! TmplFileSettings()
+  setl syntax=html
+  setl sts=2 sw=2 ts=2
+endfunc
+
+function! GoFileSettings()
+  set noexpandtab
+endfunc
+
+function! JavaFileSettings()
+  setl sts=2 sw=2 ts=2
+  setl colorcolumn=90
+  nnoremap K :JavaDocPreview<cr>
+  nnoremap <Leader>jr  :JavaRename 
+  nnoremap <Leader>ji  :JavaImport<cr>
+  nnoremap <Leader>jio :JavaImportOrganize<cr>
+  nnoremap <Leader>jch :JavaCallHierarchy<cr>
+  nnoremap <Leader>js  :JavaSearch<cr>
+  nnoremap <Leader>jc  :JavaCorrect<cr>
+  nnoremap <Leader>jcs :Checkstyle<cr>
+endfunc
+
 "}}}
 
 " Helper Functions {{{
@@ -163,18 +206,23 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 call plug#begin('~/.vim/plugged')
-Plug 'rakr/vim-one'
-Plug 'lifepillar/vim-solarized8'
+Plug 'tomlion/vim-solidity'
+Plug 'joshdick/onedark.vim'
+Plug 'Arkham/vim-tango'
 Plug 'morhetz/gruvbox'
 Plug 'itchyny/lightline.vim'
 Plug 'ryanoasis/vim-devicons'
+Plug 'scrooloose/nerdtree'
 Plug 'itchyny/lightline.vim'
 Plug 'vim-syntastic/syntastic'
-Plug 'ctrlpvim/ctrlp.vim'
+Plug 'Valloric/YouCompleteMe'
+Plug 'wincent/command-t', {
+    \   'do': 'cd ruby/command-t/ext/command-t && ruby extconf.rb && make'
+    \ }
 Plug 'scrooloose/nerdcommenter'
-Plug 'maralla/completor.vim'
-Plug 'artur-shaik/vim-javacomplete2'
 Plug 'airblade/vim-gitgutter'
+Plug 'ConradIrwin/vim-bracketed-paste'
+Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 call plug#end()
 "}}}
@@ -182,15 +230,15 @@ call plug#end()
 " Theme {{{
 
 set termguicolors
-colorscheme one
 set background=dark
-
+let g:gruvbox_contrast_dark = 'hard'
+colorscheme gruvbox
 "}}}
 
 " Lightline {{{
 
 let g:lightline = {
-      \ 'colorscheme': 'one',
+      \ 'colorscheme': 'gruvbox',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ], ['ctrlpmark'] ],
       \   'right': [ [ 'syntastic', 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
@@ -331,53 +379,25 @@ let g:vimshell_force_overwrite_statusline = 0
 
 "}}}
 
-" Ctrl-P {{{
-" index current directory
-let g:ctrlp_working_path_mode = '0'
-
-" ignore files
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
-set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-  \ 'file': '\v\.(exe|so|dll)$',
-  \ }
-"}}}
-
 " VimDevIcons {{{
 let g:webdevicons_enable = 1
 let g:webdevicons_enable_ctrlp = 1
-"}}}
-
-" completor.vim {{{
-let g:completor_python_binary = '/usr/local/bin/python'
-let g:completor_java_omni_trigger = "[\\w\\)\\]\\}'\"]+\\.\\w*$"
-
-" tab cycling
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
-"}}}
-
-" javacomplete2 {{{
-au FileType java setl omnifunc=javacomplete#Complete
 "}}}
 
 " NERD Commenter {{{
 let NERDSpaceDelims=1
 "}}}
 
-" Syntastic {{{
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+let g:CommandTFileScanner = "git"
 
+let g:EclimCompletionMethod = 'omnifunc'
+let g:EclimJavaSearchSingleResult = 'tabnew'
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
+
+let g:syntastic_check_on_open=0
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+let g:syntastic_java_checkstyle_conf_file='~/projects/evernote/web/checkstyle.xml'
 
-let g:syntastic_python_checkers = ['pylint']
-let g:syntastic_java_checkers=['javac']
-let g:syntastic_java_javac_config_file_enabled = 1
-"}}}
