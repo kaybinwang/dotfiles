@@ -40,4 +40,5 @@ bind '"jj":"\e"'
 
 . ~/.bash_prompt
 . ~/.bash_aliases
-. ~/.bash_profile_en
+export PATH="/usr/local/opt/icu4c/bin:$PATH"
+export PATH="/usr/local/opt/icu4c/sbin:$PATH"

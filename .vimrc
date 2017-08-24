@@ -206,6 +206,8 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 call plug#begin('~/.vim/plugged')
+Plug 'ternjs/tern_for_vim'
+Plug 'wincent/command-t'
 Plug 'tomlion/vim-solidity'
 Plug 'joshdick/onedark.vim'
 Plug 'Arkham/vim-tango'
@@ -213,17 +215,16 @@ Plug 'morhetz/gruvbox'
 Plug 'itchyny/lightline.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'scrooloose/nerdtree'
-Plug 'itchyny/lightline.vim'
 Plug 'vim-syntastic/syntastic'
 Plug 'Valloric/YouCompleteMe'
-Plug 'wincent/command-t', {
-    \   'do': 'cd ruby/command-t/ext/command-t && ruby extconf.rb && make'
-    \ }
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
 Plug 'scrooloose/nerdcommenter'
 Plug 'airblade/vim-gitgutter'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
+Plug 'nanotech/jellybeans.vim'
 call plug#end()
 "}}}
 
@@ -232,13 +233,13 @@ call plug#end()
 set termguicolors
 set background=dark
 let g:gruvbox_contrast_dark = 'hard'
-colorscheme gruvbox
+colorscheme jellybeans
 "}}}
 
 " Lightline {{{
 
 let g:lightline = {
-      \ 'colorscheme': 'gruvbox',
+      \ 'colorscheme': 'jellybeans',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ], ['ctrlpmark'] ],
       \   'right': [ [ 'syntastic', 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
@@ -401,3 +402,9 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_java_checkstyle_conf_file='~/projects/evernote/web/checkstyle.xml'
 
+let g:jsx_ext_required = 0
+
+"enable keyboard shortcuts
+let g:tern_map_keys=1
+"show argument hints
+let g:tern_show_argument_hints='on_hold'
