@@ -59,7 +59,7 @@ set smartcase                   " case sensitive searching when not all lowercas
 
 " Background {{{
 set autoread                    " update file when changed outside of vim
-set autoindent                  " copy indentation from the previous line for new line
+set smartindent                  " copy indentation from the previous line for new line
 set clipboard=unnamed           " use native clipboard
 set history=200                 " store last 200 commands as history
 set nobackup                    " don't save backups
@@ -114,8 +114,8 @@ nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
 
 " 
-nmap <silent> <Leader>t <Plug>(CommandT)
-nmap <silent> <Leader>b <Plug>(CommandTBuffer)
+nmap <silent> <C-p> <Plug>(CommandT)
+nmap <silent> <C-b> <Plug>(CommandTBuffer)
 "nmap <silent> <Leader>j <Plug>(CommandTJump)
 
 " Clear search
@@ -225,6 +225,7 @@ Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'nanotech/jellybeans.vim'
+Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
 call plug#end()
 "}}}
 
