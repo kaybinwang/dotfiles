@@ -38,9 +38,9 @@ set -o vi
 bind '"jj":"\e"'
 
 
-. ~/.bash_prompt
-. ~/.bash_aliases
-. ~/.bash_profile_en
+source ~/.bash_prompt
+source ~/.bash_aliases
+source ~/.bash_extras
 
 export PATH="/usr/local/opt/icu4c/bin:$PATH"
 export PATH="/usr/local/opt/icu4c/sbin:$PATH"
