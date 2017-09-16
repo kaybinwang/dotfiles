@@ -1,7 +1,11 @@
+pushd "$HOME" &> /dev/null
+
 export CLICOLOR=1
 
 # light colors
 export LSCOLORS=ExFxBxDxCxegedabagacad
+# dark colors
+#export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
 
 # flush history on each command
 export PROMPT_COMMAND="history -a"
@@ -37,10 +41,9 @@ fi
 set -o vi
 bind '"jj":"\e"'
 
-
-source ~/.bash_prompt
-source ~/.bash_aliases
-source ~/.bash_extras
+source .bash_prompt
+source .bash_aliases
+source .bash_extras
 
 export PATH="/usr/local/opt/icu4c/bin:$PATH"
 export PATH="/usr/local/opt/icu4c/sbin:$PATH"
@@ -48,3 +51,5 @@ export PATH="/usr/local/opt/icu4c/sbin:$PATH"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+popd &> /dev/null
