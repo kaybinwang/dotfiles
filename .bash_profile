@@ -31,7 +31,6 @@ if [ -f `brew --prefix`/etc/bash_completion ]; then
   __git_complete grb _git_rebase
   __git_complete grbi _git_rebase
   __git_complete gl _git_log
-  #__git_complete glp _git_log
   __git_complete ga _git_add
   __git_complete gb _git_branch
   __git_complete gbd _git_branch

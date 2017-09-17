@@ -7,7 +7,6 @@ alias .2='cd ../../'
 alias .3='cd ../../../'
 alias .4='cd ../../../../'
 alias .5='cd ../../../../..'
-
  
 ## Show hidden files ##
 alias ls='ls -G'
@@ -16,11 +15,14 @@ alias ll='ls -FGlAhprt'                       # ls with info
 alias mkdir='mkdir -pv'                      # mkdir with parents
 alias less='less -FSRXc'                    # Preferred 'less' implementation
 
+alias ebp="vi $HOME/.bash_profile"
+alias sbp="source $HOME/.bash_profile"
+
 alias c='clear'
 
 # Binary aliases
 alias tmux='tmux -2'                        # tmux with 256 colors
-alias vim='vi'                              # homebrew's vim
+alias vi='nvim'                             # neovim
 
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
