@@ -353,13 +353,14 @@ nnoremap k gk
 " New tab
 nnoremap <silent> <c-t> :tabnew<cr>
 
-" Terminal
+" Terminal window navigation
 nnoremap <silent> <c-p> :vsplit<cr>:terminal<cr>
-tnoremap <c-w>h <C-\><C-N><C-w>h
+tnoremap <c-w>h <c-\><c-n><c-w>h
 tnoremap <c-w>j <C-\><C-N><C-w>j
-tnoremap <c-w>k <C-\><C-N><C-w>k
-tnoremap <c-w>l <C-\><C-N><C-w>l
-tnoremap <c-w>z <C-\><C-n>ZZ
+tnoremap <c-w>k <c-\><c-n><c-w>k
+tnoremap <c-w>l <c-\><c-n><c-w>l
+tnoremap <c-w>z <c-\><c-n>ZZ
+tnoremap <c-w>v <c-\><c-n>
 
 " Open search
 nnoremap <silent> <leader><leader> :Files<cr>
@@ -368,6 +369,7 @@ nnoremap <silent> <leader>m :GFiles?<cr>
 nnoremap <silent> <leader>b :Buffers<cr>
 nnoremap <silent> <leader>w :Windows<cr>
 nnoremap <silent> <leader>; :BLines<cr>
+nnoremap <silent> <leader>l :Lines<cr>
 "nnoremap <silent> <leader>o :BTags<cr>
 "nnoremap <silent> <leader>O :Tags<cr>
 nnoremap <silent> <leader>h :History<cr>
