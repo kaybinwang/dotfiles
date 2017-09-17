@@ -18,8 +18,157 @@ function! VimrcLoadPlugins()
 
   Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
   Plug 'junegunn/fzf.vim'
+  "{{{
+    " Start interactive EasyAlign in visual mode (e.g. vipga)
+    xmap ga <Plug>(EasyAlign)
+
+    " Start interactive EasyAlign for a motion/text object (e.g. gaip)
+    nmap ga <Plug>(EasyAlign)
+  "}}}
 
   Plug 'itchyny/lightline.vim'
+  "{{{
+
+    let g:lightline = {
+      \ 'colorscheme': 'jellybeans',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ], ['ctrlpmark'] ],
+      \   'right': [ [ 'syntastic', 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
+      \ },
+      \ 'component_function': {
+      \   'fugitive': 'LightlineFugitive',
+      \   'filename': 'LightlineFilename',
+      \   'fileformat': 'MyFileformat',
+      \   'filetype': 'MyFiletype',
+      \   'fileencoding': 'LightlineFileencoding',
+      \   'mode': 'LightlineMode',
+      \   'ctrlpmark': 'CtrlPMark',
+      \ },
+      \ 'component_expand': {
+      \   'syntastic': 'SyntasticStatuslineFlag',
+      \ },
+      \ 'component_type': {
+      \   'syntastic': 'error',
+      \ },
+      \ 'subseparator': { 'left': '|', 'right': '|' }
+      \ }
+
+    " Helper Functions {{{
+
+    function! MyFiletype()
+      return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
+    endfunction
+
+    function! MyFileformat()
+      return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
+    endfunction
+
+    function! LightlineModified()
+      return &ft =~ 'help' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+    endfunction
+
+    function! LightlineReadonly()
+      return &ft !~? 'help' && &readonly ? '' : ''
+    endfunction
+
+    function! LightlineFilename()
+      let fname = expand('%:t')
+      return fname == 'ControlP' && has_key(g:lightline, 'ctrlp_item') ? g:lightline.ctrlp_item :
+            \ fname == '__Tagbar__' ? g:lightline.fname :
+            \ fname =~ '__Gundo\|NERD_tree' ? '' :
+            \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
+            \ &ft == 'unite' ? unite#get_status_string() :
+            \ &ft == 'vimshell' ? vimshell#get_status_string() :
+            \ ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
+            \ ('' != fname ? fname : '[No Name]') .
+            \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
+    endfunction
+
+    function! LightlineFugitive()
+      try
+        if expand('%:t') !~? 'Tagbar\|Gundo\|NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
+          let mark = ' '  " edit here for cool mark
+          let branch = fugitive#head()
+          return branch !=# '' ? mark.branch : ''
+        endif
+      catch
+      endtry
+      return ''
+    endfunction
+
+    function! LightlineFileformat()
+      return winwidth(0) > 70 ? &fileformat : ''
+    endfunction
+
+    function! LightlineFiletype()
+      return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+    endfunction
+
+    function! LightlineFileencoding()
+      return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
+    endfunction
+
+    function! LightlineMode()
+      let fname = expand('%:t')
+      return fname == '__Tagbar__' ? 'Tagbar' :
+            \ fname == 'ControlP' ? 'CtrlP' :
+            \ fname == '__Gundo__' ? 'Gundo' :
+            \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
+            \ fname =~ 'NERD_tree' ? 'NERDTree' :
+            \ &ft == 'unite' ? 'Unite' :
+            \ &ft == 'vimfiler' ? 'VimFiler' :
+            \ &ft == 'vimshell' ? 'VimShell' :
+            \ winwidth(0) > 60 ? lightline#mode() : ''
+    endfunction
+
+    function! CtrlPMark()
+      if expand('%:t') =~ 'ControlP' && has_key(g:lightline, 'ctrlp_item')
+        call lightline#link('iR'[g:lightline.ctrlp_regex])
+        return lightline#concatenate([g:lightline.ctrlp_prev, g:lightline.ctrlp_item
+              \ , g:lightline.ctrlp_next], 0)
+      else
+        return ''
+      endif
+    endfunction
+
+    let g:ctrlp_status_func = {
+      \ 'main': 'CtrlPStatusFunc_1',
+      \ 'prog': 'CtrlPStatusFunc_2',
+      \ }
+
+    function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
+      let g:lightline.ctrlp_regex = a:regex
+      let g:lightline.ctrlp_prev = a:prev
+      let g:lightline.ctrlp_item = a:item
+      let g:lightline.ctrlp_next = a:next
+      return lightline#statusline(0)
+    endfunction
+
+    function! CtrlPStatusFunc_2(str)
+      return lightline#statusline(0)
+    endfunction
+
+    let g:tagbar_status_func = 'TagbarStatusFunc'
+
+    function! TagbarStatusFunc(current, sort, fname, ...) abort
+        let g:lightline.fname = a:fname
+      return lightline#statusline(0)
+    endfunction
+
+    augroup AutoSyntastic
+      autocmd!
+      autocmd BufWritePost *.c,*.cpp call s:syntastic()
+    augroup END
+    function! s:syntastic()
+      SyntasticCheck
+      call lightline#update()
+    endfunction
+
+    let g:unite_force_overwrite_statusline = 0
+    let g:vimfiler_force_overwrite_statusline = 0
+    let g:vimshell_force_overwrite_statusline = 0
+    "}}}
+  "}}}
 
   Plug 'tpope/vim-fugitive'
   Plug 'airblade/vim-gitgutter'
@@ -28,6 +177,8 @@ function! VimrcLoadPlugins()
 
   Plug 'ConradIrwin/vim-bracketed-paste'
 
+  Plug 'junegunn/vim-easy-align'
+
   Plug 'w0rp/ale'
   "{{{
     let g:ale_linters = {
@@ -35,6 +186,7 @@ function! VimrcLoadPlugins()
     \}
   "}}}
 
+  Plug 'hail2u/vim-css3-syntax'
   Plug 'chrisbra/Colorizer'
   "{{{
     let g:colorizer_auto_filetype='css,html'
@@ -50,7 +202,6 @@ function! VimrcLoadPlugins()
   "{{{
     let g:jsx_ext_required = 0
   "}}}
-  Plug 'hail2u/vim-css3-syntax'
   Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
 
   Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
@@ -108,31 +259,31 @@ endfunction
 call VimrcLoadPlugins()
 
 " Interface
-filetype indent plugin on               " plugins
-set number                              " line numbers
-set cursorline                          " highlight current line
-set wrap                                " enable text wrap
-set linebreak                           " don't hard wrap in the middle of word
-set textwidth=80                        " hard wrap text after 80 chars
-set colorcolumn=80                      " vertical line marker at 80 chars
-set showcmd                     " show command in status bar
-set scrolloff=5                 " keep at least 5 lines above/below
-set shortmess+=aAIsT            " disable welcome screen and other messages
-set showcmd                     " show any commands
-set sidescroll=1                " smoother horizontal scrolling
-set sidescrolloff=5             " keep at least 5 lines left/right
-set splitbelow                  " create new splits below
-set splitright                  " create new splits to the right
-set wildmenu                    " enable wildmenu
-set wildmode=longest:full,full  " configure wildmenu
-set nostartofline               " keeps cursor in place when switching buffers
-set laststatus=2                " extra status (lightline)
-set noshowmode                  " hide the mode (lightline)
-set showmatch                   " show unmatched parens
-set lazyredraw                  " don't draw everything
-set list                              " show invisible characters
-set listchars=tab:>·,trail:·,nbsp:¬   " but only show useful characters
-set termguicolors                     " true color
+filetype indent plugin on           " plugins
+set number                          " line numbers
+set cursorline                      " highlight current line
+set wrap                            " enable text wrap
+set linebreak                       " don't hard wrap in the middle of word
+set textwidth=80                    " hard wrap text after 80 chars
+set colorcolumn=80                  " vertical line marker at 80 chars
+set showcmd                         " show command in status bar
+set scrolloff=5                     " keep at least 5 lines above/below
+set shortmess+=aAIsT                " disable welcome screen and other messages
+set showcmd                         " show any commands
+set sidescroll=1                    " smoother horizontal scrolling
+set sidescrolloff=5                 " keep at least 5 lines left/right
+set splitbelow                      " create new splits below
+set splitright                      " create new splits to the right
+set wildmenu                        " enable wildmenu
+set wildmode=longest:full,full      " configure wildmenu
+set nostartofline                   " keeps cursor in place when switching buffers
+set laststatus=2                    " extra status (lightline)
+set noshowmode                      " hide the mode (lightline)
+set showmatch                       " show unmatched parens
+set lazyredraw                      " don't draw everything
+set list                            " show invisible characters
+set listchars=tab:>·,trail:·,nbsp:¬ " but only show useful characters
+set termguicolors                   " true color
 set background=dark
 colorscheme jellybeans
 
@@ -150,15 +301,15 @@ let g:terminal_color_6  = '#00a7a0'
 let g:terminal_color_7  = '#c9c9c9'
 let g:terminal_color_8  = '#3b3b3b'
 let g:terminal_color_9  = '#ffb2b0'
-let g:terminal_color_10  = '#c8e3b9'
-let g:terminal_color_11  = '#ffe2af'
-let g:terminal_color_12  = '#bee0f8'
-let g:terminal_color_13  = '#fce3ff'
-let g:terminal_color_14  = '#0cbeb7'
-let g:terminal_color_15  = '#c9c9c9'
+let g:terminal_color_10 = '#c8e3b9'
+let g:terminal_color_11 = '#ffe2af'
+let g:terminal_color_12 = '#bee0f8'
+let g:terminal_color_13 = '#fce3ff'
+let g:terminal_color_14 = '#0cbeb7'
+let g:terminal_color_15 = '#c9c9c9'
 
 " Folding
-setl foldmethod=marker           " hides markers within vim config
+setl foldmethod=marker " hides markers within vim config
 setl foldlevel=0
 setl modelines=1
 
@@ -181,7 +332,7 @@ set expandtab
 set tabstop=2
 set softtabstop=2
 set shiftwidth=2
-set smartindent                 " copy indentation from the previous line for new line
+set smartindent   " copy indentation from the previous line for new line
 
 " Search
 set incsearch
@@ -352,146 +503,3 @@ function! JavaFileSettings()
 endfunc
 
 "  let g:fzf_nvim_statusline = 0 " disable statusline overwriting
-
-" Lightline {{{
-
-let g:lightline = {
-      \ 'colorscheme': 'jellybeans',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ], ['ctrlpmark'] ],
-      \   'right': [ [ 'syntastic', 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
-      \ },
-      \ 'component_function': {
-      \   'fugitive': 'LightlineFugitive',
-      \   'filename': 'LightlineFilename',
-      \   'fileformat': 'MyFileformat',
-      \   'filetype': 'MyFiletype',
-      \   'fileencoding': 'LightlineFileencoding',
-      \   'mode': 'LightlineMode',
-      \   'ctrlpmark': 'CtrlPMark',
-      \ },
-      \ 'component_expand': {
-      \   'syntastic': 'SyntasticStatuslineFlag',
-      \ },
-      \ 'component_type': {
-      \   'syntastic': 'error',
-      \ },
-      \ 'subseparator': { 'left': '|', 'right': '|' }
-      \ }
-
-" Helper Functions {{{
-
-function! MyFiletype()
-  return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
-endfunction
-
-function! MyFileformat()
-  return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
-endfunction
-
-function! LightlineModified()
-  return &ft =~ 'help' ? '' : &modified ? '+' : &modifiable ? '' : '-'
-endfunction
-
-function! LightlineReadonly()
-  return &ft !~? 'help' && &readonly ? '' : ''
-endfunction
-
-function! LightlineFilename()
-  let fname = expand('%:t')
-  return fname == 'ControlP' && has_key(g:lightline, 'ctrlp_item') ? g:lightline.ctrlp_item :
-        \ fname == '__Tagbar__' ? g:lightline.fname :
-        \ fname =~ '__Gundo\|NERD_tree' ? '' :
-        \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
-        \ &ft == 'unite' ? unite#get_status_string() :
-        \ &ft == 'vimshell' ? vimshell#get_status_string() :
-        \ ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
-        \ ('' != fname ? fname : '[No Name]') .
-        \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
-endfunction
-
-function! LightlineFugitive()
-  try
-    if expand('%:t') !~? 'Tagbar\|Gundo\|NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
-      let mark = ' '  " edit here for cool mark
-      let branch = fugitive#head()
-      return branch !=# '' ? mark.branch : ''
-    endif
-  catch
-  endtry
-  return ''
-endfunction
-
-function! LightlineFileformat()
-  return winwidth(0) > 70 ? &fileformat : ''
-endfunction
-
-function! LightlineFiletype()
-  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
-endfunction
-
-function! LightlineFileencoding()
-  return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
-endfunction
-
-function! LightlineMode()
-  let fname = expand('%:t')
-  return fname == '__Tagbar__' ? 'Tagbar' :
-        \ fname == 'ControlP' ? 'CtrlP' :
-        \ fname == '__Gundo__' ? 'Gundo' :
-        \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
-        \ fname =~ 'NERD_tree' ? 'NERDTree' :
-        \ &ft == 'unite' ? 'Unite' :
-        \ &ft == 'vimfiler' ? 'VimFiler' :
-        \ &ft == 'vimshell' ? 'VimShell' :
-        \ winwidth(0) > 60 ? lightline#mode() : ''
-endfunction
-
-function! CtrlPMark()
-  if expand('%:t') =~ 'ControlP' && has_key(g:lightline, 'ctrlp_item')
-    call lightline#link('iR'[g:lightline.ctrlp_regex])
-    return lightline#concatenate([g:lightline.ctrlp_prev, g:lightline.ctrlp_item
-          \ , g:lightline.ctrlp_next], 0)
-  else
-    return ''
-  endif
-endfunction
-
-let g:ctrlp_status_func = {
-  \ 'main': 'CtrlPStatusFunc_1',
-  \ 'prog': 'CtrlPStatusFunc_2',
-  \ }
-
-function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
-  let g:lightline.ctrlp_regex = a:regex
-  let g:lightline.ctrlp_prev = a:prev
-  let g:lightline.ctrlp_item = a:item
-  let g:lightline.ctrlp_next = a:next
-  return lightline#statusline(0)
-endfunction
-
-function! CtrlPStatusFunc_2(str)
-  return lightline#statusline(0)
-endfunction
-
-let g:tagbar_status_func = 'TagbarStatusFunc'
-
-function! TagbarStatusFunc(current, sort, fname, ...) abort
-    let g:lightline.fname = a:fname
-  return lightline#statusline(0)
-endfunction
-
-augroup AutoSyntastic
-  autocmd!
-  autocmd BufWritePost *.c,*.cpp call s:syntastic()
-augroup END
-function! s:syntastic()
-  SyntasticCheck
-  call lightline#update()
-endfunction
-
-let g:unite_force_overwrite_statusline = 0
-let g:vimfiler_force_overwrite_statusline = 0
-let g:vimshell_force_overwrite_statusline = 0
-"}}}
-"}}}
