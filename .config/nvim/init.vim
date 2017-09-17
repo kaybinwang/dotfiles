@@ -21,6 +21,8 @@ function! VimrcLoadPlugins()
 
   Plug 'tpope/vim-fugitive'
 
+  Plug 'ryanoasis/vim-devicons'
+
   call plug#end()
 endfunction
 call VimrcLoadPlugins()
