@@ -35,6 +35,12 @@ function! VimrcLoadPlugins()
     \}
   "}}}
 
+  Plug 'chrisbra/Colorizer'
+  "{{{
+    let g:colorizer_auto_filetype='css,html'
+    nnoremap <silent> <c-h> :ColorToggle<cr>
+  "}}}
+
   Plug 'pangloss/vim-javascript'
   "{{{
     let g:javascript_plugin_jsdoc = 1
@@ -135,21 +141,21 @@ let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
 " Terminal colors
 let g:terminal_color_0  = '#3b3b3b'
-let g:terminal_color_1  = '#cf6a4c'
-let g:terminal_color_2  = '#99ad6a'
-let g:terminal_color_3  = '#d8ad4c'
-let g:terminal_color_4  = '#597bc5'
-let g:terminal_color_5  = '#a037b0'
-let g:terminal_color_6  = '#71b9f8'
-let g:terminal_color_7  = '#adadad'
+let g:terminal_color_1  = '#ea8986'
+let g:terminal_color_2  = '#a4c38c'
+let g:terminal_color_3  = '#ffc68d'
+let g:terminal_color_4  = '#a7cae3'
+let g:terminal_color_5  = '#e8cefb'
+let g:terminal_color_6  = '#00a7a0'
+let g:terminal_color_7  = '#c9c9c9'
 let g:terminal_color_8  = '#3b3b3b'
-let g:terminal_color_9  = '#cf6a4c'
-let g:terminal_color_10  = '#99ad6a'
-let g:terminal_color_11  = '#d8ad4c'
-let g:terminal_color_12  = '#597bc5'
-let g:terminal_color_13  = '#a037b0'
-let g:terminal_color_14  = '#71b9f8'
-let g:terminal_color_15  = '#adadad'
+let g:terminal_color_9  = '#ffb2b0'
+let g:terminal_color_10  = '#c8e3b9'
+let g:terminal_color_11  = '#ffe2af'
+let g:terminal_color_12  = '#bee0f8'
+let g:terminal_color_13  = '#fce3ff'
+let g:terminal_color_14  = '#0cbeb7'
+let g:terminal_color_15  = '#c9c9c9'
 
 " Folding
 setl foldmethod=marker           " hides markers within vim config
@@ -281,12 +287,16 @@ nnoremap <silent> <C-n> :call ToggleRelativeNumber()<cr>
 nnoremap <leader>ov :execute 'edit' g:vimrc<cr>
 
 " Edit vimrc
-nnoremap <leader>ev :execute 'vsplit '.fnameescape(g:vimrc)<cr>
+nnoremap <silent> <leader>ev :execute 'vsplit '.fnameescape(g:vimrc)<cr>
 
 " Source vimrc 
-nnoremap <leader>sv :execute 'source '.fnameescape(g:vimrc)<cr>
+nnoremap <silent> <leader>sv :execute 'source '.fnameescape(g:vimrc)<cr>
+
+" Reload plugins
+nnoremap <silent> <leader>rp <leader>sv<cr>:PlugInstall<cr>
 
 " Clear search
+" TODO: this is broken fix it
 nnoremap <silent> <return> :noh<cr><esc>
 
 nnoremap <silent> <leader>f :NERDTreeToggle<cr><esc>

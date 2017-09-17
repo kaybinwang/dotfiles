@@ -17,7 +17,7 @@ export PROMPT_COMMAND="history -a"
 # --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
 export FZF_DEFAULT_OPTS='
-  --color fg:188,hl:103,fg+:222,bg+:234,hl+:104
+  --color fg:188,hl:110,fg+:222,bg+:234,hl+:111
   --color info:183,prompt:110,spinner:107,pointer:167,marker:215
 '
 
