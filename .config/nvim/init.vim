@@ -45,6 +45,7 @@ function! VimrcLoadPlugins()
     let g:jsx_ext_required = 0
   "}}}
   Plug 'hail2u/vim-css3-syntax'
+  Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
 
   Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
   "{{{ vim-go
