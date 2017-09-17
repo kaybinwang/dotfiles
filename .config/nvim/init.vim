@@ -194,19 +194,19 @@ nnoremap j gj
 nnoremap k gk
 
 " New tab
-nnoremap <c-t> :tabnew<cr>
+nnoremap <silent> <c-t> :tabnew<cr>
 
 " Terminal
-nnoremap <c-p> :vsplit<cr>:terminal<cr>
+nnoremap <silent> <c-p> :vsplit<cr>:terminal<cr>
 tnoremap <c-w>h <C-\><C-N><C-w>h
 tnoremap <c-w>j <C-\><C-N><C-w>j
 tnoremap <c-w>k <C-\><C-N><C-w>k
 tnoremap <c-w>l <C-\><C-N><C-w>l
-tnoremap zz <C-\><C-n>ZZ
+tnoremap <c-w>z <C-\><C-n>ZZ
 
 " Open search
 nnoremap <silent> <leader><leader> :Files<cr>
-nnoremap <silent> <leader>g :GFiles<cr>
+nnoremap <silent> <leader>p :GFiles<cr>
 nnoremap <silent> <leader>m :GFiles?<cr>
 nnoremap <silent> <leader>b :Buffers<cr>
 nnoremap <silent> <leader>w :Windows<cr>
@@ -214,37 +214,45 @@ nnoremap <silent> <leader>; :BLines<cr>
 "nnoremap <silent> <leader>o :BTags<cr>
 "nnoremap <silent> <leader>O :Tags<cr>
 nnoremap <silent> <leader>h :History<cr>
-nnoremap <silent> <leader>a :Ag<cr>
+nnoremap <silent> <leader>a :FindInExact<cr>
 
-command! -bang -nargs=* Find
+command! -bang -nargs=* FindIn
   \ call fzf#vim#grep(
-  \ 'rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>),
-  \ 1, <bang>0)
+  \ 'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+  \ {'options': '--delimiter : --nth 4..'},
+  \ <bang>0)
 
-function! SearchWordWithAg()
-  execute 'Ag' expand('<cword>')
+command! -bang -nargs=* FindInExact
+  \ call fzf#vim#grep(
+  \ 'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+  \ {'options': '--delimiter : --nth 4.. --exact'},
+  \ <bang>0)
+
+function! SearchWordWithRg()
+  execute 'FindInExact' expand('<cword>')
 endfunction
-nnoremap <silent> K :call SearchWordWithAg()<cr>
+nnoremap <silent> K :call SearchWordWithRg()<cr>
 
 " Shorter window nagivation
+" This can't be <c-h> or else it will break search scroll
 nnoremap <c-w>h <c-w><c-h>
 nnoremap <c-w>j <c-w><c-j>
 nnoremap <c-w>k <c-w><c-k>
 nnoremap <c-w>l <c-w><c-l>
 
 " Move to next git modification
-nnoremap <c-g>k :GitGutterPrevHunk<cr>
-nnoremap <c-g>j :GitGutterNextHunk<cr>
-nnoremap <c-g>p :GitGutterPreviewHunk<cr>
-nnoremap <c-g>u :GitGutterUndoHunk<cr>
+nnoremap <silent> gk :GitGutterPrevHunk<cr>
+nnoremap <silent> gj :GitGutterNextHunk<cr>
+nnoremap <silent> <leader>gp :GitGutterPreviewHunk<cr>
+nnoremap <silent> <leader>gu :GitGutterUndoHunk<cr>
 
 " Fugitive Git commands
-nnoremap gb :Gblame<cr>
-nnoremap gs :Gstatus<cr>
-nnoremap gc :Gcommit<cr>
+nnoremap <silent> gb :Gblame<cr>
+nnoremap <silent> gs :Gstatus<cr>
+nnoremap <silent> gc :Gcommit<cr>
 
 " Close preview window
-nnoremap zz :pc<cr>
+nnoremap <silent> zz :pc<cr>
 
 " Toggle hard word wrap
 function! ToggleWordWrap()
@@ -257,7 +265,7 @@ function! ToggleWordWrap()
     echo 'Word wrap enabled'
   endif
 endfunc
-nnoremap <c-w> :call ToggleWordWrap()<cr>
+nnoremap <silent> <c-e> :call ToggleWordWrap()<cr>
 
 " Toggle relative line numbers
 function! ToggleRelativeNumber()
