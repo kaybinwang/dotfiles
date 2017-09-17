@@ -253,7 +253,6 @@ function! VimrcLoadPlugins()
 
   Plug 'tpope/vim-surround'
 
-
   call plug#end()
 endfunction
 call VimrcLoadPlugins()
