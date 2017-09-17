@@ -26,6 +26,33 @@ function! VimrcLoadPlugins()
 
   Plug 'ryanoasis/vim-devicons'
 
+  Plug 'ConradIrwin/vim-bracketed-paste'
+
+  "{{{ vim-go
+    Plug 'fatih/vim-go'
+    let g:go_highlight_build_constraints = 1
+    let g:go_highlight_extra_types = 1
+    let g:go_highlight_fields = 1
+    let g:go_highlight_functions = 1
+    let g:go_highlight_methods = 1
+    let g:go_highlight_operators = 1
+    let g:go_highlight_structs = 1
+    let g:go_highlight_types = 1
+
+    " Auto import on write
+    let g:go_fmt_command = "goimports"
+  "}}}
+
+  "{{{ deoplete
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    if has('nvim')
+      " Enable deoplete on startup
+      let g:deoplete#enable_at_startup = 1
+    endif
+  "}}}
+
+  Plug 'zchee/deoplete-go'
+
   call plug#end()
 endfunction
 call VimrcLoadPlugins()
@@ -124,7 +151,13 @@ nnoremap k gk
 " New tab
 nnoremap <c-t> :tabnew<cr>
 
+" Terminal
 nnoremap <c-p> :vsplit<cr>:terminal<cr>
+tnoremap <c-w>h <C-\><C-N><C-w>h
+tnoremap <c-w>j <C-\><C-N><C-w>j
+tnoremap <c-w>k <C-\><C-N><C-w>k
+tnoremap <c-w>l <C-\><C-N><C-w>l
+tnoremap zz <C-\><C-n>ZZ
 
 " Open search
 nnoremap <silent> <leader><leader> :Files<cr>
@@ -138,19 +171,24 @@ nnoremap <silent> <leader>; :BLines<cr>
 nnoremap <silent> <leader>? :History<cr>
 
 " Shorter window nagivation
-nnoremap <c-h> <c-w><c-h>
-nnoremap <c-j> <c-w><c-j>
-nnoremap <c-k> <c-w><c-k>
-nnoremap <c-l> <c-w><c-l>
+nnoremap <c-w>h <c-w><c-h>
+nnoremap <c-w>j <c-w><c-j>
+nnoremap <c-w>k <c-w><c-k>
+nnoremap <c-w>l <c-w><c-l>
 
 " Move to next git modification
-nnoremap <c-g>j :GitGutterNextHunk<cr><esc>
-nnoremap <c-g>k :GitGutterPrevHunk<cr><esc>
+nnoremap <c-g>k :GitGutterPrevHunk<cr>
+nnoremap <c-g>j :GitGutterNextHunk<cr>
+nnoremap <c-g>p :GitGutterPreviewHunk<cr>
+nnoremap <c-g>u :GitGutterUndoHunk<cr>
 
 " Fugitive Git commands
-nnoremap gb :Gblame<cr><esc>
-nnoremap gs :Gstatus<cr><esc>
+nnoremap gb :Gblame<cr>
+nnoremap gs :Gstatus<cr>
 nnoremap gc :Gcommit<cr>
+
+" Close preview window
+nnoremap zz :pc<cr>
 
 " Toggle hard word wrap
 function! ToggleWordWrap()
