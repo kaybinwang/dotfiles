@@ -124,6 +124,7 @@ set ttyfast                     " indicates a fast terminal connection
 set undodir=~/.vim/undodir      " set undofile location
 set undofile                    " maintain undo history between sessions
 set undolevels=1000             " store 1000 undos
+set hidden                      " allow buffer to go into background
 
 " Whitespace
 set expandtab
@@ -168,7 +169,18 @@ nnoremap <silent> <leader>w :Windows<cr>
 nnoremap <silent> <leader>; :BLines<cr>
 "nnoremap <silent> <leader>o :BTags<cr>
 "nnoremap <silent> <leader>O :Tags<cr>
-nnoremap <silent> <leader>? :History<cr>
+nnoremap <silent> <leader>h :History<cr>
+nnoremap <silent> <leader>a :Ag<cr>
+
+command! -bang -nargs=* Find
+  \ call fzf#vim#grep(
+  \ 'rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>),
+  \ 1, <bang>0)
+
+function! SearchWordWithAg()
+  execute 'Ag' expand('<cword>')
+endfunction
+nnoremap <silent> K :call SearchWordWithAg()<cr>
 
 " Shorter window nagivation
 nnoremap <c-w>h <c-w><c-h>
@@ -223,9 +235,9 @@ nnoremap <leader>ev :execute 'vsplit '.fnameescape(g:vimrc)<cr>
 nnoremap <leader>sv :execute 'source '.fnameescape(g:vimrc)<cr>
 
 " Clear search
-nnoremap <return> :noh<cr><esc>
+nnoremap <silent> <return> :noh<cr><esc>
 
-nnoremap <leader>f :NERDTreeToggle<cr><esc>
+nnoremap <silent> <leader>f :NERDTreeToggle<cr><esc>
 
 " File Settings
 au FileType html call HtmlFileSettings()
