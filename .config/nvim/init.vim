@@ -28,8 +28,26 @@ function! VimrcLoadPlugins()
 
   Plug 'ConradIrwin/vim-bracketed-paste'
 
+  Plug 'w0rp/ale'
+  "{{{
+    let g:ale_linters = {
+    \ 'javascript': ['eslint'],
+    \}
+  "}}}
+
+  Plug 'pangloss/vim-javascript'
+  "{{{
+    let g:javascript_plugin_jsdoc = 1
+    let g:javascript_plugin_flow = 1
+  "}}}
+  Plug 'mxw/vim-jsx'
+  "{{{
+    let g:jsx_ext_required = 0
+  "}}}
+  Plug 'hail2u/vim-css3-syntax'
+
+  Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
   "{{{ vim-go
-    Plug 'fatih/vim-go'
     let g:go_highlight_build_constraints = 1
     let g:go_highlight_extra_types = 1
     let g:go_highlight_fields = 1
@@ -43,15 +61,40 @@ function! VimrcLoadPlugins()
     let g:go_fmt_command = "goimports"
   "}}}
 
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   "{{{ deoplete
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+
     if has('nvim')
       " Enable deoplete on startup
       let g:deoplete#enable_at_startup = 1
     endif
+
+    let g:python_host_prog = '/usr/local/bin/python2'
+    let g:python3_host_prog = '/usr/local/bin/python3'"
+
+    function! s:is_whitespace()
+      let col = col('.') - 1
+      return ! col || getline('.')[col - 1] =~? '\s'
+    endfunction
+
+    " Use tab to forward cycle
+    inoremap <silent><expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+    " Use tab to backward cycle
+    inoremap <silent><expr><s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
+
+    " Hide preview window after closing completion
+    autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+
+  "}}}
+  Plug 'zchee/deoplete-go'
+  Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+  Plug 'zchee/deoplete-jedi'
+  "{{{
+    let g:deoplete#sources#jedi#show_docstring = 1
   "}}}
 
-  Plug 'zchee/deoplete-go'
+  Plug 'tpope/vim-surround'
+
 
   call plug#end()
 endfunction
@@ -288,6 +331,8 @@ function! JavaFileSettings()
   nnoremap <Leader>jc  :JavaCorrect<cr>
   nnoremap <Leader>jcs :Checkstyle<cr>
 endfunc
+
+"  let g:fzf_nvim_statusline = 0 " disable statusline overwriting
 
 " Lightline {{{
 
