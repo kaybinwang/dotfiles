@@ -351,10 +351,12 @@ nnoremap k gk
 
 " New tab
 nnoremap <silent> <c-t> :tabnew<cr>
+tnoremap <silent> <c-t> <c-\><c-n>:tabnew<cr>
 
 " Auto insert if terminal open
 au BufEnter * if &buftype == 'terminal' | :startinsert | endif
 nnoremap <silent> <c-p> :vsplit<cr>:terminal<cr>
+tnoremap <silent> <c-p> <c-\><c-n>:vsplit<cr>:terminal<cr>
 
 " Window navigation
 tnoremap <c-w>h <c-\><c-n><c-w>h
@@ -362,11 +364,17 @@ tnoremap <c-w>j <C-\><C-N><C-w>j
 tnoremap <c-w>k <c-\><c-n><c-w>k
 tnoremap <c-w>l <c-\><c-n><c-w>l
 
+" Vertical split
+tnoremap <silent> <c-v> <c-\><c-n>:vsplit<cr>
+
 " Close
 tnoremap <c-w>z <c-\><c-n>ZZ
 
 " Visual mode
 tnoremap <c-w>v <c-\><c-n>
+
+" Close all folds except the current line
+nnoremap zp zMzv
 
 " Open search
 nnoremap <silent> <leader><leader> :Files<cr>
