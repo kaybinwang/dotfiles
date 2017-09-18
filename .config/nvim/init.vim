@@ -19,11 +19,7 @@ function! VimrcLoadPlugins()
   Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
   Plug 'junegunn/fzf.vim'
   "{{{
-    " Start interactive EasyAlign in visual mode (e.g. vipga)
-    xmap ga <Plug>(EasyAlign)
-
-    " Start interactive EasyAlign for a motion/text object (e.g. gaip)
-    nmap ga <Plug>(EasyAlign)
+    "let g:fzf_nvim_statusline = 0 " disable statusline overwriting
   "}}}
 
   Plug 'itchyny/lightline.vim'
@@ -178,6 +174,13 @@ function! VimrcLoadPlugins()
   Plug 'ConradIrwin/vim-bracketed-paste'
 
   Plug 'junegunn/vim-easy-align'
+  "{{{
+    " Start interactive EasyAlign in visual mode (e.g. vipga)
+    xmap ga <Plug>(EasyAlign)
+
+    " Start interactive EasyAlign for a motion/text object (e.g. gaip)
+    nmap ga <Plug>(EasyAlign)
+  "}}}
 
   Plug 'w0rp/ale'
   "{{{
@@ -350,8 +353,8 @@ nnoremap j gj
 nnoremap k gk
 
 " New tab
-nnoremap <silent> <c-t> :tabnew<cr>
-tnoremap <silent> <c-t> <c-\><c-n>:tabnew<cr>
+nnoremap <silent> <c-w>t :tabnew<cr>
+tnoremap <silent> <c-w>t <c-\><c-n>:tabnew<cr>
 
 " Auto insert if terminal open
 au BufEnter * if &buftype == 'terminal' | :startinsert | endif
@@ -365,7 +368,7 @@ tnoremap <c-w>k <c-\><c-n><c-w>k
 tnoremap <c-w>l <c-\><c-n><c-w>l
 
 " Vertical split
-tnoremap <silent> <c-v> <c-\><c-n>:vsplit<cr>
+tnoremap <silent> <c-w>s <c-\><c-n>:vsplit<cr>
 
 " Close
 tnoremap <c-w>z <c-\><c-n>ZZ
@@ -517,5 +520,3 @@ function! JavaFileSettings()
   nnoremap <Leader>jc  :JavaCorrect<cr>
   nnoremap <Leader>jcs :Checkstyle<cr>
 endfunc
-
-"  let g:fzf_nvim_statusline = 0 " disable statusline overwriting
