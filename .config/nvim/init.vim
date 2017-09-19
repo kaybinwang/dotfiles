@@ -22,6 +22,8 @@ function! VimrcLoadPlugins()
     "let g:fzf_nvim_statusline = 0 " disable statusline overwriting
   "}}}
 
+  Plug 'jiangmiao/auto-pairs'
+
   Plug 'itchyny/lightline.vim'
   "{{{
 
@@ -187,6 +189,7 @@ function! VimrcLoadPlugins()
     let g:ale_linters = {
     \ 'javascript': ['eslint'],
     \}
+
   "}}}
 
   Plug 'hail2u/vim-css3-syntax'
@@ -244,7 +247,7 @@ function! VimrcLoadPlugins()
     inoremap <silent><expr><s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
 
     " Hide preview window after closing completion
-    autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+    " autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 
   "}}}
   Plug 'zchee/deoplete-go'
@@ -520,3 +523,7 @@ function! JavaFileSettings()
   nnoremap <Leader>jc  :JavaCorrect<cr>
   nnoremap <Leader>jcs :Checkstyle<cr>
 endfunc
+
+
+    noremap <silent> <leader>j <Plug>(ale_previous_wrap)
+    noremap <silent> <leader>k <Plug>(ale_next_wrap)
