@@ -1,0 +1,108 @@
+#!/bin/bash
+
+# Sets up the essentials before install can be used
+
+function setup_system() {
+  softwareupdate -ia
+  systemsetup -setremotelogin on
+  xcode-select --install 2> /dev/null
+  # TODO: remap ctrl key if possible
+}
+
+function install_brew() {
+  /usr/bin/ruby -e "$(curl \
+    -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+}
+
+function prompt_user() {
+  local input
+  local response
+  while true; do
+    echo -n "$1: "
+    read -r input
+    echo -n "Is $input correct? [y/N]: "
+    read -r response
+    if [ -z "$response" ] || [ "$response" == "y" ]; then
+      break
+    fi
+  done
+  return "$input"
+}
+
+function github_config() {
+  local -r ssh_key="$HOME/.ssh/id_rsa"
+  github_generate_ssh_key "$ssh_key"
+  github_upload_ssh_key "$ssh_key.pub"
+}
+
+function github_generate_ssh_key() {
+  prompt_user 'Please enter your GitHub email address and press [Enter]'
+  local -r email_address="$?"
+
+  local -r ssh_key="$1"
+  local -r ssh_dir="$(dirname "$ssh_key")"
+  local -r ssh_config="$ssh_dir/config"
+  mkdir -p "$ssh_dir"
+  if [ ! -f "$ssh_key" ]; then
+    ssh-keygen -t rsa -b 4096 -f "$ssh_key" -C "$email_address"
+    eval "$(ssh-agent -s)" &> /dev/null
+    ssh-add -K "$ssh_key"
+
+    # MacOS 10.12.2 or later only
+    cat <<EOF >> "$ssh_config"
+Host *
+ AddKeysToAgent yes
+ UseKeychain yes
+ IdentityFile ${ssh_key}
+EOF
+  fi
+  # TODO: return value or echo
+}
+
+function github_upload_ssh_key() {
+  prompt_user 'Please enter your Github username and press [Enter]'
+  local -r username="$?"
+
+  local -r title="DevVm_$(date +%Y%m%d%H%M%S)"
+  local -r public_key="$(cat "$1")"
+
+  # TODO: check return value of cat
+
+  curl -u "$username" \
+    --data "{\"title\":\"$title\",\"key\":\"$public_key\"}" \
+    https://api.github.com/user/keys
+
+  # TODO: check return value and fallback
+
+  pbcopy < "$ssh_key.pub"
+  echo "Copied SSH public key from $ssh_key.pub to clipboard"
+
+  return "$?"
+}
+
+function install_git() {
+  brew install git
+}
+
+function main() {
+  if [ -z "$DOTFILE_PATH" ]; then
+    pushd "$(dirname "$0")" &> /dev/null
+    DOTFILE_PATH=$(pwd -P)
+    popd &> /dev/null
+    echo "export DOTFILE_PATH=$DOTFILE_PATH" >> "$DOTFILE_PATH/.bash_extras"
+  fi
+  pushd "$DOTFILE_PATH" &>/dev/null
+
+
+  github_config
+  setup_system
+  install_brew
+  install_git
+
+  echo 'Finished installing!'
+
+  popd &>/dev/null
+  exit 0
+}
+
+main "$@"
