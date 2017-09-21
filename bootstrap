@@ -63,7 +63,8 @@ function github_upload_ssh_key() {
   prompt_user 'Please enter your Github username and press [Enter]'
   local -r username="$?"
 
-  local -r title="DevVm_$(date +%Y%m%d%H%M%S)"
+  # RFC 3339 timestamp
+  local -r title="$(whoami)@$(hostname)_$(date -u +%Y-%m-%dT%H:%MZ)"
   local -r public_key="$(cat "$1")"
 
   # TODO: check return value of cat
@@ -77,6 +78,7 @@ function github_upload_ssh_key() {
   pbcopy < "$ssh_key.pub"
   echo "Copied SSH public key from $ssh_key.pub to clipboard"
 
+  # TODO: open link to github settings page
   return "$?"
 }
 

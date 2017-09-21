@@ -24,6 +24,7 @@ alias c='clear'
 # Binary aliases
 alias tmux='tmux -2'                        # tmux with 256 colors
 alias vi='nvim'                             # neovim
+alias vim='nvim'                            # neovim
 
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
