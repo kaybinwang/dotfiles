@@ -22,8 +22,8 @@ export FZF_DEFAULT_OPTS='
 '
 
 # bash completion
-if [ -f `brew --prefix`/etc/bash_completion ]; then
-  . `brew --prefix`/etc/bash_completion
+if [ -f "$(brew --prefix)"/etc/bash_completion ]; then
+  source "$(brew --prefix)"/etc/bash_completion
 
   # Add git completion to aliases
   __git_complete gm _git_merge
