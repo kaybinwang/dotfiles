@@ -182,8 +182,9 @@ function main() {
   fi
 
   install \
-    setup_github
-    setup_dotfiles
+    setup_github \
+    setup_system \
+    setup_dotfiles \
 }
 
 function teardown() {
