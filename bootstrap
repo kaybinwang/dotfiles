@@ -2,6 +2,12 @@
 
 # Sets up the essentials before install can be used
 
+declare -r DOTFILES='
+.bash_profile
+.bash_aliases
+.bash_extras
+'
+
 declare -r ERR_NO_SSH_FILE=10
 declare -r ERR_INVALID_ARGS=3
 declare -r ERR_GITHUB_GENERATE_SSH=50
@@ -42,7 +48,7 @@ function prompt_user_no_confirm() {
   __="$input"
 }
 
-function github_config() {
+function setup_github() {
   local -r ssh_key="$HOME/.ssh/id_rsa"
   github_generate_ssh_key "$ssh_key" || return $?
   github_upload_ssh_key "$ssh_key.pub" || return $?
@@ -71,6 +77,10 @@ EOF
   fi
 }
 
+function date_rfc() {
+  date -u +%Y-%m-%dT%H:%M:%SZ
+}
+
 function github_upload_ssh_key_api() {
   local -r pub_file="$1"
   [ -z "$pub_file" ] && return $ERR_INVALID_ARGS
@@ -79,7 +89,7 @@ function github_upload_ssh_key_api() {
   local -r username="${__}"
 
   # RFC 3339 timestamp
-  local -r title="$(whoami)@$(hostname)_$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  local -r title="$(whoami)@$(hostname)_$(date_rfc)"
   local -r pub_key="$(cat "$pub_file")" || return $ERR_NO_SSH_FILE
 
   if ! curl --fail -u "$username" \
@@ -138,6 +148,23 @@ function install() {
   return 0
 }
 
+function setup_dotfiles() {
+  local -r backup_dir="${HOME}/.dotfiles_backup/$(date_rfc)"
+  mkdir -p "$backup_dir"
+
+  pushd "$DOTFILE_PATH" &>/dev/null
+  local dotfile
+  while read -r dotfile; do
+    local oldfile="${HOME}/${dotfile}"
+    local newfile="${backup_dir}/${dotfile}"
+    if [ -e "$oldfile" ]; then
+      mv "$oldfile" "$backup_dir"
+    fi
+    ln -s "$oldfile" "$newfile"
+  done
+  popd &>/dev/null
+}
+
 function main() {
   if [ -z "$DOTFILE_PATH" ]; then
     pushd "$(dirname "$0")" &>/dev/null
@@ -148,12 +175,11 @@ function main() {
   fi
 
   install \
-    github_config \
+    setup_github \
     setup_system \
     install_brew \
-    install_git
-
-  return $?
+    install_git \
+    setup_dotfiles
 }
 
 function teardown() {
