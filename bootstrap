@@ -12,6 +12,7 @@ declare -r ERR_NO_SSH_FILE=10
 declare -r ERR_INVALID_ARGS=3
 declare -r ERR_GITHUB_GENERATE_SSH=50
 declare -r ERR_GITHUB_UPLOAD_SSH=20
+declare -r ERR_DOTFILE_LINK=21
 
 function setup_system() {
   softwareupdate -ia
@@ -160,7 +161,7 @@ function setup_dotfiles() {
     if [ -e "$oldfile" ]; then
       mv "$oldfile" "$backup_dir"
     fi
-    ln -s "$oldfile" "$newfile"
+    ln -s "$newfile" "$oldfile" || ERR_DOTFILE_LINK
   done
   popd &>/dev/null
 }
@@ -203,6 +204,9 @@ function finish() {
       ;;
     $ERR_GITHUB_UPLOAD_SSH)
       echo 'Unable to upload SSH key to GitHub.' 1>&2
+      ;;
+    $ERR_DOTFILE_LINK)
+      echo 'Unable to create dotfile symlink.' 1>&2
       ;;
     $ERR_GITHUB_GENERATE_SSH)
       echo 'Unable to generate SSH key for GitHub.' 1>&2
