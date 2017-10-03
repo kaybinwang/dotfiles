@@ -26,7 +26,7 @@ function prompt_user() {
       break
     fi
   done
-  return "$input"
+  __="$input"
 }
 
 function github_config() {
@@ -37,7 +37,7 @@ function github_config() {
 
 function github_generate_ssh_key() {
   prompt_user 'Please enter your GitHub email address and press [Enter]'
-  local -r email_address="$?"
+  local -r email_address="${__}"
 
   local -r ssh_key="$1"
   local -r ssh_dir="$(dirname "$ssh_key")"
@@ -61,7 +61,7 @@ EOF
 
 function github_upload_ssh_key() {
   prompt_user 'Please enter your Github username and press [Enter]'
-  local -r username="$?"
+  local -r username="${__}"
 
   # RFC 3339 timestamp
   local -r title="$(whoami)@$(hostname)_$(date -u +%Y-%m-%dT%H:%MZ)"
