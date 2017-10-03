@@ -93,7 +93,7 @@ function github_upload_ssh_key_api() {
 
 function github_upload_ssh_key() {
   local -r pub_file="$1"
-  [ -z "$pub_file" ] || return $ERR_INVALID_ARGS
+  [ -z "$pub_file" ] && return $ERR_INVALID_ARGS
 
   repeat_try github_upload_ssh_key_api "$pub_file"
   echo "toaskdjla here is $ssh_key"
@@ -143,7 +143,6 @@ function main() {
     echo "export DOTFILE_PATH=$DOTFILE_PATH" >> "${DOTFILE_PATH}/.bash_extras"
     popd &>/dev/null
   fi
-  pushd "$DOTFILE_PATH" &>/dev/null
 
   install \
     github_config \
@@ -151,8 +150,7 @@ function main() {
     install_brew \
     install_git
 
-  popd &>/dev/null
-  exit 0
+  return $?
 }
 
 function teardown() {
@@ -160,7 +158,7 @@ function teardown() {
 }
 
 function finish() {
-  local -i rv="$?"
+  local -i rv=$?
   if [ $rv -eq 0 ]; then
     echo 'Finished installing!'
     return 0
