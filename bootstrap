@@ -8,6 +8,7 @@ declare -r DOTFILES='
 .bash_extras
 .gitconfig
 .tern-config
+.config/nvim/init.vim
 '
 
 declare -r ERR_NO_SSH_FILE=10
@@ -142,7 +143,7 @@ function install_git() {
   brew install git
 }
 
-function install() {
+function setup() {
   for cmd in "$@"; do
     if ! eval "$cmd"; then
       return $?
@@ -158,18 +159,21 @@ function setup_dotfiles() {
   local dotfile
   while read -r dotfile; do
     [ -z "$dotfile" ] && continue
+
     local oldfile="${HOME}/${dotfile}"
     local newfile="${DOTFILE_PATH}/${dotfile}"
-    echo "$oldfile"
     if [ -h "$oldfile" ]; then
       echo "deleting"
       rm "$oldfile"
     fi
     if [ -e "$oldfile" ]; then
-      [ -d "$backup_dir" ] || mkdir -p "$backup_dir"
-      mv "$oldfile" "$backup_dir" || return ERROR
+      local -r dir="${backup_dir}/$(dirname "$dotfile")"
+      if [ -d "$dir" ]; then
+        mkdir -p "$dir"
+      fi
+      mv "$oldfile" "$dir"
     fi
-    ln -s "$newfile" "$oldfile" || ERR_DOTFILE_LINK
+    ln -s "$newfile" "$oldfile" || $ERR_DOTFILE_LINK
   done <<< "$DOTFILES"
   popd &>/dev/null
 }
@@ -183,10 +187,11 @@ function main() {
     popd &>/dev/null
   fi
 
-  install \
+  # TODO: setup vim, nvim, 
+  setup \
     setup_github \
     setup_system \
-    setup_dotfiles \
+    setup_dotfiles
 }
 
 function teardown() {
