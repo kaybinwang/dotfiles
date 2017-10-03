@@ -10,13 +10,13 @@ declare -r ERR_GITHUB_UPLOAD_SSH=20
 function setup_system() {
   softwareupdate -ia
   systemsetup -setremotelogin on
-  xcode-select --install 2> /dev/null
+  xcode-select --install 2>/dev/null
   # TODO: remap ctrl key if possible
 }
 
 function install_brew() {
-  /usr/bin/ruby -e "$(curl \
-    -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  command -v brew || /usr/bin/ruby -e "$(curl -fsSL
+    https://raw.githubusercontent.com/Homebrew/install/master/install)"
 }
 
 function prompt_user() {
@@ -44,8 +44,8 @@ function prompt_user_no_confirm() {
 
 function github_config() {
   local -r ssh_key="$HOME/.ssh/id_rsa"
-  github_generate_ssh_key "$ssh_key" || return $ERR_GITHUB_GENERATE_SSH
-  github_upload_ssh_key "$ssh_key.pub" || return $ERR_GITHUB_UPLOAD_SSH
+  github_generate_ssh_key "$ssh_key" || return $?
+  github_upload_ssh_key "$ssh_key.pub" || return $?
 }
 
 function github_generate_ssh_key() {
@@ -55,8 +55,8 @@ function github_generate_ssh_key() {
   local -r ssh_key="$1"
   local -r ssh_dir="$(dirname "$ssh_key")"
   local -r ssh_config="$ssh_dir/config"
-  mkdir -p "$ssh_dir"
   if [ ! -f "$ssh_key" ]; then
+    mkdir -p "$ssh_dir"
     ssh-keygen -t rsa -b 4096 -f "$ssh_key" -C "$email_address"
     eval "$(ssh-agent -s)" &>/dev/null
     ssh-add -K "$ssh_key"
@@ -69,7 +69,6 @@ Host *
  IdentityFile ${ssh_key}
 EOF
   fi
-  # TODO: return value or echo
 }
 
 function github_upload_ssh_key_api() {
@@ -83,7 +82,6 @@ function github_upload_ssh_key_api() {
   local -r title="$(whoami)@$(hostname)_$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   local -r pub_key="$(cat "$pub_file")" || return $ERR_NO_SSH_FILE
 
-  # TODO: curl returning with error
   if ! curl --fail -u "$username" \
     --data "{\"title\":\"$title\",\"key\":\"$pub_key\"}" \
     https://api.github.com/user/keys
