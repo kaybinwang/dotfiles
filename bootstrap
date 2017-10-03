@@ -4,6 +4,8 @@
 
 declare -r ERR_NO_SSH_FILE=10
 declare -r ERR_INVALID_ARGS=3
+declare -r ERR_GITHUB_GENERATE_SSH=50
+declare -r ERR_GITHUB_UPLOAD_SSH=20
 
 function setup_system() {
   softwareupdate -ia
@@ -42,8 +44,8 @@ function prompt_user_no_confirm() {
 
 function github_config() {
   local -r ssh_key="$HOME/.ssh/id_rsa"
-  github_generate_ssh_key "$ssh_key"
-  github_upload_ssh_key "$ssh_key.pub"
+  github_generate_ssh_key "$ssh_key" || return $ERR_GITHUB_GENERATE_SSH
+  github_upload_ssh_key "$ssh_key.pub" || return $ERR_GITHUB_UPLOAD_SSH
 }
 
 function github_generate_ssh_key() {
@@ -72,7 +74,7 @@ EOF
 
 function github_upload_ssh_key_api() {
   local -r pub_file="$1"
-  [ -z "$pub_file" ] || return $ERR_INVALID_ARGS
+  [ -z "$pub_file" ] && return $ERR_INVALID_ARGS
 
   prompt_user 'Please enter your Github username and press [Enter]'
   local -r username="${__}"
@@ -95,7 +97,9 @@ function github_upload_ssh_key() {
   local -r pub_file="$1"
   [ -z "$pub_file" ] && return $ERR_INVALID_ARGS
 
-  repeat_try github_upload_ssh_key_api "$pub_file"
+  if repeat_try github_upload_ssh_key_api "$pub_file"; then
+    return 0
+  fi
   echo "toaskdjla here is $ssh_key"
 
   pbcopy < "$ssh_key.pub"
@@ -159,6 +163,7 @@ function teardown() {
 
 function finish() {
   local -i rv=$?
+  echo ''
   if [ $rv -eq 0 ]; then
     echo 'Finished installing!'
     return 0
@@ -170,6 +175,12 @@ function finish() {
       ;;
     $ERR_INVALID_ARGS)
       echo 'Invalid args' 1>&2
+      ;;
+    $ERR_GITHUB_UPLOAD_SSH)
+      echo 'Unable to upload SSH key to GitHub.' 1>&2
+      ;;
+    $ERR_GITHUB_GENERATE_SSH)
+      echo 'Unable to generate SSH key for GitHub.' 1>&2
       ;;
     *)
       echo 'Unknown error.' 1>&2
