@@ -6,6 +6,8 @@ declare -r DOTFILES='
 .bash_profile
 .bash_aliases
 .bash_extras
+.gitconfig
+.tern-config
 '
 
 declare -r ERR_NO_SSH_FILE=10
