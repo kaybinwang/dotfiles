@@ -58,6 +58,8 @@ alias gpoh='git push origin HEAD'
 alias gpfoh='git push -f origin HEAD'
 alias gsh='git show'
 alias gst='git stash'
+alias gstp='git stash pop'
+alias gsta='git stash apply'
 alias gg='git grep'
 
 ECLIPSE_HOME='/Applications/Eclipse.app/Contents/Eclipse'

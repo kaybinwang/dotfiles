@@ -171,6 +171,8 @@ function! VimrcLoadPlugins()
   Plug 'tpope/vim-fugitive'
   Plug 'airblade/vim-gitgutter'
 
+  Plug 'tpope/vim-repeat'
+
   Plug 'ryanoasis/vim-devicons'
 
   Plug 'ConradIrwin/vim-bracketed-paste'
@@ -331,6 +333,10 @@ set undodir=~/.vim/undodir      " set undofile location
 set undofile                    " maintain undo history between sessions
 set undolevels=1000             " store 1000 undos
 set hidden                      " allow buffer to go into background
+
+" Auto read/write on switch
+au FocusGained,BufEnter * :silent! !
+"au FocusLost,WinLeave * :silent! w
 
 " Whitespace
 set expandtab
