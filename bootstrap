@@ -2,7 +2,8 @@
 
 # Sets up the essentials before install can be used
 
-declare -r ERR_NO_SSH_FILE=1
+declare -r ERR_NO_SSH_FILE=10
+declare -r ERR_INVALID_ARGS=3
 
 function setup_system() {
   softwareupdate -ia
@@ -69,27 +70,33 @@ EOF
   # TODO: return value or echo
 }
 
-function github_upload_ssh_key() {
+function github_upload_ssh_key_api() {
+  local -r pub_file="$1"
+  [ -z "$pub_file" ] || return $ERR_INVALID_ARGS
+
   prompt_user 'Please enter your Github username and press [Enter]'
   local -r username="${__}"
 
   # RFC 3339 timestamp
   local -r title="$(whoami)@$(hostname)_$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  local -r public_key="$(cat "$1")"
+  local -r public_key="$(cat "$pub_file")" || return $ERR_NO_SSH_FILE
 
-  if [ "$?" -ne 0 ]; then
-    return $ERR_NO_SSH_FILE
-  fi
-
-  curl -u "$username" \
+  # TODO: curl returning with error
+  if curl --fail -u "$username" \
     --data "{\"title\":\"$title\",\"key\":\"$public_key\"}" \
     https://api.github.com/user/keys
-
-  # TODO: curl returns 0 with error always
-  if [ "$?" -ne 0 ]; then
+  then
     echo "Created SSH key on GitHub with $title"
     return 0
   fi
+}
+
+function github_upload_ssh_key() {
+  local -r pub_file="$1"
+  [ -z "$pub_file" ] || return $ERR_INVALID_ARGS
+
+  repeat_try github_upload_ssh_key_api "$pub_file"
+  echo "toaskdjla here is $ssh_key"
 
   pbcopy < "$ssh_key.pub"
   echo "Copied SSH public key from $ssh_key.pub to clipboard"
@@ -97,8 +104,22 @@ function github_upload_ssh_key() {
   echo "Opening GitHub Settings page..."
   echo "Please login and paste your SSH key."
   open https://github.com/settings/keys
-  prompt_user_no_confirm 'Press [Enter] to continue.'
-  return $?
+  prompt_user_no_confirm 'Press [Enter] to continue'
+  return 0
+}
+
+function repeatUntilSuccess() {
+  local response
+  while :
+  do
+    eval "$1" && break
+    echo -n 'Try again? [y/N]: '
+    read -r response
+    if [ "$response" == "N" ]; then
+      return 1
+    fi
+  done
+  return 0
 }
 
 function install_git() {
@@ -134,21 +155,26 @@ function main() {
   exit 0
 }
 
+function teardown() {
+  echo 'User cancelled.' 1>&2
+}
+
 function finish() {
   local -i rv="$?"
   case "$rv" in
     $ERR_NO_SSH_FILE)
-      echo 'Unable to find ssh key file.' 2>&1
+      echo 'Unable to find ssh key file.' 1>&2
       ;;
     0)
       echo 'Finished installing!'
       ;;
     *)
-      echo 'Unknown error.' 2>&1
+      echo 'Unknown error.' 1>&2
       ;;
   esac
   return $rv
 }
 
+trap teardown SIGTERM
 trap finish EXIT
 main "$@"
