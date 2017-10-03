@@ -161,16 +161,17 @@ function teardown() {
 
 function finish() {
   local -i rv="$?"
-  echo "{$0}:"
+  if [ $rv -eq 0 ]; then
+    echo 'Finished installing!'
+    return 0
+  fi
+  echo -n "$0:"
   case "$rv" in
     $ERR_NO_SSH_FILE)
       echo 'Unable to find ssh key file.' 1>&2
       ;;
     $ERR_INVALID_ARGS)
       echo 'Invalid args' 1>&2
-      ;;
-    0)
-      echo 'Finished installing!'
       ;;
     *)
       echo 'Unknown error.' 1>&2
