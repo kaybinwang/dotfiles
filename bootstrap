@@ -108,7 +108,7 @@ function github_upload_ssh_key() {
   return 0
 }
 
-function repeatUntilSuccess() {
+function repeat_try() {
   local response
   while :
   do
