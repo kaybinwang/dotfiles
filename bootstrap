@@ -2,6 +2,8 @@
 
 # Sets up the essentials before install can be used
 
+declare -r ERR_NO_SSH_FILE=1
+
 function setup_system() {
   softwareupdate -ia
   systemsetup -setremotelogin on
@@ -26,6 +28,14 @@ function prompt_user() {
       break
     fi
   done
+  __="$input"
+}
+
+function prompt_user_no_confirm() {
+  local input
+  local response
+  echo -n "$1: "
+  read -r input
   __="$input"
 }
 
@@ -64,16 +74,19 @@ function github_upload_ssh_key() {
   local -r username="${__}"
 
   # RFC 3339 timestamp
-  local -r title="$(whoami)@$(hostname)_$(date -u +%Y-%m-%dT%H:%MZ)"
+  local -r title="$(whoami)@$(hostname)_$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   local -r public_key="$(cat "$1")"
 
-  # TODO: check return value of cat
+  if [ "$?" -ne 0 ]; then
+    return $ERR_NO_SSH_FILE
+  fi
 
   curl -u "$username" \
     --data "{\"title\":\"$title\",\"key\":\"$public_key\"}" \
     https://api.github.com/user/keys
 
-  if "$?"; then
+  # TODO: curl returns 0 with error always
+  if [ "$?" -ne 0 ]; then
     echo "Created SSH key on GitHub with $title"
     return 0
   fi
@@ -81,16 +94,24 @@ function github_upload_ssh_key() {
   pbcopy < "$ssh_key.pub"
   echo "Copied SSH public key from $ssh_key.pub to clipboard"
 
-  # TODO: open link to github settings page
   echo "Opening GitHub Settings page..."
   echo "Please login and paste your SSH key."
   open https://github.com/settings/keys
-  prompt_user 'Press [Enter] to continue...'
-  return "$?"
+  prompt_user_no_confirm 'Press [Enter] to continue.'
+  return $?
 }
 
 function install_git() {
   brew install git
+}
+
+function install() {
+  for cmd in "$@"; do
+    if ! eval "$cmd"; then
+      return $?
+    fi
+  done
+  return 0
 }
 
 function main() {
@@ -103,16 +124,31 @@ function main() {
   fi
   pushd "$DOTFILE_PATH" &>/dev/null
 
-
-  github_config
-  setup_system
-  install_brew
-  install_git
-
-  echo 'Finished installing!'
+  install \
+    github_config \
+    setup_system \
+    install_brew \
+    install_git
 
   popd &>/dev/null
   exit 0
 }
 
+function finish() {
+  local -i rv="$?"
+  case "$rv" in
+    $ERR_NO_SSH_FILE)
+      echo 'Unable to find ssh key file.' 2>&1
+      ;;
+    0)
+      echo 'Finished installing!'
+      ;;
+    *)
+      echo 'Unknown error.' 2>&1
+      ;;
+  esac
+  return $rv
+}
+
+trap EXIT finish
 main "$@"
