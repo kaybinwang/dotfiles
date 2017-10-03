@@ -150,5 +150,5 @@ function finish() {
   return $rv
 }
 
-trap EXIT finish
+trap finish EXIT
 main "$@"
