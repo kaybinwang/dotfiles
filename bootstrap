@@ -151,18 +151,24 @@ function install() {
 
 function setup_dotfiles() {
   local -r backup_dir="${HOME}/.dotfiles_backup/$(date_rfc)"
-  mkdir -p "$backup_dir"
 
   pushd "$DOTFILE_PATH" &>/dev/null
   local dotfile
   while read -r dotfile; do
+    [ -z "$dotfile" ] && continue
     local oldfile="${HOME}/${dotfile}"
-    local newfile="${backup_dir}/${dotfile}"
+    local newfile="${DOTFILE_PATH}/${dotfile}"
+    echo "$oldfile"
+    if [ -h "$oldfile" ]; then
+      echo "deleting"
+      rm "$oldfile"
+    fi
     if [ -e "$oldfile" ]; then
-      mv "$oldfile" "$backup_dir"
+      [ -d "$backup_dir" ] || mkdir -p "$backup_dir"
+      mv "$oldfile" "$backup_dir" || return ERROR
     fi
     ln -s "$newfile" "$oldfile" || ERR_DOTFILE_LINK
-  done
+  done <<< "$DOTFILES"
   popd &>/dev/null
 }
 
@@ -176,10 +182,7 @@ function main() {
   fi
 
   install \
-    setup_github \
-    setup_system \
-    install_brew \
-    install_git \
+    setup_github
     setup_dotfiles
 }
 
