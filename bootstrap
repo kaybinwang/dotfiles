@@ -45,7 +45,7 @@ function github_generate_ssh_key() {
   mkdir -p "$ssh_dir"
   if [ ! -f "$ssh_key" ]; then
     ssh-keygen -t rsa -b 4096 -f "$ssh_key" -C "$email_address"
-    eval "$(ssh-agent -s)" &> /dev/null
+    eval "$(ssh-agent -s)" &>/dev/null
     ssh-add -K "$ssh_key"
 
     # MacOS 10.12.2 or later only
@@ -73,12 +73,19 @@ function github_upload_ssh_key() {
     --data "{\"title\":\"$title\",\"key\":\"$public_key\"}" \
     https://api.github.com/user/keys
 
-  # TODO: check return value and fallback
+  if "$?"; then
+    echo "Created SSH key on GitHub with $title"
+    return 0
+  fi
 
   pbcopy < "$ssh_key.pub"
   echo "Copied SSH public key from $ssh_key.pub to clipboard"
 
   # TODO: open link to github settings page
+  echo "Opening GitHub Settings page..."
+  echo "Please login and paste your SSH key."
+  open https://github.com/settings/keys
+  prompt_user 'Press [Enter] to continue...'
   return "$?"
 }
 
@@ -88,10 +95,11 @@ function install_git() {
 
 function main() {
   if [ -z "$DOTFILE_PATH" ]; then
-    pushd "$(dirname "$0")" &> /dev/null
+    pushd "$(dirname "$0")" &>/dev/null
     DOTFILE_PATH=$(pwd -P)
-    popd &> /dev/null
-    echo "export DOTFILE_PATH=$DOTFILE_PATH" >> "$DOTFILE_PATH/.bash_extras"
+    export DOTFILE_PATH
+    echo "export DOTFILE_PATH=$DOTFILE_PATH" >> "${DOTFILE_PATH}/.bash_extras"
+    popd &>/dev/null
   fi
   pushd "$DOTFILE_PATH" &>/dev/null
 
