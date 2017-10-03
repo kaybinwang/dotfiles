@@ -84,13 +84,15 @@ function github_upload_ssh_key_api() {
   local -r pub_key="$(cat "$pub_file")" || return $ERR_NO_SSH_FILE
 
   # TODO: curl returning with error
-  if curl --fail -u "$username" \
+  if ! curl --fail -u "$username" \
     --data "{\"title\":\"$title\",\"key\":\"$pub_key\"}" \
     https://api.github.com/user/keys
   then
-    echo "Created SSH key on GitHub with $title"
-    return 0
+    return $ERR_GITHUB_UPLOAD_SSH
   fi
+
+  echo "Created SSH key on GitHub with $title"
+  return 0
 }
 
 function github_upload_ssh_key() {
