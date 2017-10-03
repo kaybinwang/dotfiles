@@ -81,11 +81,11 @@ function github_upload_ssh_key_api() {
 
   # RFC 3339 timestamp
   local -r title="$(whoami)@$(hostname)_$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  local -r public_key="$(cat "$pub_file")" || return $ERR_NO_SSH_FILE
+  local -r pub_key="$(cat "$pub_file")" || return $ERR_NO_SSH_FILE
 
   # TODO: curl returning with error
   if curl --fail -u "$username" \
-    --data "{\"title\":\"$title\",\"key\":\"$public_key\"}" \
+    --data "{\"title\":\"$title\",\"key\":\"$pub_key\"}" \
     https://api.github.com/user/keys
   then
     echo "Created SSH key on GitHub with $title"
@@ -100,10 +100,9 @@ function github_upload_ssh_key() {
   if repeat_try github_upload_ssh_key_api "$pub_file"; then
     return 0
   fi
-  echo "toaskdjla here is $ssh_key"
 
-  pbcopy < "$ssh_key.pub"
-  echo "Copied SSH public key from $ssh_key.pub to clipboard"
+  pbcopy < "$pub_file"
+  echo "Copied SSH public key from $pub_file to clipboard"
 
   echo "Opening GitHub Settings page..."
   echo "Please login and paste your SSH key."
@@ -116,7 +115,7 @@ function repeat_try() {
   local response
   while :
   do
-    eval "$1" && break
+    eval "$@" && break
     echo -n 'Try again? [y/N]: '
     read -r response
     if [ "$response" == "N" ]; then
