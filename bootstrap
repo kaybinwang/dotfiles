@@ -153,6 +153,7 @@ function setup() {
 }
 
 function setup_dotfiles() {
+  echo 'Setting up dotfiles...'
   local -r backup_dir="${HOME}/.dotfiles_backup/$(date_rfc)"
 
   pushd "$DOTFILE_PATH" &>/dev/null
@@ -171,11 +172,15 @@ function setup_dotfiles() {
       if [ -d "$dir" ]; then
         mkdir -p "$dir"
       fi
+      echo "Backing up $oldfile -> ${dir}/$oldfile..."
       mv "$oldfile" "$dir"
     fi
+    echo "Linking $oldfile -> ${dir}/$oldfile..."
     ln -s "$newfile" "$oldfile" || $ERR_DOTFILE_LINK
   done <<< "$DOTFILES"
   popd &>/dev/null
+
+  echo 'Finished setting up dotfiles!'
 }
 
 function main() {
