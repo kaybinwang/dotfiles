@@ -22,6 +22,13 @@ function! VimrcLoadPlugins()
     "let g:fzf_nvim_statusline = 0 " disable statusline overwriting
   "}}}
 
+  Plug 'danro/rename.vim'
+
+  Plug 'qpkorr/vim-bufkill'
+  "{{{
+    nnoremap <silent> ZB :BD<cr>
+  "}}}
+
   Plug 'jiangmiao/auto-pairs'
 
   Plug 'itchyny/lightline.vim'
@@ -244,9 +251,9 @@ function! VimrcLoadPlugins()
     endfunction
 
     " Use tab to forward cycle
-    inoremap <silent><expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+    inoremap <silent><expr><c-j> pumvisible() ? "\<c-n>" : "\<tab>"
     " Use tab to backward cycle
-    inoremap <silent><expr><s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
+    inoremap <silent><expr><c-k> pumvisible() ? "\<c-p>" : "\<s-tab>"
 
     " Hide preview window after closing completion
     " autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
@@ -485,7 +492,9 @@ au FileType html call HtmlFileSettings()
 au FileType javascript call JavascriptFileSettings()
 au FileType java call JavaFileSettings()
 au FileType go call GoFileSettings()
-au FileType markdown, txt, tex call PlainTextFileSettings()
+au FileType markdown call PlainTextFileSettings()
+au FileType txt call PlainTextFileSettings()
+au FileType tex call PlainTextFileSettings()
 au BufRead,BufNewFile *.jsp call JspFileSettings()
 au BufRead,BufNewFile *.tmpl call GoTmplFileSettings()
 au BufRead,BufNewFile  *.sig setl filetype=sml

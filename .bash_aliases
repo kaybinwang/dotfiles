@@ -36,8 +36,22 @@ alias gs='git status'
 alias ga='git add'
 alias gau='git add -u'
 alias gb='git branch'
-alias gbd='git branch -d'
-alias gbD='git branch -D'
+#alias gbd='git branch -d'
+#alias gbD='git branch -D'
+function gbd() {
+  if [ "$1" == "-" ]; then
+    git branch -d '@{-1}'
+  else
+    git branch -d "$@"
+  fi
+}
+function gbD() {
+  if [ "$1" == "-" ]; then
+    git branch -D '@{-1}'
+  else
+    git branch -D "$@"
+  fi
+}
 alias gcl='git clone'
 alias gc='git commit'
 alias gcm='git commit -m'
