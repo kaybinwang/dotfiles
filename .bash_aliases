@@ -17,6 +17,8 @@ alias mkdir='mkdir -pv'                      # mkdir with parents
 alias less='less -FSRXc'                    # Preferred 'less' implementation
 
 alias ebp="vi $HOME/.bash_profile"
+alias eba="vi $HOME/.bash_aliases"
+alias ebe="vi $HOME/.bash_extras"
 alias sbp="source $HOME/.bash_profile"
 
 alias c='clear'

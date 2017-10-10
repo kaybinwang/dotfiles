@@ -26,7 +26,8 @@ function! VimrcLoadPlugins()
 
   Plug 'qpkorr/vim-bufkill'
   "{{{
-    nnoremap <silent> ZB :BD<cr>
+    nnoremap <silent> ZB :BD!<cr>
+    nnoremap <silent> Zb :bd!<cr>
   "}}}
 
   Plug 'jiangmiao/auto-pairs'
@@ -369,8 +370,8 @@ nnoremap j gj
 nnoremap k gk
 
 " New tab
-nnoremap <silent> <c-w>t :tabnew<cr>
-tnoremap <silent> <c-w>t <c-\><c-n>:tabnew<cr>
+nnoremap <silent> <c-s>t :tabnew<cr>
+tnoremap <silent> <c-s>t <c-\><c-n>:tabnew<cr>
 
 " Auto insert if terminal open
 au BufEnter * if &buftype == 'terminal' | :startinsert | endif
@@ -378,19 +379,19 @@ nnoremap <silent> <c-p> :vsplit<cr>:terminal<cr>
 tnoremap <silent> <c-p> <c-\><c-n>:vsplit<cr>:terminal<cr>
 
 " Window navigation
-tnoremap <c-w>h <c-\><c-n><c-w>h
-tnoremap <c-w>j <C-\><C-N><C-w>j
-tnoremap <c-w>k <c-\><c-n><c-w>k
-tnoremap <c-w>l <c-\><c-n><c-w>l
+tnoremap <c-s>h <c-\><c-n><c-w>h
+tnoremap <c-s>j <c-\><c-n><c-w>j
+tnoremap <c-s>k <c-\><c-n><c-w>k
+tnoremap <c-s>l <c-\><c-n><c-w>l
 
 " Vertical split
-tnoremap <silent> <c-w>s <c-\><c-n>:vsplit<cr>
+tnoremap <silent> <c-s>s <c-\><c-n>:vsplit<cr>
 
 " Close
-tnoremap <c-w>z <c-\><c-n>ZZ
+tnoremap <c-s>z <c-\><c-n>ZZ
 
 " Visual mode
-tnoremap <c-w>v <c-\><c-n>
+tnoremap <c-s>v <c-\><c-n>
 
 " Close all folds except the current line
 nnoremap zp zMzv
@@ -427,10 +428,10 @@ nnoremap <silent> K :call SearchWordWithRg()<cr>
 
 " Shorter window nagivation
 " This can't be <c-h> or else it will break search scroll
-nnoremap <c-w>h <c-w><c-h>
-nnoremap <c-w>j <c-w><c-j>
-nnoremap <c-w>k <c-w><c-k>
-nnoremap <c-w>l <c-w><c-l>
+nnoremap <c-s>h <c-w><c-h>
+nnoremap <c-s>j <c-w><c-j>
+nnoremap <c-s>k <c-w><c-k>
+nnoremap <c-s>l <c-w><c-l>
 
 " Move to next git modification
 nnoremap <silent> gk :GitGutterPrevHunk<cr>

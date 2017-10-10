@@ -10,6 +10,9 @@ export LSCOLORS=ExFxBxDxCxegedabagacad
 # flush history on each command
 export PROMPT_COMMAND="history -a"
 
+export VISUAL=nvim
+export EDITOR="$VISUAL"
+
 # --files: List files that would be searched but do not search
 # --no-ignore: Do not respect .gitignore, etc...
 # --hidden: Search hidden files and folders
