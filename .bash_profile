@@ -50,6 +50,9 @@ if [ -f "$(brew --prefix)"/etc/bash_completion ]; then
   __git_complete gpush _git_push
 fi
 
+# Load all ssh keys in keychain for MacOS.
+ssh-add -A
+
 # Vim commands in bash
 set -o vi
 bind '"jj":"\e"'
