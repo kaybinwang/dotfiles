@@ -26,8 +26,10 @@ function! VimrcLoadPlugins()
 
   Plug 'qpkorr/vim-bufkill'
   "{{{
-    nnoremap <silent> ZB :BD!<cr>
-    nnoremap <silent> Zb :bd!<cr>
+    nnoremap <silent> ZB :bd!<cr>
+    nnoremap <silent> Zb :BD!<cr>
+    nnoremap <silent> <c-w> :BF<cr>
+    nnoremap <silent> <c-e> :BB<cr>
   "}}}
 
   Plug 'jiangmiao/auto-pairs'
@@ -458,7 +460,7 @@ function! ToggleWordWrap()
     echo 'Word wrap enabled'
   endif
 endfunc
-nnoremap <silent> <c-e> :call ToggleWordWrap()<cr>
+"nnoremap <silent> <c-w> :call ToggleWordWrap()<cr>
 
 " Toggle relative line numbers
 function! ToggleRelativeNumber()
