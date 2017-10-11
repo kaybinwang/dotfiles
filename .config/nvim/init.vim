@@ -28,8 +28,8 @@ function! VimrcLoadPlugins()
   "{{{
     nnoremap <silent> ZB :bd!<cr>
     nnoremap <silent> Zb :BD!<cr>
-    nnoremap <silent> <c-w> :BF<cr>
-    nnoremap <silent> <c-e> :BB<cr>
+    nnoremap <silent> <c-]> :BF<cr>
+    nnoremap <silent> <c-[> :BB<cr>
   "}}}
 
   Plug 'jiangmiao/auto-pairs'
@@ -460,7 +460,7 @@ function! ToggleWordWrap()
     echo 'Word wrap enabled'
   endif
 endfunc
-"nnoremap <silent> <c-w> :call ToggleWordWrap()<cr>
+nnoremap <silent> <c-w> :call ToggleWordWrap()<cr>
 
 " Toggle relative line numbers
 function! ToggleRelativeNumber()
