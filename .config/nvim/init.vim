@@ -24,14 +24,6 @@ function! VimrcLoadPlugins()
 
   Plug 'danro/rename.vim'
 
-  Plug 'qpkorr/vim-bufkill'
-  "{{{
-    nnoremap <silent> ZB :bd!<cr>
-    nnoremap <silent> Zb :BD!<cr>
-    nnoremap <silent> <c-]> :BF<cr>
-    nnoremap <silent> <c-[> :BB<cr>
-  "}}}
-
   Plug 'jiangmiao/auto-pairs'
 
   Plug 'itchyny/lightline.vim'
@@ -198,9 +190,21 @@ function! VimrcLoadPlugins()
 
   Plug 'w0rp/ale'
   "{{{
+
     let g:ale_linters = {
     \ 'javascript': ['eslint'],
     \}
+
+    " Error and warning signs.
+    let g:ale_sign_error = '⤫'
+    let g:ale_sign_warning = '⚠'
+
+    let g:ale_lint_on_save = 1
+    let g:ale_lint_on_text_changed = 0
+    let g:ale_lint_on_enter = 0
+    let g:ale_sign_warning = 'W>'
+    let g:ale_sign_error = 'E>'
+    let g:ale_set_quickfix = 1
 
   "}}}
 
@@ -233,8 +237,19 @@ function! VimrcLoadPlugins()
     let g:go_highlight_structs = 1
     let g:go_highlight_types = 1
 
+    " Semantic type inference on higlight
+    let g:go_auto_type_info = 1
+
     " Auto import on write
-    let g:go_fmt_command = "goimports"
+    let g:go_fmt_command = 'goimports'
+    let g:go_decls_mode = 'fzf'
+
+    " Highlight same variable name
+    "let g:go_auto_sameids = 1
+
+    " :GoAddTags will default to snakecase when generating tags
+    let g:go_addtags_transform = "snakecase"
+
   "}}}
 
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -259,7 +274,8 @@ function! VimrcLoadPlugins()
     inoremap <silent><expr><c-k> pumvisible() ? "\<c-p>" : "\<s-tab>"
 
     " Hide preview window after closing completion
-    " autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+    "autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+    autocmd InsertLeave * if pumvisible() == 0 | pclose | endif
 
   "}}}
   Plug 'zchee/deoplete-go'
@@ -270,6 +286,28 @@ function! VimrcLoadPlugins()
   "}}}
 
   Plug 'tpope/vim-surround'
+  Plug 'tpope/vim-unimpaired'
+
+  Plug 'scrooloose/nerdtree'
+  "{{{
+
+    " Single click expand
+    let g:NERDTreeMouseMode=2
+
+  "}}}
+
+  " Put this after vim-go and unimpaired
+  Plug 'qpkorr/vim-bufkill'
+  "{{{
+    nnoremap <silent> ZB :bd!<cr>
+    nnoremap <silent> Zb :BD!<cr>
+    nmap <silent> b[ :BB<cr>
+    nmap <silent> b] :BF<cr>
+    omap <silent> b[ :BB<cr>
+    omap <silent> b] :BF<cr>
+    xmap <silent> b[ :BB<cr>
+    xmap <silent> b] :BF<cr>
+  "}}}
 
   call plug#end()
 endfunction
@@ -331,6 +369,7 @@ setl foldlevel=0
 setl modelines=1
 
 " Background
+set mouse=a                     " enable mouse support
 set autoread                    " update file when changed outside of vim
 set clipboard=unnamed           " use native clipboard
 set history=200                 " store last 200 commands as history
@@ -371,9 +410,12 @@ inoremap jj <esc>
 nnoremap j gj
 nnoremap k gk
 
+" Faster playback
+nnoremap Q @q
+
 " New tab
-nnoremap <silent> <c-s>t :tabnew<cr>
-tnoremap <silent> <c-s>t <c-\><c-n>:tabnew<cr>
+nnoremap <silent> <c-t>t :tabnew<cr>
+tnoremap <silent> <c-t>t <c-\><c-n>:tabnew<cr>
 
 " Auto insert if terminal open
 au BufEnter * if &buftype == 'terminal' | :startinsert | endif
@@ -381,19 +423,26 @@ nnoremap <silent> <c-p> :vsplit<cr>:terminal<cr>
 tnoremap <silent> <c-p> <c-\><c-n>:vsplit<cr>:terminal<cr>
 
 " Window navigation
-tnoremap <c-s>h <c-\><c-n><c-w>h
-tnoremap <c-s>j <c-\><c-n><c-w>j
-tnoremap <c-s>k <c-\><c-n><c-w>k
-tnoremap <c-s>l <c-\><c-n><c-w>l
+tnoremap <c-h> <c-\><c-n><c-w>h
+tnoremap <c-j> <c-\><c-n><c-w>j
+tnoremap <c-k> <c-\><c-n><c-w>k
+tnoremap <c-l> <c-\><c-n><c-w>l
+
+" Prevent window nav mappins from leaving fzf
+autocmd FileType fzf tnoremap <buffer> <c-j> <down>
+autocmd FileType fzf tnoremap <buffer> <c-k> <up>
 
 " Vertical split
-tnoremap <silent> <c-s>s <c-\><c-n>:vsplit<cr>
+tnoremap <silent> <c-w>s <c-\><c-n>:vsplit<cr>
 
 " Close
-tnoremap <c-s>z <c-\><c-n>ZZ
+tnoremap <c-q> <c-\><c-n>ZZ
+nnoremap <c-q> ZZ
+
+nnoremap <silent> <c-s> :update<cr>
 
 " Visual mode
-tnoremap <c-s>v <c-\><c-n>
+tnoremap <c-v> <c-\><c-n>
 
 " Close all folds except the current line
 nnoremap zp zMzv
@@ -430,14 +479,12 @@ nnoremap <silent> K :call SearchWordWithRg()<cr>
 
 " Shorter window nagivation
 " This can't be <c-h> or else it will break search scroll
-nnoremap <c-s>h <c-w><c-h>
-nnoremap <c-s>j <c-w><c-j>
-nnoremap <c-s>k <c-w><c-k>
-nnoremap <c-s>l <c-w><c-l>
+nnoremap <c-h> <c-w><c-h>
+nnoremap <c-j> <c-w><c-j>
+nnoremap <c-k> <c-w><c-k>
+nnoremap <c-l> <c-w><c-l>
 
 " Move to next git modification
-nnoremap <silent> gk :GitGutterPrevHunk<cr>
-nnoremap <silent> gj :GitGutterNextHunk<cr>
 nnoremap <silent> <leader>gp :GitGutterPreviewHunk<cr>
 nnoremap <silent> <leader>gu :GitGutterUndoHunk<cr>
 
@@ -460,7 +507,7 @@ function! ToggleWordWrap()
     echo 'Word wrap enabled'
   endif
 endfunc
-nnoremap <silent> <c-w> :call ToggleWordWrap()<cr>
+nnoremap <silent> <c-e> :call ToggleWordWrap()<cr>
 
 " Toggle relative line numbers
 function! ToggleRelativeNumber()
@@ -485,7 +532,6 @@ nnoremap <silent> <leader>sv :execute 'source '.fnameescape(g:vimrc)<cr>
 nnoremap <silent> <leader>rp <leader>sv<cr>:PlugInstall<cr>
 
 " Clear search
-" TODO: this is broken fix it
 nnoremap <silent> <return> :noh<cr><esc>
 
 nnoremap <silent> <leader>f :NERDTreeToggle<cr><esc>
@@ -541,7 +587,3 @@ function! JavaFileSettings()
   nnoremap <Leader>jc  :JavaCorrect<cr>
   nnoremap <Leader>jcs :Checkstyle<cr>
 endfunc
-
-
-    noremap <silent> <leader>j <Plug>(ale_previous_wrap)
-    noremap <silent> <leader>k <Plug>(ale_next_wrap)
