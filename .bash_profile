@@ -57,6 +57,7 @@ source .bash_extras
 
 export PATH="/usr/local/opt/icu4c/bin:$PATH"
 export PATH="/usr/local/opt/icu4c/sbin:$PATH"
+export GOPATH=$HOME/projects/go
 export PATH=$GOPATH/bin:$PATH
 
 export NVM_DIR="$HOME/.nvm"
