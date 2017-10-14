@@ -7,10 +7,6 @@
   ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
   lnc = log --pretty=format:"%h\\ %s\\ [%cn]"
   find = "!git ls-files | grep -i"
-[user]
-	email = kaybinwang@gmail.com
-	name = Kevin Wang
-
 [color]
   ui = auto
 [color "branch"]
@@ -36,3 +32,8 @@
 
 [format]
   pretty = '%C(yellow)%h%Creset %C(magenta)%cd%Creset%Cred%d %Creset%s'
+
+[includeIf "gitdir:~/projects/personal/"]
+  path = .gitconfig-personal
+[includeIf "gitdir:~/projects/work/"]
+  path = .gitconfig-work
