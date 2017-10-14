@@ -33,7 +33,11 @@
 [format]
   pretty = '%C(yellow)%h%Creset %C(magenta)%cd%Creset%Cred%d %Creset%s'
 
+[user]
+  name = Kevin Wang
+  email = kaybinwang@gmail.com
 [includeIf "gitdir:~/projects/personal/"]
   path = .gitconfig-personal
 [includeIf "gitdir:~/projects/work/"]
   path = .gitconfig-work
+
