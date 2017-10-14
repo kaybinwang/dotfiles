@@ -8,6 +8,8 @@ declare -r DOTFILES='
 .bash_prompt
 .bash_extras
 .gitconfig
+.gitconfig-personal
+.gitconfig-work
 .tern-config
 .config/nvim/init.vim
 '
@@ -19,6 +21,8 @@ declare -r ERR_GITHUB_UPLOAD_SSH=20
 declare -r ERR_DOTFILE_LINK=21
 
 function setup_system() {
+  echo 'Logging in as system root...'
+  sudo -v
   softwareupdate -ia
   systemsetup -setremotelogin on
   xcode-select --install 2>/dev/null
