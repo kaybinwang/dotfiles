@@ -10,6 +10,9 @@ export LSCOLORS=ExFxBxDxCxegedabagacad
 # flush history on each command
 export PROMPT_COMMAND="history -a"
 
+export VISUAL=nvim
+export EDITOR="$VISUAL"
+
 # --files: List files that would be searched but do not search
 # --no-ignore: Do not respect .gitignore, etc...
 # --hidden: Search hidden files and folders
@@ -46,6 +49,9 @@ if [ -f "$(brew --prefix)"/etc/bash_completion ]; then
   __git_complete gp _git_pull
   __git_complete gpush _git_push
 fi
+
+# Load all ssh keys in keychain for MacOS.
+ssh-add -A
 
 # Vim commands in bash
 set -o vi

@@ -17,6 +17,8 @@ alias mkdir='mkdir -pv'                      # mkdir with parents
 alias less='less -FSRXc'                    # Preferred 'less' implementation
 
 alias ebp="vi $HOME/.bash_profile"
+alias eba="vi $HOME/.bash_aliases"
+alias ebe="vi $HOME/.bash_extras"
 alias sbp="source $HOME/.bash_profile"
 
 alias c='clear'
@@ -36,8 +38,22 @@ alias gs='git status'
 alias ga='git add'
 alias gau='git add -u'
 alias gb='git branch'
-alias gbd='git branch -d'
-alias gbD='git branch -D'
+#alias gbd='git branch -d'
+#alias gbD='git branch -D'
+function gbd() {
+  if [ "$1" == "-" ]; then
+    git branch -d '@{-1}'
+  else
+    git branch -d "$@"
+  fi
+}
+function gbD() {
+  if [ "$1" == "-" ]; then
+    git branch -D '@{-1}'
+  else
+    git branch -D "$@"
+  fi
+}
 alias gcl='git clone'
 alias gc='git commit'
 alias gcm='git commit -m'
