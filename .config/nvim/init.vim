@@ -242,7 +242,7 @@ function! VimrcLoadPlugins()
 
     " Auto import on write
     let g:go_fmt_command = 'goimports'
-    let g:go_decls_mode = 'fzf'
+    "let g:go_decls_mode = 'fzf'
 
     " Highlight same variable name
     "let g:go_auto_sameids = 1
@@ -274,7 +274,6 @@ function! VimrcLoadPlugins()
     inoremap <silent><expr><c-k> pumvisible() ? "\<c-p>" : "\<s-tab>"
 
     " Hide preview window after closing completion
-    "autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
     autocmd InsertLeave * if pumvisible() == 0 | pclose | endif
 
   "}}}
@@ -299,14 +298,14 @@ function! VimrcLoadPlugins()
   " Put this after vim-go and unimpaired
   Plug 'qpkorr/vim-bufkill'
   "{{{
+
+    " Delete buffer and close window
     nnoremap <silent> ZB :bd!<cr>
+
+    " Delete buffer and swap it out
+    " TODO: close window if last buffer
     nnoremap <silent> Zb :BD!<cr>
-    nmap <silent> b[ :BB<cr>
-    nmap <silent> b] :BF<cr>
-    omap <silent> b[ :BB<cr>
-    omap <silent> b] :BF<cr>
-    xmap <silent> b[ :BB<cr>
-    xmap <silent> b] :BF<cr>
+
   "}}}
 
   call plug#end()
@@ -414,8 +413,8 @@ nnoremap k gk
 nnoremap Q @q
 
 " New tab
-nnoremap <silent> <c-t>t :tabnew<cr>
-tnoremap <silent> <c-t>t <c-\><c-n>:tabnew<cr>
+nnoremap <silent> <c-w>t :tabnew<cr>
+tnoremap <silent> <c-w>t <c-\><c-n>:tabnew<cr>
 
 " Auto insert if terminal open
 au BufEnter * if &buftype == 'terminal' | :startinsert | endif
@@ -442,7 +441,7 @@ nnoremap <c-q> ZZ
 nnoremap <silent> <c-s> :update<cr>
 
 " Visual mode
-tnoremap <c-v> <c-\><c-n>
+tnoremap <c-w>v <c-\><c-n>
 
 " Close all folds except the current line
 nnoremap zp zMzv
@@ -455,8 +454,6 @@ nnoremap <silent> <leader>b :Buffers<cr>
 nnoremap <silent> <leader>w :Windows<cr>
 nnoremap <silent> <leader>; :BLines<cr>
 nnoremap <silent> <leader>l :Lines<cr>
-"nnoremap <silent> <leader>o :BTags<cr>
-"nnoremap <silent> <leader>O :Tags<cr>
 nnoremap <silent> <leader>h :History<cr>
 nnoremap <silent> <leader>a :FindInExact<cr>
 
@@ -529,11 +526,12 @@ nnoremap <silent> <leader>ev :execute 'vsplit '.fnameescape(g:vimrc)<cr>
 nnoremap <silent> <leader>sv :execute 'source '.fnameescape(g:vimrc)<cr>
 
 " Reload plugins
-nnoremap <silent> <leader>rp <leader>sv<cr>:PlugInstall<cr>
+nnoremap <silent> <leader>rp :update<cr>:execute 'source '.fnameescape(g:vimrc)<cr>:PlugInstall<cr>
 
 " Clear search
 nnoremap <silent> <return> :noh<cr><esc>
 
+" Open file explorer
 nnoremap <silent> <leader>f :NERDTreeToggle<cr><esc>
 
 " File Settings
