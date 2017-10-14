@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Sets up the essentials before install can be used
+# Includes setup that requires user interaction.
+# Installs brew, system update, git
 
 declare -r DOTFILES='
 .bash_profile
@@ -169,7 +171,7 @@ function setup_dotfiles() {
     local oldfile="${HOME}/${dotfile}"
     local newfile="${DOTFILE_PATH}/${dotfile}"
     if [ -h "$oldfile" ]; then
-      echo "deleting"
+      # Remove old symlink
       rm "$oldfile"
     fi
     if [ -e "$oldfile" ]; then
