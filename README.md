@@ -42,5 +42,7 @@ Currently using [iTerm 2.0](https://www.iterm2.com).
 - tab colors (need newer bash)
 - make neovim config file backwards compatible
 - bash profile document (alias)
-- make bash profile backwards compatible (for bashrc)
 - create dotfiles if they don't exist on linking
+- make bash profile backwards compatible (for bashrc), also so we can source
+  safely
+- create verbose command tree, e.g. `dfsetup create [pkg]`, `dfsetup reinstall [pkg]`
