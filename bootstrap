@@ -232,6 +232,16 @@ function main() {
     setup_system \
     setup_dotfiles \
     setup_bin
+
+  # Source bash profile to reflect changes, e.g. GOPATH is now set up
+  # TODO: fix bash_profile to not bork on missing commands
+  source "$HOME/.bash_profile"
+
+  #TODO: call dfsetup with all packages
+  dfsetup langs apps neovim
+
+  # Source bash profile to reflect changes post install.
+  source "$HOME/.bash_profile"
 }
 
 function teardown() {

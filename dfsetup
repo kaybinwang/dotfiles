@@ -7,6 +7,7 @@ set -e
 REINSTALL=false
 DEBUG=false
 
+# TODO: make support multiple creations
 #TODO: use real doc syntax, pretty print
 function usage() {
   cat <<EOF
@@ -49,6 +50,8 @@ function create() {
     return 1
   fi
   mkdir -p "$(dirname "$pkg_script")"
+  touch "$pkg_script"
+  chmod u+x "$pkg_script"
   cat <<EOM > "$pkg_script"
 #!/bin/bash
 
@@ -84,6 +87,7 @@ EOM
   print_info "Created package $pkg at $(abs_dirname "$pkg_script")"
 }
 
+# TODO: crawl through to find all subpackges...
 # setup:
 #   caches results
 # requires to be in DOTFILE_PATH

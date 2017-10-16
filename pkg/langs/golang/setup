@@ -1,0 +1,31 @@
+#!/bin/bash
+
+###############################################################################
+#
+# langs/golang
+#
+# Do not execute this script directly. It should only be executed from within
+# dfsetup.
+#
+# If you want to only install langs/golang, then execute 'dfsetup langs/golang'.
+#
+###############################################################################
+
+set -e
+
+source ./util/print.sh
+source ./util/dirname.sh
+
+function install() {
+  print_info 'Installing langs/golang...'
+  brew install go
+  echo ''
+  print_info 'Finished installing langs/golang!'
+  echo ''
+}
+
+function main() {
+  install
+}
+
+main "$@"
