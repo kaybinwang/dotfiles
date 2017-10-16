@@ -43,3 +43,4 @@ Currently using [iTerm 2.0](https://www.iterm2.com).
 - make neovim config file backwards compatible
 - bash profile document (alias)
 - make bash profile backwards compatible (for bashrc)
+- create dotfiles if they don't exist on linking
