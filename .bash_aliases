@@ -81,10 +81,6 @@ alias gg='git grep'
 ECLIPSE_HOME='/Applications/Eclipse.app/Contents/Eclipse'
 alias eclimd="$ECLIPSE_HOME/eclimd"
 
-EVERNOTE_DIR="$HOME/projects/evernote"
-
-alias buildweb="$EVERNOTE_DIR/web/web/src/main/scripts/build.sh"
-
 pdf () {
   pdflatex "$1".tex && rm "$1".out "$1".log "$1".aux && open "$1".pdf;
 }
