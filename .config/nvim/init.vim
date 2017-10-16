@@ -565,6 +565,7 @@ au BufRead,BufNewFile *.jsp call JspFileSettings()
 au BufRead,BufNewFile *.tmpl call GoTmplFileSettings()
 au BufRead,BufNewFile  *.sig setl filetype=sml
 au BufRead,BufNewFile *.thrift, *.bsh setl syntax=java
+au BufRead,BufNewFile .gitconfig-* setl syntax=gitconfig
 
 function! PlainTextFileSettings()
   setl textwidth=80 wrap linebreak
