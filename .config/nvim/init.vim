@@ -291,7 +291,7 @@ function! VimrcLoadPlugins()
     let g:deoplete#file#enable_buffer_path = 1
 
   "}}}
-  Plug 'zchee/deoplete-go'
+  Plug 'zchee/deoplete-go', { 'do': 'make'}
   Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
   Plug 'zchee/deoplete-jedi'
   "{{{
