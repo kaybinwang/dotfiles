@@ -27,6 +27,34 @@ Options:
 EOF
 }
 
+# setup:
+#   caches results
+# requires to be in DOTFILE_PATH
+function setup() {
+  print_info "Installing package $pkg..."
+  local -r pkg="$1"
+  local -r pkg_script="./$pkg/setup"
+  local -r cache="./$pkg/.setup"
+
+  if [ ! -f "$pkg_script" ]; then
+    print_error "Unable to find package $pkg."
+    return 1
+  fi
+  if [ ! -x "$pkg_script" ]; then
+    print_error "$pkg is not executable."
+    return 1
+  fi
+  if [ -e "$cache" ]; then
+    print_warning "$pkg already installed. Reinstall with '$0 -r $pkg'"
+    return 0
+  fi
+  if ! eval "./$pkg/setup"; then
+    return 1
+  fi
+  touch "$cache"
+  return 0
+}
+
 #
 # main
 #
@@ -62,10 +90,8 @@ function main() {
   done
   shift $((OPTIND-1))
 
-  for var in "$@"; do
-    echo "Installing $var ..."
-    # TODO: delegate to a setup function that will cache this
-    eval "./$var/setup"
+  for pkg in "$@"; do
+    setup "$pkg"
   done
 }
 
