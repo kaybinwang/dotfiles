@@ -1,0 +1,57 @@
+#!/bin/bash
+
+###############################################################################
+#
+# iterm2
+#
+# Do not execute this script directly. It should only be executed from within
+# dfsetup.
+# TODO: update doc on why
+#
+# If you want to only reinstall iterm2 then execute `dfsetup iterm2`.
+#
+###############################################################################
+
+set -e
+
+source ./util/print.sh
+source ./util/dirname.sh
+
+function install() {
+  print_info 'Installing iterm2...'
+  brew cask install iterm2
+  echo ''
+  print_info 'Finished installing iterm2!'
+  echo ''
+}
+
+###############################################################################
+#
+# Configures iterm2 to automatically read its preferences from 
+#
+###############################################################################
+function load_prefs() {
+  local -r prefs_dir="$(abs_dirname "$0")/prefs"
+  print_info "Loading iterm2 preferences from $prefs_dir ..."
+
+  if [ ! -d "$prefs_dir" ]; then
+    print_error "Unable to find directory $prefs_dir"
+    return 1
+  fi
+
+  # Specify the preferences directory
+  defaults write com.googlecode.iterm2.plist PrefsCustomFolder \
+    -string "$prefs_dir"
+
+  # Tell iTerm2 to use the custom preferences in the directory
+  defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder \
+    -bool true
+
+  print_info 'Successfully loaded!'
+}
+
+function main() {
+  install && load_prefs
+}
+
+main "$@"

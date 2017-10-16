@@ -1,0 +1,84 @@
+#!/bin/bash
+
+set -e
+
+# TODO: diff beteween force= and force
+
+REINSTALL=false
+DEBUG=false
+
+#TODO: use real doc syntax, pretty print
+function usage() {
+  cat <<EOF
+Usage: $(bold "$0") [-h | -l | -c $(underline package) | -dr $(underline package) ... ]
+
+Options:
+	$(bold -h)	Prints this message.
+
+	$(bold -d)	Enables debug mode.
+
+	$(bold -r)	Reinstalls the packages.
+
+	$(bold -l)	Lists all available packages.
+
+	$(bold -c)	$(underline package)
+		Creates a template for a new package.
+
+EOF
+}
+
+#
+# main
+#
+# Assumes we are in DOTFILE_PATH directory.
+#
+function main() {
+  if [ "$#" -eq 0 ]; then
+    usage
+    exit 0
+  fi
+  while getopts ":d:v:" o; do
+    case "$o" in
+      r)
+        REINSTALL=true
+        ;;
+      d)
+        DEBUG=true
+        ;;
+      l)
+        #TODO: list all available packages.
+        # use python script
+        return 0
+        ;;
+      h)
+        usage
+        return 0
+        ;;
+      *)
+        echo "Unrecognized option: $o"
+        return 0
+        ;;
+    esac
+  done
+  shift $((OPTIND-1))
+
+  for var in "$@"; do
+    echo "Installing $var ..."
+    # TODO: delegate to a setup function that will cache this
+    eval "./$var/setup"
+  done
+}
+
+if [ ! -d "$DOTFILE_PATH" ]; then
+  cat <<EOF 2>&1
+ERROR: DOTFILE_PATH is not set.
+Please run bootstrap.
+EOF
+  exit 1
+fi
+
+pushd "$DOTFILE_PATH" &>/dev/null
+source util/dirname.sh
+source util/print.sh
+main "$@"
+popd &>/dev/null
