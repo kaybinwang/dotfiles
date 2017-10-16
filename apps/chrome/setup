@@ -1,0 +1,31 @@
+#!/bin/bash
+
+###############################################################################
+#
+# chrome
+#
+# Do not execute this script directly. It should only be executed from within
+# dfsetup.
+#
+# If you want to only install chrome, then execute 'dfsetup chrome'.
+#
+###############################################################################
+
+set -e
+
+source ./util/print.sh
+source ./util/dirname.sh
+
+function install() {
+  print_info 'Installing chrome...'
+  brew cask install google-chrome
+  echo ''
+  print_info 'Finished installing chrome!'
+  echo ''
+}
+
+function main() {
+  install
+}
+
+main "$@"
