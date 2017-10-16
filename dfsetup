@@ -27,21 +27,78 @@ Options:
 EOF
 }
 
+function pkg_cache() {
+  local -r pkg="$1"
+  echo "./pkg/$pkg/.setup"
+}
+
+function pkg_script() {
+  local -r pkg="$1"
+  echo "./pkg/$pkg/setup"
+}
+
+function create() {
+  local -r pkg="$1"
+  if [ -z "$pkg" ]; then
+    print_error "Please supply a package name."
+    return 1
+  fi
+  local -r pkg_script="$(pkg_script "$pkg")"
+  if [ -e "$pkg_script" ]; then
+    print_error "$pkg already exists."
+    return 1
+  fi
+  mkdir -p "$(dirname "$pkg_script")"
+  cat <<EOM > "$pkg_script"
+#!/bin/bash
+
+###############################################################################
+#
+# $pkg
+#
+# Do not execute this script directly. It should only be executed from within
+# dfsetup.
+#
+# If you want to only install $pkg, then execute 'dfsetup $pkg'.
+#
+###############################################################################
+
+set -e
+
+source ./util/print.sh
+source ./util/dirname.sh
+
+function install() {
+  print_info 'Installing $pkg...'
+  echo ''
+  print_info 'Finished installing $pkg!'
+  echo ''
+}
+
+function main() {
+  install
+}
+
+main "\$@"
+EOM
+  print_info "Created package $pkg at $(abs_dirname "$pkg_script")"
+}
+
 # setup:
 #   caches results
 # requires to be in DOTFILE_PATH
 function setup() {
   print_info "Installing package $pkg..."
   local -r pkg="$1"
-  local -r pkg_script="./$pkg/setup"
-  local -r cache="./$pkg/.setup"
+  local -r pkg_script="$(pkg_script "$pkg")"
+  local -r cache="$(pkg_cache "$pkg")"
 
   if [ ! -f "$pkg_script" ]; then
     print_error "Unable to find package $pkg."
     return 1
   fi
   if [ ! -x "$pkg_script" ]; then
-    print_error "$pkg is not executable."
+    print_error "$pkg is not an executable."
     return 1
   fi
   if [ -e "$cache" ]; then
@@ -65,13 +122,17 @@ function main() {
     usage
     exit 0
   fi
-  while getopts ":d:v:" o; do
+  while getopts "drlhc:" o; do
     case "$o" in
       r)
         REINSTALL=true
         ;;
       d)
         DEBUG=true
+        ;;
+      c)
+        create "${OPTARG}"
+        return 0
         ;;
       l)
         #TODO: list all available packages.
