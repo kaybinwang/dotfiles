@@ -282,6 +282,14 @@ function! VimrcLoadPlugins()
     " Hide preview window after closing completion
     autocmd InsertLeave * if pumvisible() == 0 | pclose | endif
 
+    " Java completion settings
+    let g:deoplete#enable_at_startup = 1
+    let g:deoplete#omni_patterns = {}
+    let g:deoplete#omni_patterns.java = '[^. *\t]\.\w*'
+    let g:deoplete#sources = {}
+    let g:deoplete#sources._ = []
+    let g:deoplete#file#enable_buffer_path = 1
+
   "}}}
   Plug 'zchee/deoplete-go'
   Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
@@ -289,6 +297,7 @@ function! VimrcLoadPlugins()
   "{{{
     let g:deoplete#sources#jedi#show_docstring = 1
   "}}}
+  Plug 'artur-shaik/vim-javacomplete2'
 
   Plug 'tpope/vim-surround'
   Plug 'tpope/vim-unimpaired'
@@ -298,6 +307,12 @@ function! VimrcLoadPlugins()
 
     " Single click expand
     let g:NERDTreeMouseMode=2
+
+    " Open file explorer
+    nnoremap <silent> <leader>f :NERDTreeToggle<cr><esc>
+
+    " Jump to file in explorer
+    nnoremap <silent> <leader>e :NERDTreeFind<cr>
 
   "}}}
 
@@ -550,9 +565,6 @@ nnoremap <silent> <leader>rp :update<cr>:execute 'source '.fnameescape(g:vimrc)<
 " Clear search
 nnoremap <silent> <return> :noh<cr><esc>
 
-" Open file explorer
-nnoremap <silent> <leader>f :NERDTreeToggle<cr><esc>
-
 " File Settings
 au FileType html call HtmlFileSettings()
 au FileType javascript call JavascriptFileSettings()
@@ -576,6 +588,7 @@ function! HtmlFileSettings()
 endfunc
 
 function! JavascriptFileSettings()
+  setl omnifunc=javacomplete#Complete
   setl sts=2 sw=2 ts=2
 endfunc
 
