@@ -272,10 +272,12 @@ function! VimrcLoadPlugins()
       return ! col || getline('.')[col - 1] =~? '\s'
     endfunction
 
-    " Use tab to forward cycle
-    inoremap <silent><expr><c-j> pumvisible() ? "\<c-n>" : "\<tab>"
-    " Use tab to backward cycle
-    inoremap <silent><expr><c-k> pumvisible() ? "\<c-p>" : "\<s-tab>"
+    " Use tab to c-j cycle, otherwise navigate insert mode
+    " TODO: potentially switch to TAB because it's colliding with insert mode
+    " navigations..
+    inoremap <silent><expr><c-j> pumvisible() ? "\<c-n>" : "\<c-o>j"
+    " Use tab to c-k cycle
+    inoremap <silent><expr><c-k> pumvisible() ? "\<c-p>" : "\<c-o>k"
 
     " Hide preview window after closing completion
     autocmd InsertLeave * if pumvisible() == 0 | pclose | endif
@@ -432,10 +434,10 @@ tnoremap <c-k> <c-\><c-n><c-w>k
 tnoremap <c-l> <c-\><c-n><c-w>l
 
 " Movement in insert and command mode
-inoremap <c-h> <c-o>h
-inoremap <c-l> <c-o>a
-inoremap <c-j> <c-o>j
-inoremap <c-k> <c-o>k
+inoremap <c-h> <left>
+"inoremap <c-j> <down>
+"inoremap <c-k> <right>
+inoremap <c-l> <right>
 cnoremap <c-h> <left>
 cnoremap <c-j> <down>
 cnoremap <c-k> <up>
