@@ -184,14 +184,15 @@ function setup_dotfiles() {
       rm "$oldfile"
     fi
     if [ -e "$oldfile" ]; then
-      local -r dir="${backup_dir}/$(dirname "$dotfile")"
+      #TODO: fix  when dirname is /
+      local -r dir="$(dirname "$backup_dir/$dotfile")"
       if [ -d "$dir" ]; then
         mkdir -p "$dir"
       fi
-      echo "Backing up $oldfile -> ${dir}/$oldfile..."
+      echo "Backing up $oldfile -> $dir/$oldfile"
       mv "$oldfile" "$dir"
     fi
-    echo "Linking $oldfile -> ${dir}/$oldfile..."
+    print_info "Linking $oldfile -> $newfile"
     ln -s "$newfile" "$oldfile" || return $ERR_DOTFILE_LINK
   done <<< "$DOTFILES"
   popd &>/dev/null
@@ -228,8 +229,8 @@ function main() {
 
   # TODO: setup vim, nvim, 
   setup \
-    setup_github \
-    setup_system \
+    #setup_github \
+    #setup_system \
     setup_dotfiles \
     setup_bin
 
@@ -238,7 +239,7 @@ function main() {
   source "$HOME/.bash_profile"
 
   #TODO: call dfsetup with all packages
-  dfsetup langs/golang langs/python langs/javascript apps/iterm2 neovim
+  ./dfsetup langs/golang langs/python langs/javascript apps/iterm2 neovim
 
   # Source bash profile to reflect changes post install.
   source "$HOME/.bash_profile"
