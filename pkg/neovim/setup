@@ -1,0 +1,36 @@
+#!/bin/bash
+
+###############################################################################
+#
+# neovim
+#
+# Do not execute this script directly. It should only be executed from within
+# dfsetup.
+#
+# If you want to only install neovim, then execute 'dfsetup neovim'.
+#
+###############################################################################
+
+set -e
+
+source ./util/print.sh
+source ./util/dirname.sh
+
+function deps() {
+  pip2 install --upgrade neovim
+  pip3 install --upgrade neovim
+}
+
+function install() {
+  print_info 'Installing neovim...'
+  brew install neovim
+  echo ''
+  print_info 'Finished installing neovim!'
+  echo ''
+}
+
+function main() {
+  deps && install
+}
+
+main "$@"
