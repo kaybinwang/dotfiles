@@ -25,6 +25,10 @@ function! VimrcLoadPlugins()
   Plug 'danro/rename.vim'
 
   Plug 'jiangmiao/auto-pairs'
+  "{{{
+    " Disable <c-h> for deleting pairs.
+    let g:AutoPairsMapCh = 0
+  "}}}
 
   Plug 'itchyny/lightline.vim'
   "{{{
@@ -426,6 +430,19 @@ tnoremap <c-h> <c-\><c-n><c-w>h
 tnoremap <c-j> <c-\><c-n><c-w>j
 tnoremap <c-k> <c-\><c-n><c-w>k
 tnoremap <c-l> <c-\><c-n><c-w>l
+
+" Movement in insert and command mode
+inoremap <c-h> <c-o>h
+inoremap <c-l> <c-o>a
+inoremap <c-j> <c-o>j
+inoremap <c-k> <c-o>k
+cnoremap <c-h> <left>
+cnoremap <c-j> <down>
+cnoremap <c-k> <up>
+cnoremap <c-l> <right>
+
+" make Y like D
+nnoremap Y y$
 
 " Prevent window nav mappins from leaving fzf
 autocmd FileType fzf tnoremap <buffer> <c-j> <down>
