@@ -1,8 +1,15 @@
 #!/bin/bash
 
+set -e
+
 # Sets up the essentials before install can be used
 # Includes setup that requires user interaction.
 # Installs brew, system update, git
+
+# Files to be symlinked into /usr/local/bin
+declare -r BINS='
+dfsetup
+'
 
 declare -r DOTFILES='
 .bash_profile
@@ -159,6 +166,8 @@ function setup() {
   return 0
 }
 
+
+# TODO: document and fix relative symlinks
 function setup_dotfiles() {
   echo 'Setting up dotfiles...'
   local -r backup_dir="${HOME}/.dotfiles_backup/$(date_rfc)"
@@ -183,11 +192,25 @@ function setup_dotfiles() {
       mv "$oldfile" "$dir"
     fi
     echo "Linking $oldfile -> ${dir}/$oldfile..."
-    ln -s "$newfile" "$oldfile" || $ERR_DOTFILE_LINK
+    ln -s "$newfile" "$oldfile" || return $ERR_DOTFILE_LINK
   done <<< "$DOTFILES"
   popd &>/dev/null
 
   echo 'Finished setting up dotfiles!'
+}
+
+function setup_bin() {
+  pushd "$DOTFILE_PATH" &>/dev/null
+  print_info 'Linking files into /usr/local/bin/'
+
+  local bin
+  while read -r bin; do
+    [ -z "$bin" ] && continue
+    ln -s "/usr/local/bin/$(basename "$bin")" "$(abs_dirname "$bin")"
+  done <<< "$BINS"
+
+  print_info 'Finished linking binaries to /usr/local/bin'
+  popd &>/dev/null
 }
 
 function main() {
@@ -198,12 +221,17 @@ function main() {
     echo "export DOTFILE_PATH=$DOTFILE_PATH" >> "${DOTFILE_PATH}/.bash_extras"
     popd &>/dev/null
   fi
+  cd "$DOTFILE_PATH"
+  source util/dirname.sh
+  source util/print.sh
+  cd -
 
   # TODO: setup vim, nvim, 
   setup \
     setup_github \
     setup_system \
-    setup_dotfiles
+    setup_dotfiles \
+    setup_bin
 }
 
 function teardown() {
