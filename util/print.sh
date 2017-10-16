@@ -32,11 +32,11 @@ function print_debug() {
 }
 
 function print_info() {
-  echo "${FG_BLUE}[INFO]: $1${RESET}"
+  echo "${FG_BLUE}[INFO]:${RESET} $1${RESET}"
 }
 
 function print_warning() {
-  echo "${FG_YELLOW}[WARNING]: $1${RESET}"
+  echo "${FG_YELLOW}[WARNING]:${RESET} $1${RESET}"
 }
 
 function print_error() {
