@@ -238,7 +238,7 @@ function main() {
   source "$HOME/.bash_profile"
 
   #TODO: call dfsetup with all packages
-  dfsetup langs apps neovim
+  dfsetup langs/golang langs/python langs/javascript apps/iterm2 neovim
 
   # Source bash profile to reflect changes post install.
   source "$HOME/.bash_profile"
