@@ -47,3 +47,4 @@ Currently using [iTerm 2.0](https://www.iterm2.com).
   safely
 - create verbose command tree, e.g. `dfsetup create [pkg]`, `dfsetup reinstall [pkg]`
 - move bootstrap functionality into dfsetup
+- restore backups... :O

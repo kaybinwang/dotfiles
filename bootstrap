@@ -192,15 +192,16 @@ function symlink() {
       return 1
     fi
     local -r backup_dir="$(dirname "$backup_root/$dotfile")"
-    print_warning "File already exists. Backing up $oldfile -> $backup_dir/$oldfile"
     if [ ! -d "$backup_dir" ]; then
       print_debug "Backup directory DNE. Creating $backup_dir ..."
       mkdir -p "$backup_dir"
     fi
+    print_warning "File already exists. Backing up $oldfile -> $backup_dir/$oldfile"
     mv "$oldfile" "$backup_dir"
   fi
 
   # Check to make sure the parent directories for newfile exist before linking
+  print_debug "Creating $(dirname "$newfile")"
   mkdir -p "$(dirname "$newfile")"
   ln -s "$newfile" "$oldfile"
 }
