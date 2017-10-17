@@ -36,6 +36,8 @@ function setup_system() {
   systemsetup -setremotelogin on
   xcode-select --install 2>/dev/null
   # TODO: remap ctrl key if possible
+  # TODO: battery percent
+  # TODO: show bluetooth
 }
 
 function install_brew() {
