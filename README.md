@@ -21,6 +21,7 @@ Bugs, tech debt, etc
   - make sure .bashrc is being copied over via dfsetup
 
 Features
+- 100% coverage of brew list
 - Have a `update_dotfiles` command in `PATH` that will execute the install
   script and pull from repo and update the dotfiles.
 - Install and customize languages, e.g. Python, Go, ...
