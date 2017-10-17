@@ -13,8 +13,9 @@
 
 set -e
 
-source ./util/print.sh
+source ./util/brew.sh
 source ./util/dirname.sh
+source ./util/print.sh
 
 function deps() {
   pip2 install --upgrade neovim
@@ -22,10 +23,7 @@ function deps() {
 }
 
 function install() {
-  print_info 'Installing neovim...'
-  brew install neovim
-  echo ''
-  print_info 'Finished installing neovim!'
+  brew_install neovim
   echo ''
 }
 

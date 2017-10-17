@@ -13,16 +13,16 @@
 
 set -e
 
-source ./util/print.sh
 source ./util/dirname.sh
+source ./util/brew.sh
+source ./util/print.sh
 
 function install() {
   print_info 'Installing langs/javascript...'
-  brew install node
-  brew install npm
-  brew install yarn
-  brew install nvm
-  echo ''
+  brew_install node
+  brew_install npm
+  brew_install yarn
+  brew_install nvm
   print_info 'Finished installing langs/javascript!'
   echo ''
 }

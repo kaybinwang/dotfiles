@@ -13,16 +13,16 @@
 
 set -e
 
-source ./util/print.sh
 source ./util/dirname.sh
+source ./util/brew.sh
+source ./util/print.sh
 
 function install() {
   print_info 'Installing langs/python...'
-  brew install python
-  brew install python3
-  brew install pip2
-  brew install pip3
-  echo ''
+  brew_install python
+  brew_install python3
+  brew_install pip2
+  brew_install pip3
   print_info 'Finished installing langs/python!'
   echo ''
 }

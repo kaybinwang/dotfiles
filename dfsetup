@@ -68,12 +68,12 @@ function create() {
 
 set -e
 
-source ./util/print.sh
 source ./util/dirname.sh
+source ./util/brew.sh
+source ./util/print.sh
 
 function install() {
   print_info 'Installing $pkg...'
-  echo ''
   print_info 'Finished installing $pkg!'
   echo ''
 }

@@ -205,9 +205,14 @@ function setup_bin() {
   print_info 'Linking files into /usr/local/bin/'
 
   local bin
+  local src
+  local dest
   while read -r bin; do
     [ -z "$bin" ] && continue
-    ln -s "/usr/local/bin/$(basename "$bin")" "$(abs_dirname "$bin")"
+    print_info "Linking $"
+    src="$(abs_dirname "$bin")"
+    dest="/usr/local/bin/$(basename "$bin")"
+    ln -s "$dest" "$src"
   done <<< "$BINS"
 
   print_info 'Finished linking binaries to /usr/local/bin'
