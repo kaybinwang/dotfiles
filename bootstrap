@@ -170,7 +170,8 @@ function setup_dotfiles() {
   print_info 'Setting up dotfiles...'
   local -r backup_dir="${HOME}/.dotfiles_backup/$(date_rfc)"
 
-  pushd "$DOTFILE_PATH" &>/dev/null
+  pushd_debug "$DOTFILE_PATH"
+
   local dotfile
   while read -r dotfile; do
     [ -z "$dotfile" ] && continue
@@ -183,19 +184,36 @@ function setup_dotfiles() {
     fi
     if [ -e "$oldfile" ]; then
       #TODO: fix  when dirname is /
+      print_debug "Backup directory is $dir"
       local -r dir="$(dirname "$backup_dir/$dotfile")"
-      if [ -d "$dir" ]; then
+      if [ ! -d "$dir" ]; then
+        print_debug "Backup directory DNE. Creating $dir ..."
         mkdir -p "$dir"
       fi
-      print_warning "Backing up $oldfile -> $dir/$oldfile"
+      print_warning "Found existing dotfiles. Backing up $oldfile -> $dir/$oldfile"
       mv "$oldfile" "$dir"
     fi
     print_verbose "Created symlink $oldfile -> $newfile"
     ln -s "$newfile" "$oldfile"
   done <<< "$DOTFILES"
-  popd &>/dev/null
+  popd_debug
 
   print_info 'Finished setting up dotfiles!'
+}
+
+function pushd_debug() {
+  local -r path="$1"
+  if ! pushd "$path" >/dev/null; then
+    print_error "Unable to switch CWD to $path"
+  fi
+  print_debug "Switched to CWD to $path"
+}
+
+function popd_debug() {
+  if ! local -r path="$(popd)"; then
+    print_error "Unable to switch CWD"
+  fi
+  print_debug "Switched to CWD to $path"
 }
 
 function setup_bin() {
