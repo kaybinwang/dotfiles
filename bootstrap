@@ -186,6 +186,7 @@ function symlink() {
     rm "$oldfile"
   fi
   if [ -e "$oldfile" ]; then
+    # Only backup if a backup directory was provided
     if [ -z "$backup_root" ]; then
       print_error "Unable to symlink. File $oldfile already exists."
       return 1
@@ -198,6 +199,9 @@ function symlink() {
     fi
     mv "$oldfile" "$backup_dir"
   fi
+
+  # Check to make sure the parent directories for newfile exist before linking
+  mkdir -p "$(dirname "$newfile")"
   ln -s "$newfile" "$oldfile"
 }
 
