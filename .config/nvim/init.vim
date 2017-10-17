@@ -444,6 +444,9 @@ tnoremap <silent> <c-p> <c-\><c-n>:vsplit<cr>:terminal<cr>
 
 " Window navigation
 tnoremap <c-h> <c-\><c-n><c-w>h
+"TODO: this stays in normal if there's no window
+"maybe use alt-h instead for all window navs or tab...
+" and use c-j in terminal for scrolling up
 tnoremap <c-j> <c-\><c-n><c-w>j
 tnoremap <c-k> <c-\><c-n><c-w>k
 tnoremap <c-l> <c-\><c-n><c-w>l

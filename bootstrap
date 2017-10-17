@@ -167,7 +167,7 @@ function setup() {
 
 # TODO: document and fix relative symlinks
 function setup_dotfiles() {
-  echo 'Setting up dotfiles...'
+  print_info 'Setting up dotfiles...'
   local -r backup_dir="${HOME}/.dotfiles_backup/$(date_rfc)"
 
   pushd "$DOTFILE_PATH" &>/dev/null
@@ -190,12 +190,12 @@ function setup_dotfiles() {
       print_warning "Backing up $oldfile -> $dir/$oldfile"
       mv "$oldfile" "$dir"
     fi
-    print_info "Created symlink $oldfile -> $newfile"
+    print_verbose "Created symlink $oldfile -> $newfile"
     ln -s "$newfile" "$oldfile"
   done <<< "$DOTFILES"
   popd &>/dev/null
 
-  echo 'Finished setting up dotfiles!'
+  print_info 'Finished setting up dotfiles!'
 }
 
 function setup_bin() {
@@ -210,7 +210,7 @@ function setup_bin() {
 
     dest="/usr/local/bin/$(basename "$bin")"
     src="$(abs_dirname "$bin")/$(basename "$bin")"
-    print_info "Created symlink $dest -> $src"
+    print_verbose "Created symlink $dest -> $src"
     if [ -h "$dest" ]; then
       rm "$dest"
     fi

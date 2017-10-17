@@ -35,6 +35,10 @@ function print_info() {
   echo "${FG_BLUE}[INFO]:${RESET} $1${RESET}"
 }
 
+function print_verbose() {
+  echo "$1"
+}
+
 function print_warning() {
   echo "${FG_YELLOW}[WARNING]:${RESET} $1${RESET}"
 }
