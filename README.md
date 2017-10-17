@@ -34,3 +34,4 @@ Features
 - restore backups... :O
 - NERD font install auto
 - way to install all vim plugins on load or during install script ?
+- list all available packages
