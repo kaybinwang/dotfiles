@@ -169,26 +169,26 @@ function setup() {
 #
 # symlink_dotfile
 #
-# Creates a symlink from oldfile -> newfile
+# Creates a symlink from dst -> src
 #
-# If oldfile already exists, then it is backed up to 
-# (dirname backup_dir/newfile) if backup_dir provided
+# If dst already exists, then it is backed up to 
+# (dirname backup_dir/src) if backup_dir provided
 #
 # please use relative paths
 #
 function symlink() {
-  local -r oldfile="$1"
-  local -r newfile="$2"
+  local -r dst="$1"
+  local -r src="$2"
   local -r backup_root="$3"
-  print_verbose "Creating symlink $oldfile -> $newfile"
-  if [ -h "$oldfile" ]; then
+  print_verbose "Creating symlink $dst -> $src"
+  if [ -h "$dst" ]; then
     # Remove old symlink
-    rm "$oldfile"
+    rm "$dst"
   fi
-  if [ -e "$oldfile" ]; then
+  if [ -e "$dst" ]; then
     # Only backup if a backup directory was provided
     if [ -z "$backup_root" ]; then
-      print_error "Unable to symlink. File $oldfile already exists."
+      print_error "Unable to symlink. File $dst already exists."
       return 1
     fi
     local -r backup_dir="$(dirname "$backup_root/$dotfile")"
@@ -196,14 +196,18 @@ function symlink() {
       print_debug "Backup directory DNE. Creating $backup_dir ..."
       mkdir -p "$backup_dir"
     fi
-    print_warning "File already exists. Backing up $oldfile -> $backup_dir/$oldfile"
-    mv "$oldfile" "$backup_dir"
+    print_warning "File already exists. Backing up $dst ->
+    $backup_dir/$dst"
+    mv "$dst" "$backup_dir"
   fi
 
-  # Check to make sure the parent directories for newfile exist before linking
-  print_debug "Creating $(dirname "$newfile")"
-  mkdir -p "$(dirname "$newfile")"
-  ln -s "$newfile" "$oldfile"
+  # Check to make sure the parent directories for src exist before linking
+  local -r dst_dir="$(dirname "$dst")"
+  if [ ! -d "$dst_dir" ]; then
+    print_debug "Creating directory $dst_dir"
+  fi
+  mkdir -p "$dst_dir"
+  ln -s "$src" "$dst"
 }
 
 # TODO: document and fix relative symlinks
@@ -216,9 +220,9 @@ function setup_dotfiles() {
   while read -r dotfile; do
     [ -z "$dotfile" ] && continue
 
-    local oldfile="$HOME/$dotfile"
-    local newfile="$DOTFILE_PATH/$dotfile"
-    symlink "$oldfile" "$newfile" "$backup_dir"
+    local src="$HOME/$dotfile"
+    local dst="$DOTFILE_PATH/$dotfile"
+    symlink "$src" "$dst" "$backup_dir"
   done <<< "$DOTFILES"
 
   print_info 'Finished setting up dotfiles!'
