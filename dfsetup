@@ -109,7 +109,7 @@ function setup() {
     print_warning "$pkg already installed. Reinstall with '$0 -r $pkg'"
     return 0
   fi
-  if ! eval "./$pkg/setup"; then
+  if ! eval "$pkg_script"; then
     return 1
   fi
   touch "$cache"
