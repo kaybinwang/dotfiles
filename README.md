@@ -48,3 +48,6 @@ Currently using [iTerm 2.0](https://www.iterm2.com).
 - create verbose command tree, e.g. `dfsetup create [pkg]`, `dfsetup reinstall [pkg]`
 - move bootstrap functionality into dfsetup
 - restore backups... :O
+- fix deoplete-tern and tern-js vim.. UpdateRemotePlugins not working..
+- NERD font install auto
+- way to install all vim plugins on load or during install script ?
