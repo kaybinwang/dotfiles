@@ -14,15 +14,12 @@
 
 set -e
 
-source ./util/print.sh
+source ./util/brew.sh
 source ./util/dirname.sh
+source ./util/print.sh
 
 function install() {
-  print_info 'Installing iterm2...'
-  brew cask install iterm2
-  echo ''
-  print_info 'Finished installing iterm2!'
-  echo ''
+  brew_cask_install iterm2
 }
 
 ###############################################################################

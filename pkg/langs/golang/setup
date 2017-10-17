@@ -18,10 +18,7 @@ source ./util/dirname.sh
 source ./util/print.sh
 
 function install() {
-  print_info 'Installing langs/golang...'
   brew_install go
-  print_info 'Finished installing langs/golang!'
-  echo ''
 }
 
 function main() {

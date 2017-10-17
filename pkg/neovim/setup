@@ -24,7 +24,6 @@ function deps() {
 
 function install() {
   brew_install neovim
-  echo ''
 }
 
 function main() {

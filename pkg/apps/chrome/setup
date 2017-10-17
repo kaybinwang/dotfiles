@@ -13,15 +13,12 @@
 
 set -e
 
-source ./util/print.sh
+source ./util/brew.sh
 source ./util/dirname.sh
+source ./util/print.sh
 
 function install() {
-  print_info 'Installing chrome...'
-  brew cask install google-chrome
-  echo ''
-  print_info 'Finished installing chrome!'
-  echo ''
+  brew_cask_install google-chrome
 }
 
 function main() {

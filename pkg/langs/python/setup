@@ -18,13 +18,11 @@ source ./util/brew.sh
 source ./util/print.sh
 
 function install() {
-  print_info 'Installing langs/python...'
+  # brew provides pip via python
   brew_install python
   brew_install python3
-  brew_install pip2
-  brew_install pip3
-  print_info 'Finished installing langs/python!'
-  echo ''
+  command -v pip2 &>/dev/null || brew_install pip2
+  command -v pip3 &>/dev/null || brew_install pip3
 }
 
 function main() {

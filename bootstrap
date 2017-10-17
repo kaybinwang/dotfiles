@@ -159,11 +159,8 @@ function install_git() {
 
 function setup() {
   for cmd in "$@"; do
-    if ! eval "$cmd"; then
-      return $?
-    fi
+    eval "$cmd"
   done
-  return 0
 }
 
 
@@ -209,10 +206,17 @@ function setup_bin() {
   local dest
   while read -r bin; do
     [ -z "$bin" ] && continue
-    print_info "Linking $"
-    src="$(abs_dirname "$bin")"
+
     dest="/usr/local/bin/$(basename "$bin")"
-    ln -s "$dest" "$src"
+    src="$(abs_dirname "$bin")/$(basename "$bin")"
+    print_info "Linking $dest -> $src"
+    if [ -h "$dest" ]; then
+      rm "$dest"
+    fi
+    if [ -e "$dest" ]; then
+      print_error "Unable to symlink $dest: File already exists"
+    fi
+    ln -s "$src" "$dest"
   done <<< "$BINS"
 
   print_info 'Finished linking binaries to /usr/local/bin'
@@ -230,14 +234,16 @@ function main() {
   cd "$DOTFILE_PATH"
   source util/dirname.sh
   source util/print.sh
-  cd -
+  cd - >/dev/null
+  print_debug "DOTFILE_PATH=$DOTFILE_PATH"
 
   # TODO: setup vim, nvim, 
   setup \
-    #setup_github \
-    #setup_system \
     setup_dotfiles \
     setup_bin
+
+    #setup_github \
+    #setup_system \
 
   # Source bash profile to reflect changes, e.g. GOPATH is now set up
   # TODO: fix bash_profile to not bork on missing commands
