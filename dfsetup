@@ -1,11 +1,56 @@
 #!/bin/bash
 
+################################################################################
+#
+# dfsetup: Automated dotfile setup with a package mana
+#
+# If DOTFILE_PATH is not set, then main will set it to the absolute directory
+# that this script lives in, resolving all symlinks and relative paths. It will
+# also append the variable to .bash_extras and export it as a global.
+#
+# If REINSTALL is set, then the provided packages will reinstall even if they
+# already have.
+#
+# If DEBUG is set, then the debugging output will be sent to stdout.
+#
+# Env:
+#   DOTFILE_PATH (optional string)
+#   REINSTALL    (bool)
+#   DEBUG        (bool)
+#
+# Arguments:
+#   A list of packages (string[])
+#
+# Returns an error if:
+#   Setup of any of the packages fail.
+#
+################################################################################
+
+set -u
 set -e
 
-# TODO: diff beteween force= and force
+# Files to be symlinked from script directory into /usr/local/bin
+# Please keep make all binaries siblings to the script
+declare -r BINS='
+dfsetup
+'
 
-REINSTALL=false
-DEBUG=false
+# Files to be symlinked from script directory into $HOME
+declare -r DOTFILES='
+.bash_profile
+.bash_aliases
+.bash_prompt
+.bash_extras
+.gitconfig
+.gitconfig-personal
+.gitconfig-work
+.tern-config
+.config/nvim/init.vim
+'
+
+# Global variables set by the options passed into the script.
+declare REINSTALL=false
+declare DEBUG=false
 
 # TODO: make support multiple creations
 #TODO: use real doc syntax, pretty print
@@ -26,6 +71,240 @@ Options:
 		Creates a template for a new package.
 
 EOF
+}
+
+function setup_system() {
+  echo 'Logging in as system root...'
+  sudo -v
+  softwareupdate -ia
+  systemsetup -setremotelogin on
+  xcode-select --install 2>/dev/null
+  # TODO: remap ctrl key if possible
+  # TODO: battery percent
+  # TODO: show bluetooth
+}
+
+function install_brew() {
+  command -v brew || /usr/bin/ruby -e "$(curl -fsSL
+    https://raw.githubusercontent.com/Homebrew/install/master/install)"
+}
+
+function prompt_user() {
+  local input
+  local response
+  while true; do
+    echo -n "$1: "
+    read -r input
+    echo -n "Is $input correct? [y/N]: "
+    read -r response
+    if [ -z "$response" ] || [ "$response" == "y" ]; then
+      break
+    fi
+  done
+  __="$input"
+}
+
+function prompt_user_no_confirm() {
+  local input
+  local response
+  echo -n "$1: "
+  read -r input
+  __="$input"
+}
+
+function setup_github() {
+  local -r ssh_key="$HOME/.ssh/id_rsa"
+  github_generate_ssh_key "$ssh_key" || return $?
+  github_upload_ssh_key "$ssh_key.pub" || return $?
+}
+
+function github_generate_ssh_key() {
+  prompt_user 'Please enter your GitHub email address and press [Enter]'
+  local -r email_address="${__}"
+
+  local -r ssh_key="$1"
+  local -r ssh_dir="$(dirname "$ssh_key")"
+  local -r ssh_config="$ssh_dir/config"
+  if [ ! -f "$ssh_key" ]; then
+    mkdir -p "$ssh_dir"
+    ssh-keygen -t rsa -b 4096 -f "$ssh_key" -C "$email_address"
+    eval "$(ssh-agent -s)" &>/dev/null
+    ssh-add -K "$ssh_key"
+
+    # MacOS 10.12.2 or later only
+    cat <<EOF >> "$ssh_config"
+Host *
+ AddKeysToAgent yes
+ UseKeychain yes
+ IdentityFile ${ssh_key}
+EOF
+  fi
+}
+
+function date_rfc() {
+  date -u +%Y-%m-%dT%H:%M:%SZ
+}
+
+function github_upload_ssh_key_api() {
+  local -r pub_file="$1"
+  [ -z "$pub_file" ] && return $ERR_INVALID_ARGS
+
+  prompt_user 'Please enter your Github username and press [Enter]'
+  local -r username="${__}"
+
+  # RFC 3339 timestamp
+  local -r title="$(whoami)@$(hostname)_$(date_rfc)"
+  local -r pub_key="$(cat "$pub_file")" || return $ERR_NO_SSH_FILE
+
+  if ! curl --fail -u "$username" \
+    --data "{\"title\":\"$title\",\"key\":\"$pub_key\"}" \
+    https://api.github.com/user/keys
+  then
+    return $ERR_GITHUB_UPLOAD_SSH
+  fi
+
+  echo "Created SSH key on GitHub with $title"
+  return 0
+}
+
+function github_upload_ssh_key() {
+  local -r pub_file="$1"
+  [ -z "$pub_file" ] && return $ERR_INVALID_ARGS
+
+  if repeat_try github_upload_ssh_key_api "$pub_file"; then
+    return 0
+  fi
+
+  pbcopy < "$pub_file"
+  echo "Copied SSH public key from $pub_file to clipboard"
+
+  echo "Opening GitHub Settings page..."
+  echo "Please login and paste your SSH key."
+  open https://github.com/settings/keys
+  prompt_user_no_confirm 'Press [Enter] to continue'
+  return 0
+}
+
+function repeat_try() {
+  local response
+  while :
+  do
+    eval "$@" && break
+    echo -n 'Try again? [y/N]: '
+    read -r response
+    if [ "$response" == "N" ]; then
+      return 1
+    fi
+  done
+  return 0
+}
+
+function install_git() {
+  brew install git
+}
+
+function setup() {
+  for cmd in "$@"; do
+    eval "$cmd"
+    echo ''
+  done
+}
+
+#
+# symlink $1
+#
+# Creates a symlink from dst -> src
+#
+# If dst already exists, then it is backed up to 
+# (dirname backup_dir/src) if backup_dir provided
+#
+# please use relative paths
+#
+function symlink() {
+  local -r dst="$1"
+  local -r src="$2"
+  local -r backup_root="$3"
+  print_verbose "Creating symlink $dst -> $src"
+  if [ -h "$dst" ]; then
+    # Remove old symlink
+    rm "$dst"
+  fi
+  if [ -e "$dst" ]; then
+    # Only backup if a backup directory was provided
+    if [ -z "$backup_root" ]; then
+      print_error "Unable to symlink. File $dst already exists."
+      return 1
+    fi
+    local -r backup_dir="$(dirname "$backup_root/$dotfile")"
+    if [ ! -d "$backup_dir" ]; then
+      print_debug "Backup directory DNE. Creating $backup_dir ..."
+      mkdir -p "$backup_dir"
+    fi
+    print_warning "File already exists. Backing up $dst ->
+    $backup_dir/$dst"
+    mv "$dst" "$backup_dir"
+  fi
+
+  # Check to make sure the parent directories for src exist before linking
+  local -r dst_dir="$(dirname "$dst")"
+  if [ ! -d "$dst_dir" ]; then
+    print_debug "Creating directory $dst_dir"
+  fi
+  mkdir -p "$dst_dir"
+  ln -s "$src" "$dst"
+}
+
+# TODO: document and fix relative symlinks
+function setup_dotfiles() {
+  pushd_debug "$DOTFILE_PATH"
+  print_info 'Setting up dotfiles...'
+  local -r backup_dir="${HOME}/.dotfiles_backup/$(date_rfc)"
+
+  local dotfile
+  while read -r dotfile; do
+    [ -z "$dotfile" ] && continue
+
+    local src="$HOME/$dotfile"
+    local dst="$DOTFILE_PATH/$dotfile"
+    symlink "$src" "$dst" "$backup_dir"
+  done <<< "$DOTFILES"
+
+  print_info 'Finished setting up dotfiles!'
+  popd_debug
+}
+
+function pushd_debug() {
+  local -r path="$1"
+  if ! pushd "$path" >/dev/null; then
+    print_error "Unable to switch CWD to $path"
+  fi
+  print_debug "Switched to CWD to $path"
+}
+
+function popd_debug() {
+  if ! local -r path="$(popd)"; then
+    print_error "Unable to switch CWD"
+  fi
+  print_debug "Switched to CWD to $path"
+}
+
+function setup_bin() {
+  pushd_debug "$DOTFILE_PATH"
+  print_info 'Setting up binaries...'
+
+  local bin
+  local from
+  local to
+  while read -r bin; do
+    [ -z "$bin" ] && continue
+
+    from="/usr/local/bin/$(basename "$bin")"
+    to="$(abs_dirname "$bin")/$(basename "$bin")"
+    symlink "$from" "$to"
+  done <<< "$BINS"
+
+  print_info 'Finished linking binaries to /usr/local/bin'
+  popd_debug
 }
 
 function pkg_cache() {
@@ -86,15 +365,39 @@ EOM
   print_info "Created package $pkg at $(abs_dirname "$pkg_script")"
 }
 
-# TODO: crawl through to find all subpackges...
-# setup:
-#   caches results
-# requires to be in DOTFILE_PATH
+################################################################################
+#
+# setup: Takes a package name (pkg) and executes an executable located at
+#
+# $DOTFILE_PATH/pkg/$pkg/setup.
+#
+# Upon success, we create an empty sibling file called .setup that marks that
+# the package has installed successfully. This prevents the package from being
+# executed through setup for future calls.
+#
+# If REINSTALL is set, then the provided package will reinstall, regardless of
+# the .setup file.
+#
+# Env:
+#   DOTFILE_PATH (optional string)
+#   REINSTALL    (bool)
+#   DEBUG        (bool)
+#
+# Arguments:
+#   pkg (string)
+#
+# Returns an error if:
+#   setup does not exist,
+#   setup does not have executable permissions,
+#   setup failed on execution
+#
+################################################################################
 function setup() {
-  print_info "Installing package $pkg..."
   local -r pkg="$1"
   local -r pkg_script="$(pkg_script "$pkg")"
   local -r cache="$(pkg_cache "$pkg")"
+
+  print_info "Installing package $pkg..."
 
   if [ ! -f "$pkg_script" ]; then
     print_error "Unable to find package $pkg."
@@ -104,7 +407,7 @@ function setup() {
     print_error "$pkg is not an executable."
     return 1
   fi
-  if [ -e "$cache" ]; then
+  if [ $REINSTALL -eq 1 ] && [ -e "$cache" ]; then
     print_warning "$pkg already installed. Reinstall with '$0 -r $pkg'"
     return 0
   fi
@@ -116,61 +419,92 @@ function setup() {
   return 0
 }
 
+################################################################################
 #
-# main
+# main: Main entry point for dfsetup.
 #
-# Assumes we are in DOTFILE_PATH directory.
+# If DOTFILE_PATH is not set, then main will set it to the absolute directory
+# that this script lives in, resolving all symlinks and relative paths. It will
+# also append the variable to .bash_extras and export it as a global.
 #
+# If REINSTALL is set, then the provided packages will reinstall even if they
+# already have.
+#
+# If DEBUG is set, then the debugging output will be sent to stdout.
+#
+# Env:
+#   DOTFILE_PATH (optional string)
+#   REINSTALL    (bool)
+#   DEBUG        (bool)
+#
+# Arguments:
+#   A list of packages (string[])
+#
+# Returns an error if:
+#   Setup of any of the packages fail.
+#
+################################################################################
 function main() {
-  if [ "$#" -eq 0 ]; then
-    usage
-    exit 0
-  fi
-  while getopts "drlhc:" o; do
-    case "$o" in
-      r)
-        REINSTALL=true
-        ;;
-      d)
-        DEBUG=true
-        ;;
-      c)
-        create "${OPTARG}"
-        return 0
-        ;;
-      l)
-        #TODO: list all available packages.
-        # use python script
-        return 0
-        ;;
-      h)
-        usage
-        return 0
-        ;;
-      *)
-        echo "Unrecognized option: $o"
-        return 0
-        ;;
-    esac
-  done
-  shift $((OPTIND-1))
+  # Bootstrap DOTFILE_PATH on the first run and store it into .bash_extras.
+  # Also export DOTFILE_PATH so that it's available to the script.
+  if [ -z "$DOTFILE_PATH" ]; then
+    # abs_dirname resolves all symlinks and relative paths
+    DOTFILE_PATH="$(abs_dirname "$0")"
+    export DOTFILE_PATH
+    echo "export DOTFILE_PATH=$DOTFILE_PATH" >> "${DOTFILE_PATH}/.bash_extras"
 
-  for pkg in "$@"; do
-    setup "$pkg"
-    echo ''
-  done
+    # one time configuration setups
+    setup_github && \
+      setup_system && \
+      setup_dotfiles && \
+      setup_bin
+  fi
+
+  print_debug "DOTFILE_PATH=$DOTFILE_PATH"
+
+  # Source bash profile to reflect changes, e.g. GOPATH is now set up
+  # TODO: fix bash_profile to not bork on missing commands
+  source "$HOME/.bash_profile" &>/dev/null
+
+  # TODO: setup better ?? dep tree idk...
+  setup langs/golang langs/python langs/javascript apps/iterm2 neovim
+
+  # Source bash profile to reflect changes post install.
+  source "$HOME/.bash_profile" &>/dev/null
 }
 
-if [ ! -d "$DOTFILE_PATH" ]; then
-  cat <<EOF 2>&1
-ERROR: DOTFILE_PATH is not set.
-Please run bootstrap.
-EOF
-  exit 1
-fi
 
-pushd "$DOTFILE_PATH" &>/dev/null
-source util/dirname.sh
-source util/print.sh
+if [ "$#" -eq 0 ]; then
+  usage
+  exit 0
+fi
+while getopts "drlhc:" o; do
+  case "$o" in
+    r)
+      REINSTALL=true
+      ;;
+    d)
+      DEBUG=true
+      ;;
+    c)
+      create "${OPTARG}"
+      return 0
+      ;;
+    l)
+      #TODO: list all available packages.
+      # use python script
+      return 0
+      ;;
+    h)
+      usage
+      return 0
+      ;;
+    *)
+      echo "Unrecognized option: $o"
+      return 0
+      ;;
+  esac
+done
+shift $((OPTIND-1))
+
 main "$@"
-popd &>/dev/null
