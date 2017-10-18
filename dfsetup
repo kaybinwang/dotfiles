@@ -49,28 +49,34 @@ declare -r DOTFILES='
 '
 
 # Global variables set by the options passed into the script.
-declare REINSTALL=false
-declare DEBUG=false
+declare REINSTALL=
+declare DEBUG=
 
 # TODO: make support multiple creations
 #TODO: use real doc syntax, pretty print
 function usage() {
   cat <<EOF
-Usage: $(bold "$0") [-h | -l | -c $(underline package) | -dr $(underline package) ... ]
+Usage: $(basename "$0") [-h | -l | -c package | -dr package ... ]
 
 Options:
-	$(bold -h)	Prints this message.
+	-h	Prints this message.
 
-	$(bold -d)	Enables debug mode.
+	-d	Enables debug mode.
 
-	$(bold -r)	Reinstalls the packages.
+	-r	Reinstalls the packages.
 
-	$(bold -l)	Lists all available packages.
+	-l	Lists all available packages.
 
-	$(bold -c)	$(underline package)
+	-c	package
 		Creates a template for a new package.
 
 EOF
+}
+
+# Pre EXIT clean up of set variables
+function cleanup() {
+  unset REINSTALL
+  unset DEBUG
 }
 
 function setup_system() {
@@ -307,31 +313,56 @@ function setup_bin() {
   popd_debug
 }
 
+# Outputs the package cache path
 function pkg_cache() {
   local -r pkg="$1"
-  echo "./pkg/$pkg/.setup"
+  if [ -z "$pkg" ]; then
+    print_error 'pkg_cache requires a package name.'
+  fi
+  echo "$DOTFILE_PATH/pkg/$pkg/.setup"
 }
 
+# Outputs the package setup path
 function pkg_script() {
   local -r pkg="$1"
-  echo "./pkg/$pkg/setup"
+  if [ -z "$pkg" ]; then
+    print_error 'pkg_script requires a package name.'
+  fi
+  echo "$DOTFILE_PATH/pkg/$pkg/setup"
 }
 
+################################################################################
+#
+# create: Takes a package name and generates a template setup file at
+#
+# $DOTFILE_PATH/pkg/$pkg/setup (see pkg_name for details).
+#
+# Env:
+#   DOTFILE_PATH (string)
+#   DEBUG        (bool)
+#
+# Arguments:
+#   pkg (string)
+#
+# Returns an error if:
+#   pkg's setup already exists
+#
+################################################################################
 function create() {
   local -r pkg="$1"
   if [ -z "$pkg" ]; then
     print_error "Please supply a package name."
     return 1
   fi
-  local -r pkg_script="$(pkg_script "$pkg")"
-  if [ -e "$pkg_script" ]; then
+  local -r script="$(pkg_script "$pkg")"
+  if [ -e "$script" ]; then
     print_error "$pkg already exists."
     return 1
   fi
-  mkdir -p "$(dirname "$pkg_script")"
-  touch "$pkg_script"
-  chmod u+x "$pkg_script"
-  cat <<EOM > "$pkg_script"
+  mkdir -p "$(dirname "$script")"
+  touch "$script"
+  chmod u+x "$script"
+  cat <<EOM > "$script"
 #!/bin/bash
 
 ###############################################################################
@@ -362,14 +393,14 @@ function main() {
 
 main "\$@"
 EOM
-  print_info "Created package $pkg at $(abs_dirname "$pkg_script")"
+  print_info "Created package $pkg at $(abs_dirname "$script")"
 }
 
 ################################################################################
 #
-# setup: Takes a package name (pkg) and executes an executable located at
+# setup: Takes a package name and executes an executable located at
 #
-# $DOTFILE_PATH/pkg/$pkg/setup.
+# $DOTFILE_PATH/pkg/$pkg/setup (see pkg_name for details).
 #
 # Upon success, we create an empty sibling file called .setup that marks that
 # the package has installed successfully. This prevents the package from being
@@ -379,7 +410,7 @@ EOM
 # the .setup file.
 #
 # Env:
-#   DOTFILE_PATH (optional string)
+#   DOTFILE_PATH (string)
 #   REINSTALL    (bool)
 #   DEBUG        (bool)
 #
@@ -394,26 +425,29 @@ EOM
 ################################################################################
 function setup() {
   local -r pkg="$1"
-  local -r pkg_script="$(pkg_script "$pkg")"
+  local -r script="$(pkg_script "$pkg")"
   local -r cache="$(pkg_cache "$pkg")"
 
   print_info "Installing package $pkg..."
 
-  if [ ! -f "$pkg_script" ]; then
+  if [ ! -f "$script" ]; then
     print_error "Unable to find package $pkg."
     return 1
   fi
-  if [ ! -x "$pkg_script" ]; then
+  if [ ! -x "$script" ]; then
     print_error "$pkg is not an executable."
     return 1
   fi
-  if [ $REINSTALL -eq 1 ] && [ -e "$cache" ]; then
+  if [ ! "$REINSTALL" ] && [ -e "$cache" ]; then
     print_warning "$pkg already installed. Reinstall with '$0 -r $pkg'"
     return 0
   fi
-  if ! eval "$pkg_script"; then
+  print_debug "Executing $script..."
+  if ! eval "$script"; then
     return 1
   fi
+
+  print_debug "Created cache file at $cache..."
   touch "$cache"
   print_info "Sucessfully installed package $pkg"
   return 0
@@ -454,11 +488,13 @@ function main() {
     echo "export DOTFILE_PATH=$DOTFILE_PATH" >> "${DOTFILE_PATH}/.bash_extras"
 
     # one time configuration setups
-    setup_github && \
-      setup_system && \
-      setup_dotfiles && \
-      setup_bin
+    #setup_github && \
+    #  setup_system && \
+    #  setup_dotfiles && \
+    #  setup_bin
   fi
+  source "$DOTFILE_PATH/util/dirname.sh"
+  source "$DOTFILE_PATH/util/print.sh"
 
   print_debug "DOTFILE_PATH=$DOTFILE_PATH"
 
@@ -467,17 +503,20 @@ function main() {
   source "$HOME/.bash_profile" &>/dev/null
 
   # TODO: setup better ?? dep tree idk...
-  setup langs/golang langs/python langs/javascript apps/iterm2 neovim
+  local pkg
+  for pkg in "$@"; do
+    setup "$pkg"
+  done
+  #setup langs/golang langs/python langs/javascript apps/iterm2 neovim
 
   # Source bash profile to reflect changes post install.
   source "$HOME/.bash_profile" &>/dev/null
 }
 
+# Trap before any possible exits
+trap cleanup EXIT INT TERM
 
-if [ "$#" -eq 0 ]; then
-  usage
-  exit 0
-fi
+# Parse options and shift to real arguments
 while getopts "drlhc:" o; do
   case "$o" in
     r)
@@ -485,26 +524,31 @@ while getopts "drlhc:" o; do
       ;;
     d)
       DEBUG=true
+      export DEBUG
       ;;
     c)
       create "${OPTARG}"
-      return 0
+      exit 0
       ;;
     l)
-      #TODO: list all available packages.
-      # use python script
-      return 0
+      #TODO: list all available packages using pyscript
+      exit 0
       ;;
     h)
       usage
-      return 0
+      exit 0
       ;;
     *)
       echo "Unrecognized option: $o"
-      return 0
+      exit 1
       ;;
   esac
 done
 shift $((OPTIND-1))
+
+if [ "$#" -eq 0 ]; then
+  usage
+  exit 0
+fi
 
 main "$@"
