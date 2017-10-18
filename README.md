@@ -19,6 +19,9 @@ Bugs, tech debt, etc
 - make neovim config file backwards compatible
 - make bash profile backwards compatible (for bashrc), also so we can source safely
   - make sure .bashrc is being copied over via dfsetup
+- move setup system into it's own utility? 
+- move setup github into it's own utility? actually this makes more sense as a
+  package.
 
 Features
 - 100% coverage of brew list
