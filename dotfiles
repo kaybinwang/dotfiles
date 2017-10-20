@@ -33,6 +33,9 @@ declare -r DOTFILES='
 .config/nvim/init.vim
 '
 
+PROG_NAME="$(basename "$0")"
+declare -r PROG_NAME
+
 # Global variables set by the options passed into the script.
 declare REINSTALL=
 declare DEBUG=
@@ -40,7 +43,7 @@ declare DEBUG=
 # TODO: make support multiple creations
 function usage() {
   cat <<EOF
-Usage: $(basename "$0") [-h | -l | -c package | -dr package ... ]
+Usage: $PROG_NAME [-h | -l | -c package | -dr package ... ]
 
 Options:
 	-h	Prints this message.
@@ -473,7 +476,7 @@ function setup() {
     return 1
   fi
   if [ ! "$REINSTALL" ] && [ -e "$cache" ]; then
-    print_warning "$pkg already installed. Reinstall with '$0 -r $pkg'"
+    print_warning "$pkg already installed. Reinstall with '$PROG_NAME -r $pkg'"
     return 0
   fi
   print_debug "Executing $script..."
@@ -485,6 +488,74 @@ function setup() {
   touch "$cache"
   print_info "Sucessfully installed package $pkg"
   return 0
+}
+
+function usage_install() {
+  if [ "$#" -eq 0 ]; then
+    return 0
+  fi
+  for cmd in "$@"; do
+    shift
+    case "$cmd" in
+      list)
+        ;;
+      *)
+        break
+        ;;
+    esac
+  done
+
+  parse_args "$@"
+}
+
+function parse_cmd() {
+  if [ "$#" -eq 0 ]; then
+    return 1
+  fi
+
+  local -r parent_cmd="$1"
+  shift
+
+  if [ "$#" -eq 0 ]; then
+    echo "no argsuments passed to $parent_cmd"
+    return 0
+  fi
+
+  local -r cmd="$1"
+  shift
+  echo "Command is $cmd "
+  case "$cmd" in
+    *)
+      if "parse_cmd $cmd $*"; then
+        return 0
+      fi
+      return 1
+      ;;
+  esac
+}
+
+function parse_args() {
+  if [ "$#" -eq 0 ]; then
+    usage
+    exit 0
+  fi
+
+  # Shift through each argument and delegate to next parser
+  local -r cmd="$1"
+  case "$cmd" in
+    help)
+      if "usage_$cmd"; then
+        return 0
+      fi
+      return 1
+      ;;
+    *)
+      if parse_cmd $*; then
+        return 0
+      fi
+      return 1
+      ;;
+  esac
 }
 
 ################################################################################
@@ -513,6 +584,8 @@ function setup() {
 #
 ################################################################################
 function main() {
+  #parse_args "$@"
+
   # Bootstrap DOTFILE_PATH on the first run and store it into .bash_extras.
   # Also export DOTFILE_PATH so that it's available to the script.
   if [ -z "$DOTFILE_PATH" ]; then
@@ -527,8 +600,8 @@ function main() {
     echo "export DOTFILE_PATH=$DOTFILE_PATH" >> "$bash_extras"
 
     # One time configuration setups
+    #setup_github && \
       #setup_system && \
-    setup_github && \
       setup_dotfiles && \
       setup_bin
   else
@@ -556,40 +629,5 @@ function main() {
 # Trap before any possible exits
 trap teardown SIGTERM
 trap cleanup EXIT
-
-# Parse options and shift to real arguments
-while getopts "drlhc:" o; do
-  case "$o" in
-    r)
-      REINSTALL=true
-      ;;
-    d)
-      DEBUG=true
-      export DEBUG
-      ;;
-    c)
-      create "${OPTARG}"
-      exit 0
-      ;;
-    l)
-      #TODO: list all available packages using pyscript
-      exit 0
-      ;;
-    h)
-      usage
-      exit 0
-      ;;
-    *)
-      echo "Unrecognized option: $o"
-      exit 1
-      ;;
-  esac
-done
-shift $((OPTIND-1))
-
-if [ "$#" -eq 0 ]; then
-  usage
-  exit 0
-fi
 
 main "$@"
