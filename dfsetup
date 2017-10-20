@@ -65,6 +65,11 @@ function cleanup() {
   unset DEBUG
 }
 
+# On SIGTERM kill all forked processes.
+function teardown() {
+  pkill -g 0
+}
+
 function setup_system() {
   echo 'Logging in as system root...'
   sudo -v
@@ -96,6 +101,16 @@ function prompt_user() {
   __="$input"
 }
 
+function confirm_user() {
+  local response
+  echo -n "$1 [y/N]: "
+  read -r response
+  if [ -z "$response" ] || [ "$response" == "y" ]; then
+    return 0
+  fi
+  return 1
+}
+
 function prompt_user_no_confirm() {
   local input
   local response
@@ -105,11 +120,42 @@ function prompt_user_no_confirm() {
 }
 
 function setup_github() {
-  local -r ssh_key="$HOME/.ssh/id_rsa"
+  # TODO: id_rsa is the default and we are using this to setup a default
+  # personal identity. In the future, we should try to generalize this function
+  # for the Host, Hostname, IdentityFile.
+  local ssh_key="$HOME/.ssh/id_rsa"
+
+  echo 'Creating a new SSH key for GitHub...'
+
+  while [ -e "$ssh_key" ]; do
+    echo "You already have an SSH key here: $ssh_key"
+    if confirm_user 'Would you like to create another one?'; then
+      prompt_user 'Please enter an SSH key location'
+      ssh_key="${__}"
+    else
+      return 0
+    fi
+  done
+
   github_generate_ssh_key "$ssh_key" || return $?
   github_upload_ssh_key "$ssh_key.pub" || return $?
 }
 
+
+################################################################################
+#
+# github_generate_ssh_key: Creates an public/private SSH keypair for GitHub.
+#
+# Env:
+#   DEBUG (bool)
+#
+# Arguments:
+#   Private SSH key location (string)
+#
+# Returns an error if:
+#   The IdentityFile already exists.
+#
+################################################################################
 function github_generate_ssh_key() {
   prompt_user 'Please enter your GitHub email address and press [Enter]'
   local -r email_address="${__}"
@@ -125,11 +171,14 @@ function github_generate_ssh_key() {
 
     # MacOS 10.12.2 or later only
     cat <<EOF >> "$ssh_config"
-Host *
- AddKeysToAgent yes
- UseKeychain yes
- IdentityFile ${ssh_key}
+Host github.com
+  HostName github.com
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ${ssh_key}
 EOF
+  else
+    print_error "File $ssh_key already exists."
   fi
 }
 
@@ -139,29 +188,34 @@ function date_rfc() {
 
 function github_upload_ssh_key_api() {
   local -r pub_file="$1"
-  [ -z "$pub_file" ] && return $ERR_INVALID_ARGS
+  if [ -z "$pub_file" ]; then
+    print_error 'Please input a file with github_upload_ssh_key_api'
+    return 1
+  fi
 
   prompt_user 'Please enter your Github username and press [Enter]'
   local -r username="${__}"
 
-  # RFC 3339 timestamp
   local -r title="$(whoami)@$(hostname)_$(date_rfc)"
-  local -r pub_key="$(cat "$pub_file")" || return $ERR_NO_SSH_FILE
+  local -r pub_key="$(cat "$pub_file")"
 
   if ! curl --fail -u "$username" \
     --data "{\"title\":\"$title\",\"key\":\"$pub_key\"}" \
     https://api.github.com/user/keys
   then
-    return $ERR_GITHUB_UPLOAD_SSH
+    return 1
   fi
 
-  echo "Created SSH key on GitHub with $title"
+  print_info "Created SSH key on GitHub with $title"
   return 0
 }
 
 function github_upload_ssh_key() {
   local -r pub_file="$1"
-  [ -z "$pub_file" ] && return $ERR_INVALID_ARGS
+  if [ -z "$pub_file" ]; then
+    print_error 'Please input a file with github_upload_ssh_key_api'
+    return 1
+  fi
 
   if repeat_try github_upload_ssh_key_api "$pub_file"; then
     return 0
@@ -181,7 +235,9 @@ function repeat_try() {
   local response
   while :
   do
-    eval "$@" && break
+    if eval "$@"; then
+      break
+    fi
     echo -n 'Try again? [y/N]: '
     read -r response
     if [ "$response" == "N" ]; then
@@ -193,13 +249,6 @@ function repeat_try() {
 
 function install_git() {
   brew install git
-}
-
-function setup() {
-  for cmd in "$@"; do
-    eval "$cmd"
-    echo ''
-  done
 }
 
 #
@@ -473,14 +522,15 @@ function main() {
     # abs_dirname resolves all symlinks and relative paths
     DOTFILE_PATH="$(abs_dirname "$0")"
     export DOTFILE_PATH
-    echo '#!/bin/bash'
-    echo "export DOTFILE_PATH=$DOTFILE_PATH" >> "${DOTFILE_PATH}/.bash_extras"
+    local -r bash_extras="$DOTFILE_PATH/.bash_extras"
+    echo '#!/bin/bash' > "$bash_extras"
+    echo "export DOTFILE_PATH=$DOTFILE_PATH" >> "$bash_extras"
 
-    # one time configuration setups
-    #setup_github && \
-    #  setup_system && \
-    #  setup_dotfiles && \
-    #  setup_bin
+    # One time configuration setups
+      #setup_system && \
+    setup_github && \
+      setup_dotfiles && \
+      setup_bin
   else
     source "$DOTFILE_PATH/util/dirname.sh"
     source "$DOTFILE_PATH/util/print.sh"
@@ -504,7 +554,8 @@ function main() {
 }
 
 # Trap before any possible exits
-trap cleanup EXIT INT TERM
+trap teardown SIGTERM
+trap cleanup EXIT
 
 # Parse options and shift to real arguments
 while getopts "drlhc:" o; do
