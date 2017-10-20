@@ -1,8 +1,15 @@
 #!/bin/bash
 
+set -e
+
 # Sets up the essentials before install can be used
 # Includes setup that requires user interaction.
 # Installs brew, system update, git
+
+# Files to be symlinked into /usr/local/bin
+declare -r BINS='
+dfsetup
+'
 
 declare -r DOTFILES='
 .bash_profile
@@ -29,6 +36,8 @@ function setup_system() {
   systemsetup -setremotelogin on
   xcode-select --install 2>/dev/null
   # TODO: remap ctrl key if possible
+  # TODO: battery percent
+  # TODO: show bluetooth
 }
 
 function install_brew() {
@@ -152,42 +161,106 @@ function install_git() {
 
 function setup() {
   for cmd in "$@"; do
-    if ! eval "$cmd"; then
-      return $?
-    fi
+    eval "$cmd"
+    echo ''
   done
-  return 0
 }
 
+#
+# symlink_dotfile
+#
+# Creates a symlink from dst -> src
+#
+# If dst already exists, then it is backed up to 
+# (dirname backup_dir/src) if backup_dir provided
+#
+# please use relative paths
+#
+function symlink() {
+  local -r dst="$1"
+  local -r src="$2"
+  local -r backup_root="$3"
+  print_verbose "Creating symlink $dst -> $src"
+  if [ -h "$dst" ]; then
+    # Remove old symlink
+    rm "$dst"
+  fi
+  if [ -e "$dst" ]; then
+    # Only backup if a backup directory was provided
+    if [ -z "$backup_root" ]; then
+      print_error "Unable to symlink. File $dst already exists."
+      return 1
+    fi
+    local -r backup_dir="$(dirname "$backup_root/$dotfile")"
+    if [ ! -d "$backup_dir" ]; then
+      print_debug "Backup directory DNE. Creating $backup_dir ..."
+      mkdir -p "$backup_dir"
+    fi
+    print_warning "File already exists. Backing up $dst ->
+    $backup_dir/$dst"
+    mv "$dst" "$backup_dir"
+  fi
+
+  # Check to make sure the parent directories for src exist before linking
+  local -r dst_dir="$(dirname "$dst")"
+  if [ ! -d "$dst_dir" ]; then
+    print_debug "Creating directory $dst_dir"
+  fi
+  mkdir -p "$dst_dir"
+  ln -s "$src" "$dst"
+}
+
+# TODO: document and fix relative symlinks
 function setup_dotfiles() {
-  echo 'Setting up dotfiles...'
+  pushd_debug "$DOTFILE_PATH"
+  print_info 'Setting up dotfiles...'
   local -r backup_dir="${HOME}/.dotfiles_backup/$(date_rfc)"
 
-  pushd "$DOTFILE_PATH" &>/dev/null
   local dotfile
   while read -r dotfile; do
     [ -z "$dotfile" ] && continue
 
-    local oldfile="${HOME}/${dotfile}"
-    local newfile="${DOTFILE_PATH}/${dotfile}"
-    if [ -h "$oldfile" ]; then
-      # Remove old symlink
-      rm "$oldfile"
-    fi
-    if [ -e "$oldfile" ]; then
-      local -r dir="${backup_dir}/$(dirname "$dotfile")"
-      if [ -d "$dir" ]; then
-        mkdir -p "$dir"
-      fi
-      echo "Backing up $oldfile -> ${dir}/$oldfile..."
-      mv "$oldfile" "$dir"
-    fi
-    echo "Linking $oldfile -> ${dir}/$oldfile..."
-    ln -s "$newfile" "$oldfile" || $ERR_DOTFILE_LINK
+    local src="$HOME/$dotfile"
+    local dst="$DOTFILE_PATH/$dotfile"
+    symlink "$src" "$dst" "$backup_dir"
   done <<< "$DOTFILES"
-  popd &>/dev/null
 
-  echo 'Finished setting up dotfiles!'
+  print_info 'Finished setting up dotfiles!'
+  popd_debug
+}
+
+function pushd_debug() {
+  local -r path="$1"
+  if ! pushd "$path" >/dev/null; then
+    print_error "Unable to switch CWD to $path"
+  fi
+  print_debug "Switched to CWD to $path"
+}
+
+function popd_debug() {
+  if ! local -r path="$(popd)"; then
+    print_error "Unable to switch CWD"
+  fi
+  print_debug "Switched to CWD to $path"
+}
+
+function setup_bin() {
+  pushd_debug "$DOTFILE_PATH"
+  print_info 'Setting up binaries...'
+
+  local bin
+  local from
+  local to
+  while read -r bin; do
+    [ -z "$bin" ] && continue
+
+    from="/usr/local/bin/$(basename "$bin")"
+    to="$(abs_dirname "$bin")/$(basename "$bin")"
+    symlink "$from" "$to"
+  done <<< "$BINS"
+
+  print_info 'Finished linking binaries to /usr/local/bin'
+  popd_debug
 }
 
 function main() {
@@ -198,12 +271,29 @@ function main() {
     echo "export DOTFILE_PATH=$DOTFILE_PATH" >> "${DOTFILE_PATH}/.bash_extras"
     popd &>/dev/null
   fi
+  cd "$DOTFILE_PATH"
+  source util/dirname.sh
+  source util/print.sh
+  cd - >/dev/null
+  print_debug "DOTFILE_PATH=$DOTFILE_PATH"
 
   # TODO: setup vim, nvim, 
   setup \
-    setup_github \
-    setup_system \
-    setup_dotfiles
+    setup_dotfiles \
+    setup_bin
+
+    #setup_github \
+    #setup_system \
+
+  # Source bash profile to reflect changes, e.g. GOPATH is now set up
+  # TODO: fix bash_profile to not bork on missing commands
+  source "$HOME/.bash_profile"
+
+  #TODO: call dfsetup with all packages
+  ./dfsetup langs/golang langs/python langs/javascript apps/iterm2 neovim
+
+  # Source bash profile to reflect changes post install.
+  source "$HOME/.bash_profile"
 }
 
 function teardown() {

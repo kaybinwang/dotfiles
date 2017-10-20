@@ -307,7 +307,7 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   let g:deoplete#file#enable_buffer_path = 1
 
 "}}}
-Plug 'zchee/deoplete-go'
+Plug 'zchee/deoplete-go', { 'do': 'make'}
 Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
 Plug 'zchee/deoplete-jedi'
 "{{{
@@ -329,6 +329,7 @@ Plug 'scrooloose/nerdtree'
 
   " Jump to file in explorer
   nnoremap <silent> <leader>e :NERDTreeFind<cr>
+"}}}
 
 "}}}
 
@@ -488,6 +489,9 @@ nnoremap ^ <nop>
 
 " Window navigation
 tnoremap <c-h> <c-\><c-n><c-w>h
+"TODO: this stays in normal if there's no window
+"maybe use alt-h instead for all window navs or tab...
+" and use c-j in terminal for scrolling up
 tnoremap <c-j> <c-\><c-n><c-w>j
 tnoremap <c-k> <c-\><c-n><c-w>k
 tnoremap <c-l> <c-\><c-n><c-w>l

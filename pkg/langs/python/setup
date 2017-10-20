@@ -1,0 +1,32 @@
+#!/bin/bash
+
+###############################################################################
+#
+# langs/python
+#
+# Do not execute this script directly. It should only be executed from within
+# dfsetup.
+#
+# If you want to only install langs/python, then execute 'dfsetup langs/python'.
+#
+###############################################################################
+
+set -e
+
+source ./util/dirname.sh
+source ./util/brew.sh
+source ./util/print.sh
+
+function install() {
+  # brew provides pip via python
+  brew_install python
+  brew_install python3
+  command -v pip2 &>/dev/null || brew_install pip2
+  command -v pip3 &>/dev/null || brew_install pip3
+}
+
+function main() {
+  install
+}
+
+main "$@"
