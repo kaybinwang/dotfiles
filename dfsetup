@@ -26,7 +26,6 @@ dfsetup
 declare -r DOTFILES='
 .bash_profile
 .bash_aliases
-.bash_prompt
 .bash_extras
 .gitconfig
 .gitconfig-personal

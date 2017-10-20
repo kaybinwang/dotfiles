@@ -24,6 +24,12 @@ export FZF_DEFAULT_OPTS='
   --color info:183,prompt:110,spinner:107,pointer:167,marker:215
 '
 
+parse_git_branch() {
+     git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+export PS1="\[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
+#export PS1="\[\e[32m\]\W\[\e[m\] \[\e[31m\]>\[\e[m\] "
+
 # bash completion
 if [ -f "$(brew --prefix)"/etc/bash_completion ]; then
   source "$(brew --prefix)"/etc/bash_completion
@@ -57,7 +63,6 @@ ssh-add -A
 set -o vi
 bind '"jj":"\e"'
 
-source .bash_prompt
 source .bash_aliases
 source .bash_extras
 
