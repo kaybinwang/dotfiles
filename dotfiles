@@ -13,6 +13,7 @@
 #
 ################################################################################
 
+# TODO: maybe delete this
 set -e
 
 # Files to be symlinked from script directory into /usr/local/bin

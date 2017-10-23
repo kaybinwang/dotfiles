@@ -2,6 +2,12 @@
 The configuration I use on MacOS.
 
 ## Installation
+Clone the repository to a pl
+```
+git clone https://github.com/kaybinwang/dotfiles
+cd dotfiles
+./dotfiles
+```
 
 ## About
 Information about some of the stuff I use.
