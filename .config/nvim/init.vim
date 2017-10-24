@@ -511,7 +511,10 @@ tnoremap <c-w>R <c-\><c-n><c-w>R
 tnoremap <c-w>T <c-\><c-n><c-w>T
 
 " Vertical split
-tnoremap <silent> <c-w>s <c-\><c-n>:vsplit<cr>
+tnoremap <silent> <c-w>v <c-\><c-n>:vsplit<cr>
+
+" Horizontal split
+tnoremap <silent> <c-w>s <c-\><c-n>:sp<cr>
 
 " Close preview window
 nnoremap <silent> zz :pc<cr>
@@ -534,9 +537,6 @@ tnoremap <c-[> <c-\><c-n>
 " Close
 tnoremap <c-q> <c-\><c-n>ZZ
 nnoremap <c-q> ZZ
-
-" Visual mode
-tnoremap <c-w>v <c-\><c-n>
 
 " Close all folds except the current line
 nnoremap zp zMzv
