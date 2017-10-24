@@ -320,16 +320,6 @@ Plug 'tpope/vim-unimpaired'
 
 " Put this after vim-go and unimpaired
 Plug 'qpkorr/vim-bufkill'
-"{{{
-
-  " Delete buffer and close window
-  nnoremap <silent> ZB :bd!<cr>
-
-  " Delete buffer and swap it out
-  " TODO: close window if last buffer
-  nnoremap <silent> Zb :BD!<cr>
-
-"}}}
 
 call plug#end()
 
@@ -535,6 +525,7 @@ nnoremap Y y$
 nnoremap <silent> <c-s> :update<cr>
 
 
+tnoremap <c-[> <c-\><c-n>
 
 " Close
 tnoremap <c-q> <c-\><c-n>ZZ
