@@ -318,7 +318,6 @@ Plug 'artur-shaik/vim-javacomplete2'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 
-" Put this after vim-go and unimpaired
 Plug 'qpkorr/vim-bufkill'
 
 call plug#end()
@@ -394,8 +393,8 @@ set undolevels=1000             " store 1000 undos
 set hidden                      " allow buffer to go into background
 
 " Auto read/write on switch
-au FocusGained,BufEnter * :silent! !
-"au FocusLost,WinLeave * :silent! w
+au FocusGained,BufEnter * :checktime
+au FocusLost,WinLeave * :silent! noautocmd w
 
 " Whitespace
 set expandtab
@@ -508,12 +507,17 @@ tnoremap <c-w>J <c-\><c-n><c-w>J
 tnoremap <c-w>K <c-\><c-n><c-w>K
 tnoremap <c-w>L <c-\><c-n><c-w>L
 tnoremap <c-w>r <c-\><c-n><c-w>r
+tnoremap <c-w>R <c-\><c-n><c-w>R
+tnoremap <c-w>T <c-\><c-n><c-w>T
 
 " Vertical split
 tnoremap <silent> <c-w>s <c-\><c-n>:vsplit<cr>
 
 " Close preview window
 nnoremap <silent> zz :pc<cr>
+
+" Close terminal window
+tnoremap <c-w>q <c-\><c-n><c-w>q
 
 "-------------------------------------------------------------------------------
 " 3.3 Editing
