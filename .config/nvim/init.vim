@@ -318,8 +318,6 @@ Plug 'artur-shaik/vim-javacomplete2'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 
-Plug 'scrooloose/nerdtree'
-
 " Put this after vim-go and unimpaired
 Plug 'qpkorr/vim-bufkill'
 "{{{
