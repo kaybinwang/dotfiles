@@ -10,7 +10,7 @@
 "     1.2.3
 " 2. Editor Settings
 " 4. File Specific Settings
-" 3. Mappings
+" 3. Key Mappings
 "   3.1 Training Wheels
 "   3.2 Movement / Navigation
 "   3.3 
@@ -318,33 +318,7 @@ Plug 'artur-shaik/vim-javacomplete2'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 
-Plug 'scrooloose/nerdtree'
-"{{{
-
-  " Single click expand
-  let g:NERDTreeMouseMode=2
-
-  " Open file explorer
-  nnoremap <silent> <leader>f :NERDTreeToggle<cr><esc>
-
-  " Jump to file in explorer
-  nnoremap <silent> <leader>e :NERDTreeFind<cr>
-"}}}
-
-"}}}
-
-" Put this after vim-go and unimpaired
 Plug 'qpkorr/vim-bufkill'
-"{{{
-
-  " Delete buffer and close window
-  nnoremap <silent> ZB :bd!<cr>
-
-  " Delete buffer and swap it out
-  " TODO: close window if last buffer
-  nnoremap <silent> Zb :BD!<cr>
-
-"}}}
 
 call plug#end()
 
@@ -419,8 +393,8 @@ set undolevels=1000             " store 1000 undos
 set hidden                      " allow buffer to go into background
 
 " Auto read/write on switch
-au FocusGained,BufEnter * :silent! !
-"au FocusLost,WinLeave * :silent! w
+au FocusGained,BufEnter * :checktime
+au FocusLost,WinLeave * :silent! noautocmd w
 
 " Whitespace
 set expandtab
@@ -434,24 +408,6 @@ set incsearch
 set hlsearch
 set smartcase
 set ignorecase
-
-" 
-" 3. Mappings
-" ~~~~~~
-
-" Key Mappings
-let mapleader = " "
-
-" Esc from insert mode using jj fast
-inoremap jj <esc>
-
-" Faster ^ and $
-nnoremap H ^
-nnoremap L $
-
-" Move into line wraps
-nnoremap j gj
-nnoremap k gk
 
 " Faster playback
 nnoremap Q @q
@@ -467,37 +423,59 @@ tnoremap <silent> <c-p> <c-\><c-n>:vsplit<cr>:terminal<cr>
 
 
 "===============================================================================
-" 3. Mappings
+" 3. Key Mappings
 "===============================================================================
 
 "-------------------------------------------------------------------------------
 " 3.1 Training Wheels
 "-------------------------------------------------------------------------------
-"{{{
 
 " Use H, L instead
 nnoremap $ <nop>
 nnoremap ^ <nop>
 
-"}}}
-
-
-" TODO: fold?
 "-------------------------------------------------------------------------------
-" 3.2 Movement / Navigation
+" 3.2 General
 "-------------------------------------------------------------------------------
 
-" Window navigation
-tnoremap <c-h> <c-\><c-n><c-w>h
-"TODO: this stays in normal if there's no window
-"maybe use alt-h instead for all window navs or tab...
-" and use c-j in terminal for scrolling up
-tnoremap <c-j> <c-\><c-n><c-w>j
-tnoremap <c-k> <c-\><c-n><c-w>k
-tnoremap <c-l> <c-\><c-n><c-w>l
+let mapleader = " "
 
-" Movement in insert and command mode
+" Esc from insert mode using jj fast
+inoremap jj <esc>
+"xnoremap jj <esc>
+"cnoremap jj <c-c>
+
+" Open vimrc
+nnoremap <leader>ov :execute 'edit' g:vimrc<cr>
+
+" Edit vimrc
+nnoremap <silent> <leader>ev :execute 'vsplit '.fnameescape(g:vimrc)<cr>
+
+" Source vimrc 
+nnoremap <silent> <leader>sv :execute 'source '.fnameescape(g:vimrc)<cr>
+
+" Reload plugins
+nnoremap <silent> <leader>rp :update<cr>:execute 'source '.fnameescape(g:vimrc)<cr>:PlugInstall<cr>
+
+" Clear search
+nnoremap <silent> <return> :noh<cr><esc>
+
+
+"-------------------------------------------------------------------------------
+" 3.2 Movement
+"-------------------------------------------------------------------------------
+
+" Move into line wraps
+nnoremap j gj
+nnoremap k gk
+
+" Faster ^ and $
+nnoremap H ^
+nnoremap L $
+
+" Move in insert and command mode
 inoremap <c-h> <left>
+" Conflicts with <c-j> for next completion
 "inoremap <c-j> <down>
 "inoremap <c-k> <right>
 inoremap <c-l> <right>
@@ -506,27 +484,67 @@ cnoremap <c-j> <down>
 cnoremap <c-k> <up>
 cnoremap <c-l> <right>
 
+"-------------------------------------------------------------------------------
+" 3.2 Windows
+"-------------------------------------------------------------------------------
+
+" Window nagivation
+nnoremap <c-h> <c-w><c-h>
+nnoremap <c-j> <c-w><c-j>
+nnoremap <c-k> <c-w><c-k>
+nnoremap <c-l> <c-w><c-l>
+tnoremap <c-h> <c-\><c-n><c-w>h
+"TODO: this stays in normal if there's no window
+"maybe use alt-h instead for all window navs or tab...
+" and use c-j in terminal for scrolling up
+tnoremap <c-j> <c-\><c-n><c-w>j
+tnoremap <c-k> <c-\><c-n><c-w>k
+tnoremap <c-l> <c-\><c-n><c-w>l
+
+" Swap windows
+tnoremap <c-w>H <c-\><c-n><c-w>H
+tnoremap <c-w>J <c-\><c-n><c-w>J
+tnoremap <c-w>K <c-\><c-n><c-w>K
+tnoremap <c-w>L <c-\><c-n><c-w>L
+tnoremap <c-w>r <c-\><c-n><c-w>r
+tnoremap <c-w>R <c-\><c-n><c-w>R
+tnoremap <c-w>T <c-\><c-n><c-w>T
+
+" Vertical split
+tnoremap <silent> <c-w>v <c-\><c-n>:vsplit<cr>
+
+" Horizontal split
+tnoremap <silent> <c-w>s <c-\><c-n>:sp<cr>
+
+" Close preview window
+nnoremap <silent> zz :pc<cr>
+
+" Close terminal window
+tnoremap <c-w>q <c-\><c-n><c-w>q
+
+"-------------------------------------------------------------------------------
+" 3.3 Editing
+"-------------------------------------------------------------------------------
+
 " make Y like D
 nnoremap Y y$
 
-" Prevent window nav mappins from leaving fzf
-autocmd FileType fzf tnoremap <buffer> <c-j> <down>
-autocmd FileType fzf tnoremap <buffer> <c-k> <up>
+nnoremap <silent> <c-s> :update<cr>
 
-" Vertical split
-tnoremap <silent> <c-w>s <c-\><c-n>:vsplit<cr>
+
+tnoremap <c-[> <c-\><c-n>
 
 " Close
 tnoremap <c-q> <c-\><c-n>ZZ
 nnoremap <c-q> ZZ
 
-nnoremap <silent> <c-s> :update<cr>
-
-" Visual mode
-tnoremap <c-w>v <c-\><c-n>
-
 " Close all folds except the current line
 nnoremap zp zMzv
+
+"-------------------------------------------------------------------------------
+" 3.3 Search (FZF)
+"-------------------------------------------------------------------------------
+" {{{
 
 " Open search
 nnoremap <silent> <leader><leader> :Files<cr>
@@ -556,12 +574,16 @@ function! SearchWordWithRg()
 endfunction
 nnoremap <silent> K :call SearchWordWithRg()<cr>
 
-" Shorter window nagivation
-" This can't be <c-h> or else it will break search scroll
-nnoremap <c-h> <c-w><c-h>
-nnoremap <c-j> <c-w><c-j>
-nnoremap <c-k> <c-w><c-k>
-nnoremap <c-l> <c-w><c-l>
+" Scroll search results
+autocmd FileType fzf tnoremap <buffer> <c-j> <down>
+autocmd FileType fzf tnoremap <buffer> <c-k> <up>
+
+" }}}
+
+"-------------------------------------------------------------------------------
+" 3.4 Git (Fugitive, GitGutter)
+"-------------------------------------------------------------------------------
+" {{{
 
 " Move to next git modification
 nnoremap <silent> <leader>gp :GitGutterPreviewHunk<cr>
@@ -572,8 +594,26 @@ nnoremap <silent> gb :Gblame<cr>
 nnoremap <silent> gs :Gstatus<cr>
 nnoremap <silent> gc :Gcommit<cr>
 
-" Close preview window
-nnoremap <silent> zz :pc<cr>
+" }}}
+
+"-------------------------------------------------------------------------------
+" 3.5 File Browser (NERDTree)
+"-------------------------------------------------------------------------------
+"{{{
+
+" Single click expand
+let g:NERDTreeMouseMode=2
+
+" Open file explorer
+nnoremap <silent> <leader>f :NERDTreeToggle<cr><esc>
+
+" Jump to file in explorer
+nnoremap <silent> <leader>e :NERDTreeFind<cr>
+
+"}}}
+
+" Normal mode in terminal
+tnoremap <c-[> <c-\><c-n>
 
 " Toggle hard word wrap
 function! ToggleWordWrap()
@@ -597,21 +637,6 @@ function! ToggleRelativeNumber()
   endif
 endfunc
 nnoremap <silent> <C-n> :call ToggleRelativeNumber()<cr>
-
-" Open vimrc
-nnoremap <leader>ov :execute 'edit' g:vimrc<cr>
-
-" Edit vimrc
-nnoremap <silent> <leader>ev :execute 'vsplit '.fnameescape(g:vimrc)<cr>
-
-" Source vimrc 
-nnoremap <silent> <leader>sv :execute 'source '.fnameescape(g:vimrc)<cr>
-
-" Reload plugins
-nnoremap <silent> <leader>rp :update<cr>:execute 'source '.fnameescape(g:vimrc)<cr>:PlugInstall<cr>
-
-" Clear search
-nnoremap <silent> <return> :noh<cr><esc>
 
 " File Settings
 au FileType html call HtmlFileSettings()

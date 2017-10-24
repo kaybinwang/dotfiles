@@ -13,12 +13,13 @@
 #
 ################################################################################
 
+# TODO: maybe delete this
 set -e
 
 # Files to be symlinked from script directory into /usr/local/bin
 # Please keep make all binaries siblings to the script
 declare -r BINS='
-dfsetup
+dotfiles
 '
 
 # Files to be symlinked from script directory into $HOME
@@ -33,8 +34,8 @@ declare -r DOTFILES='
 .config/nvim/init.vim
 '
 
-PROG_NAME="$(basename "$0")"
-declare -r PROG_NAME
+PROGRAM="$(basename "$0")"
+declare -r PROGRAM
 
 # Global variables set by the options passed into the script.
 declare REINSTALL=
@@ -43,7 +44,7 @@ declare DEBUG=
 # TODO: make support multiple creations
 function usage() {
   cat <<EOF
-Usage: $PROG_NAME [-h | -l | -c package | -dr package ... ]
+Usage: $PROGRAM [-h | -l | -c package | -dr package ... ]
 
 Options:
 	-h	Prints this message.
@@ -476,7 +477,7 @@ function setup() {
     return 1
   fi
   if [ ! "$REINSTALL" ] && [ -e "$cache" ]; then
-    print_warning "$pkg already installed. Reinstall with '$PROG_NAME -r $pkg'"
+    print_warning "$pkg already installed. Reinstall with '$PROGRAM -r $pkg'"
     return 0
   fi
   print_debug "Executing $script..."
@@ -588,9 +589,10 @@ function main() {
 
   # Bootstrap DOTFILE_PATH on the first run and store it into .bash_extras.
   # Also export DOTFILE_PATH so that it's available to the script.
-  if [ -z "$DOTFILE_PATH" ]; then
+  if [ -z "$DOTFILE_PATH" ] || [ ! -e "$DOTFILE_PATH/.bash_extras" ]; then
     source util/dirname.sh
     source util/print.sh
+    print_debug 'First time executing...'
 
     # abs_dirname resolves all symlinks and relative paths
     DOTFILE_PATH="$(abs_dirname "$0")"
@@ -620,7 +622,10 @@ function main() {
   for pkg in "$@"; do
     setup "$pkg"
   done
-  #setup langs/golang langs/python langs/javascript apps/iterm2 neovim
+  setup langs/golang 
+  setup langs/python 
+  setup langs/javascript 
+  setup apps/iterm2 neovim
 
   # Source bash profile to reflect changes post install.
   source "$HOME/.bash_profile" &>/dev/null
@@ -629,5 +634,40 @@ function main() {
 # Trap before any possible exits
 trap teardown SIGTERM
 trap cleanup EXIT
+
+# Parse options and shift to real arguments
+while getopts "drlhc:" o; do
+  case "$o" in
+    r)
+      REINSTALL=true
+      ;;
+    d)
+      DEBUG=true
+      export DEBUG
+      ;;
+    c)
+      create "${OPTARG}"
+      exit 0
+      ;;
+    l)
+      #TODO: list all available packages using pyscript
+      exit 0
+      ;;
+    h)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unrecognized option: $o"
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND-1))
+
+#if [ "$#" -eq 0 ]; then
+  #usage
+  #exit 0
+#fi
 
 main "$@"
