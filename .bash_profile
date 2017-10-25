@@ -63,16 +63,18 @@ ssh-add -A
 set -o vi
 bind '"jj":"\e"'
 
-source .bash_aliases
-source .bash_extras
-
+export PROJECT_PERSONAL="$HOME/projects/personal"
+export PROJECT_WORK="$HOME/projects/work"
 export PATH="/usr/local/opt/icu4c/bin:$PATH"
 export PATH="/usr/local/opt/icu4c/sbin:$PATH"
-export GOPATH=$HOME/projects/go
+export GOPATH="$PERSONAL_PROJECT/go"
 export PATH=$GOPATH/bin:$PATH
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+source .bash_aliases
+source .bash_extras
 
 popd &> /dev/null
