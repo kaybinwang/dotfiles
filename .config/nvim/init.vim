@@ -473,17 +473,6 @@ nnoremap k gk
 nnoremap H ^
 nnoremap L $
 
-" Move in insert and command mode
-inoremap <c-h> <left>
-" Conflicts with <c-j> for next completion
-"inoremap <c-j> <down>
-"inoremap <c-k> <right>
-inoremap <c-l> <right>
-cnoremap <c-h> <left>
-cnoremap <c-j> <down>
-cnoremap <c-k> <up>
-cnoremap <c-l> <right>
-
 "-------------------------------------------------------------------------------
 " 3.2 Windows
 "-------------------------------------------------------------------------------
