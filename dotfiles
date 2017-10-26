@@ -32,6 +32,8 @@ declare -r DOTFILES='
 .gitconfig-work
 .tern-config
 .config/nvim/init.vim
+.chunkwmrc
+.skhdrc
 '
 
 PROGRAM="$(basename "$0")"
