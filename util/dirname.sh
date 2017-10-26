@@ -1,5 +1,3 @@
-#!/bin/bash
-
 #
 # Takes an file path as an input and outputs the absolute directory name of the
 # file. This resolves symlinks, relative paths, and symlinks to relative paths.

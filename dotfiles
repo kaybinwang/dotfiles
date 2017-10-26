@@ -14,7 +14,6 @@
 ################################################################################
 
 # TODO: maybe delete this
-set -e
 
 # Files to be symlinked from script directory into /usr/local/bin
 # Please keep make all binaries siblings to the script
@@ -561,6 +560,32 @@ function parse_args() {
   esac
 }
 
+function bootstrap() {
+  # Bootstrap DOTFILE_PATH on the first run and store it into .bash_extras.
+  # Also export DOTFILE_PATH so that it's available to the script.
+  if [ -z "$DOTFILE_PATH" ] || [ ! -e "$DOTFILE_PATH/.bash_extras" ]; then
+    source util/dirname.sh
+    source util/print.sh
+    print_debug 'First time executing...'
+
+    # abs_dirname resolves all symlinks and relative paths
+    DOTFILE_PATH="$(abs_dirname "$0")"
+    export DOTFILE_PATH
+    local -r bash_extras="$DOTFILE_PATH/.bash_extras"
+    echo '#!/bin/bash' > "$bash_extras"
+    echo "export DOTFILE_PATH=$DOTFILE_PATH" >> "$bash_extras"
+
+    # One time configuration setups
+    #setup_github && \
+      #setup_system && \
+      setup_dotfiles && \
+      setup_bin
+  else
+    source "$DOTFILE_PATH/util/dirname.sh"
+    source "$DOTFILE_PATH/util/print.sh"
+  fi
+}
+
 ################################################################################
 #
 # main: Main entry point for dfsetup.
@@ -587,31 +612,47 @@ function parse_args() {
 #
 ################################################################################
 function main() {
+
+  # Handles first time execution and resolving imports.
+  # This must be called first.
+  bootstrap
+
   #parse_args "$@"
 
-  # Bootstrap DOTFILE_PATH on the first run and store it into .bash_extras.
-  # Also export DOTFILE_PATH so that it's available to the script.
-  if [ -z "$DOTFILE_PATH" ] || [ ! -e "$DOTFILE_PATH/.bash_extras" ]; then
-    source util/dirname.sh
-    source util/print.sh
-    print_debug 'First time executing...'
-
-    # abs_dirname resolves all symlinks and relative paths
-    DOTFILE_PATH="$(abs_dirname "$0")"
-    export DOTFILE_PATH
-    local -r bash_extras="$DOTFILE_PATH/.bash_extras"
-    echo '#!/bin/bash' > "$bash_extras"
-    echo "export DOTFILE_PATH=$DOTFILE_PATH" >> "$bash_extras"
-
-    # One time configuration setups
-    #setup_github && \
-      #setup_system && \
-      setup_dotfiles && \
-      setup_bin
-  else
-    source "$DOTFILE_PATH/util/dirname.sh"
-    source "$DOTFILE_PATH/util/print.sh"
-  fi
+  # Parse options and shift to real arguments
+  while getopts "sdrlhc:" o; do
+    case "$o" in
+      r)
+        REINSTALL=true
+        ;;
+      d)
+        DEBUG=true
+        export DEBUG
+        ;;
+      s)
+        setup_dotfiles
+        setup_bin
+        exit 0
+        ;;
+      c)
+        create "${OPTARG}"
+        exit 0
+        ;;
+      l)
+        #TODO: list all available packages using pyscript
+        exit 0
+        ;;
+      h)
+        usage
+        exit 0
+        ;;
+      *)
+        echo "Unrecognized option: $o"
+        exit 1
+        ;;
+    esac
+  done
+  shift $((OPTIND-1))
 
   print_debug "DOTFILE_PATH=$DOTFILE_PATH"
 
@@ -636,36 +677,6 @@ function main() {
 # Trap before any possible exits
 trap teardown SIGTERM
 trap cleanup EXIT
-
-# Parse options and shift to real arguments
-while getopts "drlhc:" o; do
-  case "$o" in
-    r)
-      REINSTALL=true
-      ;;
-    d)
-      DEBUG=true
-      export DEBUG
-      ;;
-    c)
-      create "${OPTARG}"
-      exit 0
-      ;;
-    l)
-      #TODO: list all available packages using pyscript
-      exit 0
-      ;;
-    h)
-      usage
-      exit 0
-      ;;
-    *)
-      echo "Unrecognized option: $o"
-      exit 1
-      ;;
-  esac
-done
-shift $((OPTIND-1))
 
 #if [ "$#" -eq 0 ]; then
   #usage

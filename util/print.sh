@@ -1,5 +1,3 @@
-#!/bin/bash
-
 ###############################################################################
 #
 # print.sh
@@ -12,18 +10,18 @@
 #
 ###############################################################################
 
-declare -r FG_RED="$(tput setaf 1)"
-declare -r FG_GREEN="$(tput setaf 2)"
-declare -r FG_YELLOW="$(tput setaf 3)"
-declare -r FG_BLUE="$(tput setaf 4)"
-declare -r FG_MAGENTA="$(tput setaf 5)"
-declare -r FG_CYAN="$(tput setaf 6)"
-declare -r FG_WHITE="$(tput setaf 7)"
+FG_RED="$(tput setaf 1)"
+FG_GREEN="$(tput setaf 2)"
+FG_YELLOW="$(tput setaf 3)"
+FG_BLUE="$(tput setaf 4)"
+FG_MAGENTA="$(tput setaf 5)"
+FG_CYAN="$(tput setaf 6)"
+FG_WHITE="$(tput setaf 7)"
 
-declare -r BOLD="$(tput bold)"
-declare -r UNDERLINE="$(tput smul)"
+BOLD="$(tput bold)"
+UNDERLINE="$(tput smul)"
 
-declare -r RESET="$(tput sgr0)"
+RESET="$(tput sgr0)"
 
 function print_debug() {
   if [ "$DEBUG" ]; then
