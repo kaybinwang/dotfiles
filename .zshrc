@@ -67,3 +67,26 @@ unset LSCOLORS
 
 export CLICOLOR  # same as 'alias ls=ls -G' which I also have set
 export LSCOLORS=ExFxBxDxCxegedabagacad
+
+
+zstyle ':completion:*' menu select=2                        # menu if nb items > 2
+
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+
+# path zsh syntax highlighting
+#ZSH_HIGHLIGHT_STYLES[default]='fg=blue'
+#ZSH_HIGHLIGHT_STYLES[globbing]='fg=yellow'
+#ZSH_HIGHLIGHT_STYLES[path]='fg=blue,bold,dim'
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
+
+# To differentiate aliases from other command types
+#ZSH_HIGHLIGHT_STYLES[alias]='fg=magenta,bold'
+
+# To have paths colored instead of underlined
+#ZSH_HIGHLIGHT_STYLES[path]='fg=cyan'
+
+# To disable highlighting of globbing expressions
+#ZSH_HIGHLIGHT_STYLES[globbing]='none'
+
+source .bash_aliases
+source .bash_extras
