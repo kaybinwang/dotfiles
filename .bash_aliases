@@ -78,6 +78,8 @@ alias gstp='git stash pop'
 alias gsta='git stash apply'
 alias gg='git grep'
 
+alias pp="cd $PROJECT_PERSONAL"
+
 ECLIPSE_HOME='/Applications/Eclipse.app/Contents/Eclipse'
 alias eclimd="$ECLIPSE_HOME/eclimd"
 

@@ -57,7 +57,7 @@ if [ -f "$(brew --prefix)"/etc/bash_completion ]; then
 fi
 
 # Load all ssh keys in keychain for MacOS.
-ssh-add -A
+ssh-add -A &>/dev/null
 
 # Vim commands in bash
 set -o vi
