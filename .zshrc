@@ -39,8 +39,37 @@ bindkey "jj" vi-cmd-mode
 bindkey -v '^?' backward-delete-char
 bindkey -v '^h' backward-delete-char
 
+# do I want this 
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
+
+# enable parens, quotes and surround text-objects
+# ciw ci" text objects
+# https://www.reddit.com/r/vim/comments/4995nr/navigate_your_command_line_with_modal_vi/d0qmcbl/
+autoload -U select-bracketed
+zle -N select-bracketed
+for m in visual viopp; do
+    for c in {a,i}${(s..)^:-'()[]{}<>bB'}; do
+        bindkey -M $m $c select-bracketed
+    done
+done
+
+autoload -U select-quoted
+zle -N select-quoted
+for m in visual viopp; do
+  for c in {a,i}{\',\",\`}; do
+    bindkey -M $m $c select-quoted
+  done
+done
+
+autoload -Uz surround
+zle -N delete-surround surround
+zle -N change-surround surround
+zle -N add-surround surround
+bindkey -a cs change-surround
+bindkey -a ds delete-surround
+bindkey -a ys add-surround
+bindkey -M visual S add-surround
 
 # Two sided prompt
 PROMPT='%F{red}%n%f@%F{blue}%m%f %F{yellow}%1~%f %# '
