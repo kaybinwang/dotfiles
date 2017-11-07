@@ -1,3 +1,5 @@
+export IDEAVIMRC="$HOME/.ideavimrc"
+
 ## a quick way to get out of current directory ##
 alias ..='cd ..'
 alias ...='cd ../../'
@@ -41,14 +43,14 @@ alias gb='git branch'
 #alias gbd='git branch -d'
 #alias gbD='git branch -D'
 function gbd() {
-  if [ "$1" == "-" ]; then
+  if [[ "$1" = "-" ]]; then
     git branch -d '@{-1}'
   else
     git branch -d "$@"
   fi
 }
 function gbD() {
-  if [ "$1" == "-" ]; then
+  if [[ "$1" = "-" ]]; then
     git branch -D '@{-1}'
   else
     git branch -D "$@"
@@ -59,7 +61,10 @@ alias gc='git commit'
 alias gcm='git commit -m'
 alias gca='git commit --amend'
 alias gcane='git commit --amend --no-edit'
-alias gco='git checkout'
+function gco() {
+  git checkout "$@"
+}
+alias gcor='git checkout'
 alias gcob='git checkout -b'
 alias gf='git fetch'
 alias gd='git diff'
@@ -79,9 +84,7 @@ alias gsta='git stash apply'
 alias gg='git grep'
 
 alias pp="cd $PROJECT_PERSONAL"
-
-ECLIPSE_HOME='/Applications/Eclipse.app/Contents/Eclipse'
-alias eclimd="$ECLIPSE_HOME/eclimd"
+alias wp="cd $PROJECT_WORK"
 
 pdf () {
   pdflatex "$1".tex && rm "$1".out "$1".log "$1".aux && open "$1".pdf;
