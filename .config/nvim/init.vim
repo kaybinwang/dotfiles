@@ -1,3 +1,9 @@
+"-------------------------------------------------------------------------------
+" TODO
+"-------------------------------------------------------------------------------
+" Remove dependencies on lightline
+" Make backwards compatible with vim
+" Document this file
 
 "-------------------------------------------------------------------------------
 " Table of contents
@@ -313,9 +319,10 @@ Plug 'zchee/deoplete-jedi'
 "{{{
   let g:deoplete#sources#jedi#show_docstring = 1
 "}}}
-Plug 'artur-shaik/vim-javacomplete2'
 
+" Text Editing
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 
 Plug 'qpkorr/vim-bufkill'
@@ -409,18 +416,10 @@ set hlsearch
 set smartcase
 set ignorecase
 
-" Faster playback
-nnoremap Q @q
-
-" New tab
-nnoremap <silent> <c-w>t :tabnew<cr>
-tnoremap <silent> <c-w>t <c-\><c-n>:tabnew<cr>
-
 " Auto insert if terminal open
-au BufEnter * if &buftype == 'terminal' | :startinsert | endif
-nnoremap <silent> <c-p> :vsplit<cr>:terminal<cr>
-tnoremap <silent> <c-p> <c-\><c-n>:vsplit<cr>:terminal<cr>
-
+if has('nvim')
+  au BufEnter * if &buftype == 'terminal' | :startinsert | endif
+endif
 
 "===============================================================================
 " 3. Key Mappings
@@ -430,10 +429,6 @@ tnoremap <silent> <c-p> <c-\><c-n>:vsplit<cr>:terminal<cr>
 " 3.1 Training Wheels
 "-------------------------------------------------------------------------------
 
-" Use H, L instead
-nnoremap $ <nop>
-nnoremap ^ <nop>
-
 "-------------------------------------------------------------------------------
 " 3.2 General
 "-------------------------------------------------------------------------------
@@ -442,8 +437,6 @@ let mapleader = " "
 
 " Esc from insert mode using jj fast
 inoremap jj <esc>
-"xnoremap jj <esc>
-"cnoremap jj <c-c>
 
 " Open vimrc
 nnoremap <leader>ov :execute 'edit' g:vimrc<cr>
@@ -460,6 +453,9 @@ nnoremap <silent> <leader>rp :update<cr>:execute 'source '.fnameescape(g:vimrc)<
 " Clear search
 nnoremap <silent> <return> :noh<cr><esc>
 
+
+" Faster playback
+nnoremap Q @q
 
 "-------------------------------------------------------------------------------
 " 3.2 Movement
@@ -482,34 +478,45 @@ nnoremap <c-h> <c-w><c-h>
 nnoremap <c-j> <c-w><c-j>
 nnoremap <c-k> <c-w><c-k>
 nnoremap <c-l> <c-w><c-l>
-tnoremap <c-h> <c-\><c-n><c-w>h
-"TODO: this stays in normal if there's no window
-"maybe use alt-h instead for all window navs or tab...
-" and use c-j in terminal for scrolling up
-tnoremap <c-j> <c-\><c-n><c-w>j
-tnoremap <c-k> <c-\><c-n><c-w>k
-tnoremap <c-l> <c-\><c-n><c-w>l
 
-" Swap windows
-tnoremap <c-w>H <c-\><c-n><c-w>H
-tnoremap <c-w>J <c-\><c-n><c-w>J
-tnoremap <c-w>K <c-\><c-n><c-w>K
-tnoremap <c-w>L <c-\><c-n><c-w>L
-tnoremap <c-w>r <c-\><c-n><c-w>r
-tnoremap <c-w>R <c-\><c-n><c-w>R
-tnoremap <c-w>T <c-\><c-n><c-w>T
+nnoremap <silent> <c-p> :vsplit<cr>:terminal<cr>
+tnoremap <silent> <c-p> <c-\><c-n>:vsplit<cr>:terminal<cr>
 
-" Vertical split
-tnoremap <silent> <c-w>v <c-\><c-n>:vsplit<cr>
+" New tab
+nnoremap <silent> <c-w>t :tabnew<cr>
+tnoremap <silent> <c-w>t <c-\><c-n>:tabnew<cr>
 
-" Horizontal split
-tnoremap <silent> <c-w>s <c-\><c-n>:sp<cr>
+" Terminal window navigation
+if has('nvim')
+  tnoremap <c-h> <c-\><c-n><c-w>h
+  "TODO: this stays in normal if there's no window
+  "maybe use alt-h instead for all window navs or tab...
+  " and use c-j in terminal for scrolling up
+  tnoremap <c-j> <c-\><c-n><c-w>j
+  tnoremap <c-k> <c-\><c-n><c-w>k
+  tnoremap <c-l> <c-\><c-n><c-w>l
+
+  " Swap terminal windows
+  tnoremap <c-w>H <c-\><c-n><c-w>H
+  tnoremap <c-w>J <c-\><c-n><c-w>J
+  tnoremap <c-w>K <c-\><c-n><c-w>K
+  tnoremap <c-w>L <c-\><c-n><c-w>L
+  tnoremap <c-w>r <c-\><c-n><c-w>r
+  tnoremap <c-w>R <c-\><c-n><c-w>R
+  tnoremap <c-w>T <c-\><c-n><c-w>T
+
+  " Vertical split
+  tnoremap <silent> <c-w>v <c-\><c-n>:vsplit<cr>
+
+  " Horizontal split
+  tnoremap <silent> <c-w>s <c-\><c-n>:sp<cr>
+
+" Close terminal window
+  tnoremap <c-w>q <c-\><c-n><c-w>q
+endif
 
 " Close preview window
 nnoremap <silent> zz :pc<cr>
-
-" Close terminal window
-tnoremap <c-w>q <c-\><c-n><c-w>q
 
 "-------------------------------------------------------------------------------
 " 3.3 Editing
@@ -519,7 +526,6 @@ tnoremap <c-w>q <c-\><c-n><c-w>q
 nnoremap Y y$
 
 nnoremap <silent> <c-s> :update<cr>
-
 
 tnoremap <c-[> <c-\><c-n>
 
@@ -539,7 +545,6 @@ nnoremap zp zMzv
 nnoremap <silent> <leader><leader> :Files<cr>
 nnoremap <silent> <leader>p :GFiles<cr>
 nnoremap <silent> <leader>m :GFiles?<cr>
-nnoremap <silent> <leader>b :Buffers<cr>
 nnoremap <silent> <leader>w :Windows<cr>
 nnoremap <silent> <leader>; :BLines<cr>
 nnoremap <silent> <leader>l :Lines<cr>
@@ -566,6 +571,8 @@ nnoremap <silent> K :call SearchWordWithRg()<cr>
 " Scroll search results
 autocmd FileType fzf tnoremap <buffer> <c-j> <down>
 autocmd FileType fzf tnoremap <buffer> <c-k> <up>
+autocmd FileType fzf tnoremap <buffer> <c-h> <c-h>
+autocmd FileType fzf tnoremap <buffer> <c-l> <c-l>
 
 " }}}
 
@@ -579,9 +586,9 @@ nnoremap <silent> <leader>gp :GitGutterPreviewHunk<cr>
 nnoremap <silent> <leader>gu :GitGutterUndoHunk<cr>
 
 " Fugitive Git commands
-nnoremap <silent> gb :Gblame<cr>
-nnoremap <silent> gs :Gstatus<cr>
-nnoremap <silent> gc :Gcommit<cr>
+nnoremap <silent> <leader>gb :Gblame<cr>
+nnoremap <silent> <leader>gs :Gstatus<cr>
+nnoremap <silent> <leader>gc :Gcommit<cr>
 
 " }}}
 
@@ -615,7 +622,7 @@ function! ToggleWordWrap()
     echo 'Word wrap enabled'
   endif
 endfunc
-nnoremap <silent> <c-e> :call ToggleWordWrap()<cr>
+"nnoremap <silent> <c-e> :call ToggleWordWrap()<cr>
 
 " Toggle relative line numbers
 function! ToggleRelativeNumber()
@@ -650,7 +657,8 @@ function! HtmlFileSettings()
 endfunc
 
 function! JavascriptFileSettings()
-  setl omnifunc=javacomplete#Complete
+  "TODO: figure this out or don't use javacomplete
+  "setl omnifunc=javacomplete#Complete
   setl sts=2 sw=2 ts=2
 endfunc
 
