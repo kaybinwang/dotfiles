@@ -31,6 +31,7 @@ declare -r DOTFILES='
 .gitconfig-personal
 .gitconfig-work
 .tern-config
+.tmux.conf
 .config/nvim/init.vim
 .chunkwmrc
 .skhdrc
@@ -67,8 +68,12 @@ EOF
 
 # On EXIT clean up of exported variables.
 function cleanup() {
+  res="$?"
   unset REINSTALL
   unset DEBUG
+  if [ $res -ne 0 ]; then
+    printf_error "Error: $res"
+  fi
 }
 
 # On SIGTERM kill all forked processes.
