@@ -15,6 +15,8 @@
 "     1.2.2
 "     1.2.3
 " 2. Editor Settings
+"   2.1 Interface
+"   2.2 Status Line
 " 4. File Specific Settings
 " 3. Key Mappings
 "   3.1 Training Wheels
@@ -122,14 +124,6 @@ Plug 'itchyny/lightline.vim'
     return ''
   endfunction
 
-  function! LightlineFileformat()
-    return winwidth(0) > 70 ? &fileformat : ''
-  endfunction
-
-  function! LightlineFiletype()
-    return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
-  endfunction
-
   function! LightlineFileencoding()
     return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
   endfunction
@@ -147,47 +141,11 @@ Plug 'itchyny/lightline.vim'
           \ winwidth(0) > 60 ? lightline#mode() : ''
   endfunction
 
-  function! CtrlPMark()
-    if expand('%:t') =~ 'ControlP' && has_key(g:lightline, 'ctrlp_item')
-      call lightline#link('iR'[g:lightline.ctrlp_regex])
-      return lightline#concatenate([g:lightline.ctrlp_prev, g:lightline.ctrlp_item
-            \ , g:lightline.ctrlp_next], 0)
-    else
-      return ''
-    endif
-  endfunction
-
-  let g:ctrlp_status_func = {
-    \ 'main': 'CtrlPStatusFunc_1',
-    \ 'prog': 'CtrlPStatusFunc_2',
-    \ }
-
-  function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
-    let g:lightline.ctrlp_regex = a:regex
-    let g:lightline.ctrlp_prev = a:prev
-    let g:lightline.ctrlp_item = a:item
-    let g:lightline.ctrlp_next = a:next
-    return lightline#statusline(0)
-  endfunction
-
-  function! CtrlPStatusFunc_2(str)
-    return lightline#statusline(0)
-  endfunction
-
   let g:tagbar_status_func = 'TagbarStatusFunc'
 
   function! TagbarStatusFunc(current, sort, fname, ...) abort
       let g:lightline.fname = a:fname
     return lightline#statusline(0)
-  endfunction
-
-  augroup AutoSyntastic
-    autocmd!
-    autocmd BufWritePost *.c,*.cpp call s:syntastic()
-  augroup END
-  function! s:syntastic()
-    SyntasticCheck
-    call lightline#update()
   endfunction
 
   let g:unite_force_overwrite_statusline = 0
@@ -314,6 +272,7 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 "}}}
 Plug 'zchee/deoplete-go', { 'do': 'make'}
+
 Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
 Plug 'zchee/deoplete-jedi'
 "{{{
@@ -452,7 +411,6 @@ nnoremap <silent> <leader>rp :update<cr>:execute 'source '.fnameescape(g:vimrc)<
 
 " Clear search
 nnoremap <silent> <return> :noh<cr><esc>
-
 
 " Faster playback
 nnoremap Q @q
