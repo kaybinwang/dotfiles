@@ -23,12 +23,21 @@ alias eba="vi $HOME/.bash_aliases"
 alias ebe="vi $HOME/.bash_extras"
 alias sbp="source $HOME/.bash_profile"
 
+if command -v zsh &>/dev/null; then
+  alias szp="source $HOME/.zshrc"
+  alias ezp="vi $HOME/.zshrc"
+fi
+
 alias c='clear'
 
-# Binary aliases
-alias tmux='tmux -2'                        # tmux with 256 colors
-alias vi='nvim'                             # neovim
-alias vim='nvim'                            # neovim
+# tmux with 256 colors
+alias tmux='tmux -2'
+
+# default to neovim if it exists
+if command -v nvim &>/dev/null; then
+  alias vi='nvim'                             # neovim
+  alias vim='nvim'                            # neovim
+fi
 
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
@@ -86,10 +95,10 @@ alias gg='git grep'
 alias pp="cd $PROJECT_PERSONAL"
 alias wp="cd $PROJECT_WORK"
 
-pdf () {
+function pdf() {
   pdflatex "$1".tex && rm "$1".out "$1".log "$1".aux && open "$1".pdf;
 }
 
-chrome () {
+function chrome() {
   open -a "Google Chrome" "$1"
 }
