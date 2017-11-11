@@ -437,8 +437,8 @@ nnoremap <c-j> <c-w><c-j>
 nnoremap <c-k> <c-w><c-k>
 nnoremap <c-l> <c-w><c-l>
 
-nnoremap <silent> <c-p> :vsplit<cr>:terminal<cr>
-tnoremap <silent> <c-p> <c-\><c-n>:vsplit<cr>:terminal<cr>
+nnoremap <silent> <c-t> :vsplit<cr>:terminal<cr>
+tnoremap <silent> <c-t> <c-\><c-n>:vsplit<cr>:terminal<cr>
 
 " New tab
 nnoremap <silent> <c-w>t :tabnew<cr>
@@ -646,3 +646,19 @@ function! JavaFileSettings()
   nnoremap <Leader>jc  :JavaCorrect<cr>
   nnoremap <Leader>jcs :Checkstyle<cr>
 endfunc
+
+function! EditZshrc()
+  edit ~/.zshrc
+endfunc
+command! Ezp call EditZshrc()
+
+function! EditBashProfile()
+  edit ~/.bash_profile
+endfunc
+command! Ebp call EditBashProfile()
+
+function! EditBashAliases()
+  edit ~/.bash_aliases
+endfunc
+command! Eba call EditBashAliases()
+
