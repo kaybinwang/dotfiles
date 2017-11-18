@@ -446,6 +446,7 @@ tnoremap <silent> <c-w>t <c-\><c-n>:tabnew<cr>
 
 " Terminal window navigation
 if has('nvim')
+" TODO: this conflicts with backspace
   tnoremap <c-h> <c-\><c-n><c-w>h
   "TODO: this stays in normal if there's no window
   "maybe use alt-h instead for all window navs or tab...
