@@ -7,11 +7,19 @@ export LSCOLORS=ExFxBxDxCxegedabagacad
 # dark colors
 #export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
 
-# flush history on each command
-export PROMPT_COMMAND="history -a"
+# right before prompting for the next command, save the previous command in a
+# file.
+function onPrompt() {
+  echo "$(date +%Y-%m-%d--%H-%M-%S) $(hostname) $PWD $(history 1)" \
+    >> ~/.full_history
+}
+PROMPT_COMMAND=onPrompt
 
-export VISUAL=nvim
-export EDITOR="$VISUAL"
+# Set all editors to neovim (e.g. Git commit editor)
+if command -v nvim &>/dev/null; then
+  export VISUAL=nvim
+  export EDITOR="$VISUAL"
+fi
 
 # --files: List files that would be searched but do not search
 # --no-ignore: Do not respect .gitignore, etc...

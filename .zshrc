@@ -1,4 +1,21 @@
-# TODO: make .zsh if it works
+#===============================================================================
+# TODO
+#===============================================================================
+# make sure .zsh is a real directory
+# number the table of contents
+# move tbc to bottom for cat?
+
+#===============================================================================
+# Table of contents
+#===============================================================================
+# 1. Plugins
+# 2. Vim Bindings
+# 3. Keybindings
+# 4. Interface
+
+#===============================================================================
+# 1. Plugins
+#===============================================================================
 
 export ZPLUG_HOME=/usr/local/opt/zplug
 source $ZPLUG_HOME/init.zsh
@@ -21,16 +38,16 @@ if ! zplug check --verbose; then
   fi
 fi
 
-zplug load #--verbose
+zplug load
 
-# For faster vim mode display changes
-#export KEYTIMEOUT=1
+#===============================================================================
+# 2. Vim Bindings
+#===============================================================================
 
 export VISUAL=nvim
 export EDITOR="$VISUAL"
-alias vi='nvim'
 
-# Vim commands in bash
+# Vim mode
 bindkey -v
 bindkey "jj" vi-cmd-mode
 
@@ -39,13 +56,14 @@ bindkey "jj" vi-cmd-mode
 bindkey -v '^?' backward-delete-char
 bindkey -v '^h' backward-delete-char
 
-# do I want this 
-bindkey -M vicmd 'k' history-substring-search-up
-bindkey -M vicmd 'j' history-substring-search-down
+# bindkey -M vicmd 'c-p' history-substring-search-up
+# bindkey -M vicmd 'c-n' history-substring-search-down
+bindkey '^p' history-substring-search-up
+bindkey '^n' history-substring-search-down
 
-# enable parens, quotes and surround text-objects
+# Enable parens, quotes and surround text-objects
 # ciw ci" text objects
-# https://www.reddit.com/r/vim/comments/4995nr/navigate_your_command_line_with_modal_vi/d0qmcbl/
+# Source: https://www.reddit.com/r/vim/comments/4995nr/navigate_your_command_line_with_modal_vi/d0qmcbl/
 autoload -U select-bracketed
 zle -N select-bracketed
 for m in visual viopp; do
@@ -71,34 +89,20 @@ bindkey -a ds delete-surround
 bindkey -a ys add-surround
 bindkey -M visual S add-surround
 
-# Two sided prompt
-PROMPT='%F{red}%n%f@%F{blue}%m%f %F{yellow}%1~%f %# '
-#RPROMPT='[%F{yellow}%?%f]'
+#===============================================================================
+# 3. Interface
+#===============================================================================
 
-# TODO: figure how to make this show insert mode?
-function zle-line-init zle-keymap-select {
-  VIM_PROMPT="%{$fg_bold[yellow]%} [% NORMAL]% %{$reset_color%}"
-  #RPS1="${${KEYMAP/vicmd/$VIM_PROMPT}/(main|viins)/} $(git_custom_status) $EPS1"
-  RPS1="${${KEYMAP/vicmd/$VIM_PROMPT}/(main|viins)/} $EPS1"
-  zle reset-prompt
-}
+#-------------------------------------------------------------------------------
+# 3.1 Colors
+#-------------------------------------------------------------------------------
 
-zle -N zle-line-init
-zle -N zle-keymap-select
-
-alias szp="source $HOME/.zshrc"
-alias ezp="vi $HOME/.zshrc"
-
-# Always ls with colors
-alias ls='ls -G'
-
-unset LSCOLORS
-
-export CLICOLOR  # same as 'alias ls=ls -G' which I also have set
+export CLICOLOR
 export LSCOLORS=ExFxBxDxCxegedabagacad
 
-
-zstyle ':completion:*' menu select=2                        # menu if nb items > 2
+#-------------------------------------------------------------------------------
+# 3.2 Syntax Hightlighting
+#-------------------------------------------------------------------------------
 
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 
@@ -106,6 +110,8 @@ ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 #ZSH_HIGHLIGHT_STYLES[default]='fg=blue'
 #ZSH_HIGHLIGHT_STYLES[globbing]='fg=yellow'
 #ZSH_HIGHLIGHT_STYLES[path]='fg=blue,bold,dim'
+
+# Syntax highlighting for previous command suggestions
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
 
 # To differentiate aliases from other command types
@@ -117,5 +123,79 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
 # To disable highlighting of globbing expressions
 #ZSH_HIGHLIGHT_STYLES[globbing]='none'
 
-source .bash_aliases
-source .bash_extras
+
+#-------------------------------------------------------------------------------
+# 3.3 Prompt
+#-------------------------------------------------------------------------------
+
+setopt prompt_subst
+
+function parse_git_branch() {
+  git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+
+PROMPT='[%F{yellow}$(task status:pending count)%f] %F{green}%~%f%F{yellow}$(parse_git_branch)%f%F{red}$(gcp_prompt_info)%f%F{blue}$(kube_prompt_info)%f %# '
+
+# Update right side prompt that shows vim mode.
+function zle-line-init zle-keymap-select {
+  local NORMAL="%{$fg_bold[blue]%} [% NORMAL]% %{$reset_color%}"
+  local INSERT="%{$fg_bold[green]%} [% INSERT]% %{$reset_color%}"
+  RPS1="${${KEYMAP/vicmd/$NORMAL}/(main|viins)/$INSERT} $EPS1"
+  zle reset-prompt
+}
+
+zle -N zle-line-init
+zle -N zle-keymap-select
+
+#===============================================================================
+# 4. Environment
+#===============================================================================
+
+# --files: List files that would be searched but do not search
+# --no-ignore: Do not respect .gitignore, etc...
+# --hidden: Search hidden files and folders
+# --follow: Follow symlinks
+# --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
+export FZF_DEFAULT_OPTS='
+  --color fg:188,hl:110,fg+:222,bg+:234,hl+:111
+  --color info:183,prompt:110,spinner:107,pointer:167,marker:215
+'
+
+export PROJECT_PERSONAL="$HOME/projects/personal"
+export PROJECT_WORK="$HOME/projects/work"
+export PATH="/usr/local/opt/icu4c/bin:$PATH"
+export PATH="/usr/local/opt/icu4c/sbin:$PATH"
+export GOPATH="$PROJECT_PERSONAL/go"
+export PATH=$GOPATH/bin:$PATH
+
+if [ -f "$HOME/.bash_aliases" ]; then
+  source "$HOME/.bash_aliases"
+fi
+
+if [ -f "$HOME/.sh_extras" ]; then
+  source "$HOME/.sh_extras"
+fi
+
+# Load all ssh keys in keychain for MacOS.
+ssh-add -A &>/dev/null
+
+#===============================================================================
+# 5. Completion
+#===============================================================================
+
+# menu if nb items > 2
+zstyle ':completion:*' menu select=2
+
+#-------------------------------------------------------------------------------
+# 5.1 Git Completion
+#-------------------------------------------------------------------------------
+
+compdef g=git
+
+_git 2>/dev/null
+compdef '__gitcomp_nl "$(__git_heads '' $track)"' gco
+compdef '__gitcomp_nl "$(__git_heads '' $track)"' gbd
+compdef '__gitcomp_nl "$(__git_heads '' $track)"' gbD
+
+#test -z "$TMUX" && (tmux attach || tmux new-session)
