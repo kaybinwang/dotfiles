@@ -56,10 +56,10 @@ bindkey "jj" vi-cmd-mode
 bindkey -v '^?' backward-delete-char
 bindkey -v '^h' backward-delete-char
 
-# bindkey -M vicmd 'c-p' history-substring-search-up
-# bindkey -M vicmd 'c-n' history-substring-search-down
-bindkey '^p' history-substring-search-up
-bindkey '^n' history-substring-search-down
+bindkey -M vicmd 'c-p' history-substring-search-up
+bindkey -M vicmd 'c-n' history-substring-search-down
+#bindkey '^p' history-substring-search-up
+#bindkey '^n' history-substring-search-down
 
 # Enable parens, quotes and surround text-objects
 # ciw ci" text objects
