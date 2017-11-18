@@ -131,10 +131,34 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
 setopt prompt_subst
 
 function parse_git_branch() {
-  git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+  git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1) /'
 }
 
-PROMPT='[%F{yellow}$(task status:pending count)%f] %F{green}%~%f%F{yellow}$(parse_git_branch)%f%F{red}$(gcp_prompt_info)%f%F{blue}$(kube_prompt_info)%f %# '
+unset PROMPT
+
+if command -v task &>/dev/null; then
+  PROMPT="${PROMPT}[%F{yellow}\$(task status:pending count)%f] "
+fi
+
+# Show current working directory, favoring ~ for home
+PROMPT="${PROMPT}%F{green}%~%f "
+
+# Show working git branch if applicable
+if command -v git &>/dev/null; then
+  PROMPT="${PROMPT}%F{yellow}\$(parse_git_branch)%f"
+fi
+
+# Show Google Cloud Project if applicable
+if command -v gcp_prompt_info &>/dev/null; then
+  PROMPT="${PROMPT}%F{red}\$(gcp_prompt_info)%f "
+fi
+
+# Show Kubernetes cluster if applicable
+if command -v kube_prompt_info &>/dev/null; then
+  PROMPT="${PROMPT}%F{blue}\$(kube_prompt_info)%f "
+fi
+
+PROMPT="${PROMPT}%# "
 
 # Update right side prompt that shows vim mode.
 function zle-line-init zle-keymap-select {
