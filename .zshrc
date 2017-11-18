@@ -3,7 +3,6 @@
 #===============================================================================
 # make sure .zsh is a real directory
 # number the table of contents
-# move tbc to bottom for cat?
 
 #===============================================================================
 # Table of contents
