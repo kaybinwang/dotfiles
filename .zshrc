@@ -131,11 +131,54 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
 
 setopt prompt_subst
 
+unset PROMPT
+
+# Git context
 function parse_git_branch() {
   git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1) /'
 }
 
-unset PROMPT
+# GCP context
+function gcp_prompt_info() {
+  local cfg="$(cat ~/.config/gcloud/active_config 2>/dev/null)"
+  if [ -n "$cfg" ]; then
+    case "$cfg" in
+      *development*)
+        cfg='dev'
+        ;;
+      *testing*)
+        cfg='test'
+        ;;
+      *production*)
+        cfg='prod'
+        ;;
+      *)
+        ;;
+    esac
+    echo -n "(gcp:$cfg) "
+  fi
+}
+
+# Kubernetes context
+function kube_prompt_info() {
+  local cfg="$(kubectl config current-context 2>/dev/null)"
+  if [ -n "$cfg" ]; then
+    case "$cfg" in
+      *development*)
+        cfg='dev'
+        ;;
+      *testing*)
+        cfg='test'
+        ;;
+      *production*)
+        cfg='prod'
+        ;;
+      *)
+        ;;
+    esac
+    echo -n "(kub:$cfg) "
+  fi
+}
 
 if command -v task &>/dev/null; then
   PROMPT="${PROMPT}[%F{yellow}\$(task status:pending count)%f] "
@@ -145,21 +188,23 @@ fi
 PROMPT="${PROMPT}%F{green}%~%f "
 
 # Show working git branch if applicable
+# We can't encode a trailing space or else it will always be present.
+# Trailing space should be appended in parse_git_branch.
 if command -v git &>/dev/null; then
   PROMPT="${PROMPT}%F{yellow}\$(parse_git_branch)%f"
 fi
 
 # Show Google Cloud Project if applicable
-if command -v gcp_prompt_info &>/dev/null; then
-  PROMPT="${PROMPT}%F{red}\$(gcp_prompt_info)%f "
+if command -v gcloud &>/dev/null; then
+  PROMPT="${PROMPT}%F{red}\$(gcp_prompt_info)%f"
 fi
 
 # Show Kubernetes cluster if applicable
-if command -v kube_prompt_info &>/dev/null; then
-  PROMPT="${PROMPT}%F{blue}\$(kube_prompt_info)%f "
+if command -v kubectl &>/dev/null; then
+  PROMPT="${PROMPT}%F{blue}\$(kube_prompt_info)%f"
 fi
 
-PROMPT="${PROMPT}%# "
+export PROMPT="${PROMPT}%# "
 
 # Update right side prompt that shows vim mode.
 function zle-line-init zle-keymap-select {
