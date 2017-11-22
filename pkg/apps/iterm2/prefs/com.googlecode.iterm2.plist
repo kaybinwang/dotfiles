@@ -770,11 +770,11 @@
 	<key>NSWindow Frame SessionsPreferences</key>
 	<string>269 139 606 456 0 0 1680 1027 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>130 531 918 452 0 0 1680 1027 </string>
+	<string>130 531 796 473 0 0 1680 1027 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
 	<string>89 61 1410 927 0 0 1680 1027 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
-	<string>133 148 1130 777 0 0 1680 1027 </string>
+	<string>-140 100 1410 927 0 0 1680 1027 </string>
 	<key>NSWindow Frame iTerm Window 2</key>
 	<string>149 37 1270 777 0 0 1680 1027 </string>
 	<key>New Bookmarks</key>
