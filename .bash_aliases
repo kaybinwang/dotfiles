@@ -1,5 +1,7 @@
 export IDEAVIMRC="$HOME/.ideavimrc"
 
+alias sudo='sudo '
+
 ## a quick way to get out of current directory ##
 alias ..='cd ..'
 alias ...='cd ../../'
