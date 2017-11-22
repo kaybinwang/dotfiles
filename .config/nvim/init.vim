@@ -48,7 +48,7 @@ Plug 'junegunn/fzf.vim'
 
 Plug 'danro/rename.vim'
 
-Plug 'jiangmiao/auto-pairs'
+"Plug 'jiangmiao/auto-pairs'
 "{{{
   " Disable <c-h> for deleting pairs.
   let g:AutoPairsMapCh = 0
@@ -309,6 +309,7 @@ set splitbelow                      " create new splits below
 set splitright                      " create new splits to the right
 set wildmenu                        " enable wildmenu
 set wildmode=longest:full,full      " configure wildmenu
+"set path+=**                        " recursive searching
 set nostartofline                   " keeps cursor in place when switching buffers
 set laststatus=2                    " extra status (lightline)
 set noshowmode                      " hide the mode (lightline)
@@ -502,6 +503,11 @@ nnoremap zp zMzv
 " 3.3 Search (FZF)
 "-------------------------------------------------------------------------------
 " {{{
+
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
 
 " Open search
 nnoremap <silent> <leader><leader> :Files<cr>
