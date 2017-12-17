@@ -60,7 +60,7 @@ bindkey '^p' history-substring-search-up
 bindkey '^n' history-substring-search-down
 
 # Complete autosuggestion when in insert mode
-bindkey '^l' autosuggest-accept
+bindkey '^ ' autosuggest-accept
 
 # Enable parens, quotes and surround text-objects
 # ciw ci" text objects
@@ -243,8 +243,8 @@ if [ -f "$HOME/.bash_aliases" ]; then
   source "$HOME/.bash_aliases"
 fi
 
-if [ -f "$HOME/.sh_extras" ]; then
-  source "$HOME/.sh_extras"
+if [ -f "$HOME/.env" ]; then
+  source "$HOME/.env"
 fi
 
 # Load all ssh keys in keychain for MacOS.
