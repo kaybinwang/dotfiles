@@ -39,6 +39,7 @@ endif
 
 call plug#begin('~/.vim/plugged')
 Plug 'nanotech/jellybeans.vim'
+Plug 'joshdick/onedark.vim'
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
 Plug 'junegunn/fzf.vim'
@@ -46,7 +47,8 @@ Plug 'junegunn/fzf.vim'
   "let g:fzf_nvim_statusline = 0 " disable statusline overwriting
 "}}}
 
-Plug 'danro/rename.vim'
+Plug 'tpope/vim-eunuch'
+"Plug 'justinmk/vim-dirvish'
 
 "Plug 'jiangmiao/auto-pairs'
 "{{{
@@ -156,6 +158,8 @@ Plug 'itchyny/lightline.vim'
 
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
+
+Plug 'tomlion/vim-solidity'
 
 Plug 'tpope/vim-repeat'
 
@@ -381,6 +385,7 @@ set ignorecase
 
 " Auto insert if terminal open
 if has('nvim')
+  au TermOpen * setl nonumber norelativenumber
   au BufEnter * if &buftype == 'terminal' | :startinsert | endif
 endif
 
@@ -561,18 +566,15 @@ nnoremap <silent> <leader>gc :Gcommit<cr>
 " }}}
 
 "-------------------------------------------------------------------------------
-" 3.5 File Browser (NERDTree)
+" 3.5 File Browser (netrw)
 "-------------------------------------------------------------------------------
 "{{{
 
-" Single click expand
-let g:NERDTreeMouseMode=2
+" Turn off top banner by default (toggle with I)
+let g:netrw_banner = 0
 
-" Open file explorer
-nnoremap <silent> <leader>f :NERDTreeToggle<cr><esc>
-
-" Jump to file in explorer
-nnoremap <silent> <leader>e :NERDTreeFind<cr>
+" Tree view
+let g:netrw_liststyle = 3
 
 "}}}
 
