@@ -180,12 +180,11 @@ function kube_prompt_info() {
   fi
 }
 
-if command -v task &>/dev/null; then
-  PROMPT="${PROMPT}[%F{yellow}\$(task status:pending count)%f] "
-fi
+
+PROMPT="${PROMPT}%(?.%F{green}[✔]%f.%F{red}[✘]%f) "
 
 # Show current working directory, favoring ~ for home
-PROMPT="${PROMPT}%F{green}%~%f "
+PROMPT="${PROMPT}%F{blue}%~%f "
 
 # Show working git branch if applicable
 # We can't encode a trailing space or else it will always be present.
