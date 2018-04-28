@@ -38,7 +38,7 @@ endif
 let vim_plug = g:vim_plug_dir.'/plug.vim'
 " Install vim-plug if not available
 if !filereadable(vim_plug)
-  echo "Installing vim-plug..."
+  echo "Installing vim-plug...\n"
   call mkdir(g:vim_plug_dir, 'p')
   silent! execute '!curl -fLo '.g:vim_plug.' --create-dirs '.
         \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -46,6 +46,12 @@ if !filereadable(vim_plug)
 endif
 
 call plug#begin('~/.vim/plugged')
+
+if !has('nvim')
+  Plug 'roxma/vim-hug-neovim-rpc'
+  Plug 'roxma/nvim-yarp'
+endif
+
 Plug 'nanotech/jellybeans.vim'
 Plug 'joshdick/onedark.vim'
 
@@ -164,6 +170,7 @@ Plug 'itchyny/lightline.vim'
   "}}}
 "}}}
 
+" Git Plugins
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 
@@ -210,44 +217,6 @@ Plug 'hail2u/vim-css3-syntax'
 Plug 'chrisbra/Colorizer'
 "{{{
   let g:colorizer_auto_filetype='css,html'
-  nnoremap <silent> <c-h> :ColorToggle<cr>
-"}}}
-
-Plug 'pangloss/vim-javascript'
-"{{{
-  let g:javascript_plugin_jsdoc = 1
-  let g:javascript_plugin_flow = 1
-"}}}
-Plug 'mxw/vim-jsx'
-"{{{
-  let g:jsx_ext_required = 0
-"}}}
-Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
-
-Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
-"{{{ vim-go
-  let g:go_highlight_build_constraints = 1
-  let g:go_highlight_extra_types = 1
-  let g:go_highlight_fields = 1
-  let g:go_highlight_functions = 1
-  let g:go_highlight_methods = 1
-  let g:go_highlight_operators = 1
-  let g:go_highlight_structs = 1
-  let g:go_highlight_types = 1
-
-  " Semantic type inference on higlight
-  let g:go_auto_type_info = 1
-
-  " Auto import on write
-  let g:go_fmt_command = 'goimports'
-  "let g:go_decls_mode = 'fzf'
-
-  " Highlight same variable name
-  "let g:go_auto_sameids = 1
-
-  " :GoAddTags will default to snakecase when generating tags
-  let g:go_addtags_transform = "snakecase"
-
 "}}}
 
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -285,12 +254,70 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   let g:deoplete#file#enable_buffer_path = 1
 
 "}}}
-Plug 'zchee/deoplete-go', { 'do': 'make'}
+" Plug 'zchee/deoplete-go', { 'do': 'make'}
 
-Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
-Plug 'zchee/deoplete-jedi'
+"Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+"Plug 'zchee/deoplete-jedi'
+""{{{
+"  let g:deoplete#sources#jedi#show_docstring = 1
+""}}}
+
+
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
 "{{{
-  let g:deoplete#sources#jedi#show_docstring = 1
+  " Automatically start language servers.
+  let g:LanguageClient_autoStart = 1
+
+  let g:LanguageClient_serverCommands = {
+        \ 'html': ['html-languageserver', '--stdio'],
+        \ 'java': ['java',
+          \ '-Declipse.application=org.eclipse.jdt.ls.core.id1',
+          \ '-Declipse.product=org.eclipse.jdt.ls.core.product',
+          \ '-noverify',
+          \ '-Xms1G',
+          \ '-jar',
+          \ '~/Downloads/jdt-language-server-0.1.0-201702132114/plugins/org.eclipse.equinox.launcher_1.4.0.v20161219-1356.jar',
+          \ '-configuration',
+          \ '~/Downloads/jdt-language-server-0.1.0-201702132114/config_mac'],
+        \ 'javascript': ['javascript-typescript-stdio'],
+        \ 'javascript.jsx': ['javascript-typescript-stdio'],
+        \ 'python': ['pyls'],
+        \ }
+
+  " call LanguageClient_setLoggingLevel('DEBUG')
+
+  nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+  nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+  nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+"}}}
+
+Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+"{{{ vim-go
+  let g:go_highlight_build_constraints = 1
+  let g:go_highlight_extra_types = 1
+  let g:go_highlight_fields = 1
+  let g:go_highlight_functions = 1
+  let g:go_highlight_methods = 1
+  let g:go_highlight_operators = 1
+  let g:go_highlight_structs = 1
+  let g:go_highlight_types = 1
+
+  " Semantic type inference on higlight
+  let g:go_auto_type_info = 1
+
+  " Auto import on write
+  let g:go_fmt_command = 'goimports'
+  "let g:go_decls_mode = 'fzf'
+
+  " Highlight same variable name
+  "let g:go_auto_sameids = 1
+
+  " :GoAddTags will default to snakecase when generating tags
+  let g:go_addtags_transform = "snakecase"
+
 "}}}
 
 " Text Editing
@@ -307,6 +334,7 @@ call plug#end()
 
 " Interface
 filetype indent plugin on           " plugins
+set encoding=utf8
 set number                          " line numbers
 set cursorline                      " highlight current line
 set wrap                            " enable text wrap
