@@ -23,17 +23,20 @@
 "   3.2 Movement / Navigation
 "   3.3 
 
-let g:vim_home = expand('~/.config/nvim')
-let g:vim_plug_dir = g:vim_home.'/autoload'
-let g:vimrc = g:vim_home.'/init.vim'
+if has('nvim')
+  let g:vim_plug_dir = expand('~/.config/nvim/autoload')
+  let g:vimrc = expand('~/.config/nvim/init.vim')
+else
+  let g:vim_plug_dir = expand('~/.vim/autoload')
+  let g:vimrc = expand('~/.vimrc')
+endif
 
 let vim_plug = g:vim_plug_dir.'/plug.vim'
 " Install vim-plug if not available
 if !filereadable(vim_plug)
   echo "Installing vim-plug..."
   call mkdir(g:vim_plug_dir, 'p')
-  silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  silent! execute '!curl -fLo '.g:vim_plug.' --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   execute 'source '.fnameescape(vim_plug)
 endif
 
@@ -354,7 +357,7 @@ setl modelines=1
 " Background
 set mouse=a                     " enable mouse support
 set autoread                    " update file when changed outside of vim
-"set clipboard=unnamed           " use native clipboard
+set clipboard=unnamed           " use native clipboard
 set history=200                 " store last 200 commands as history
 set nobackup                    " don't save backups
 set noerrorbells                " no error bells please
