@@ -23,6 +23,10 @@
 "   3.2 Movement / Navigation
 "   3.3 
 
+"===============================================================================
+" 1. Plugins
+"===============================================================================
+
 if has('nvim')
   let g:vim_plug_dir = expand('~/.config/nvim/autoload')
   let g:vimrc = expand('~/.config/nvim/init.vim')
@@ -36,7 +40,8 @@ let vim_plug = g:vim_plug_dir.'/plug.vim'
 if !filereadable(vim_plug)
   echo "Installing vim-plug..."
   call mkdir(g:vim_plug_dir, 'p')
-  silent! execute '!curl -fLo '.g:vim_plug.' --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  silent! execute '!curl -fLo '.g:vim_plug.' --create-dirs '.
+        \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   execute 'source '.fnameescape(vim_plug)
 endif
 
