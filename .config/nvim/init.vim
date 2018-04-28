@@ -357,7 +357,7 @@ setl modelines=1
 " Background
 set mouse=a                     " enable mouse support
 set autoread                    " update file when changed outside of vim
-set clipboard=unnamed           " use native clipboard
+" set clipboard=unnamed           " use native clipboard
 set history=200                 " store last 200 commands as history
 set nobackup                    " don't save backups
 set noerrorbells                " no error bells please
