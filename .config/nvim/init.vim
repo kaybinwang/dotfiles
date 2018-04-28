@@ -199,6 +199,8 @@ Plug 'w0rp/ale'
 
 "}}}
 
+Plug 'sheerun/vim-polyglot'
+
 Plug 'hail2u/vim-css3-syntax'
 Plug 'chrisbra/Colorizer'
 "{{{
@@ -617,8 +619,8 @@ au FileType txt call PlainTextFileSettings()
 au FileType tex call PlainTextFileSettings()
 au BufRead,BufNewFile *.jsp call JspFileSettings()
 au BufRead,BufNewFile *.tmpl call GoTmplFileSettings()
-au BufRead,BufNewFile  *.sig setl filetype=sml
-au BufRead,BufNewFile *.thrift, *.bsh setl syntax=java
+au BufRead,BufNewFile *.sig setl filetype=sml
+au BufRead,BufNewFile *.bsh setl syntax=java
 au BufRead,BufNewFile .gitconfig-* setl syntax=gitconfig
 
 function! PlainTextFileSettings()
