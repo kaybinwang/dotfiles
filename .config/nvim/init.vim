@@ -279,12 +279,18 @@ Plug 'autozimu/LanguageClient-neovim', {
         \ 'python': ['pyls'],
         \ }
 
-  let g:LanguageClient_loggingLevel = 'DEBUG'
-  " call LanguageClient_setLoggingLevel('DEBUG')
+  " let g:LanguageClient_loggingLevel = 'DEBUG'
 
-  nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-  nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-  nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+  nnoremap <silent> K :call LanguageClient#textDocument_hover()<cr>
+
+  nnoremap <silent> <leader>f :call LanguageClient#textDocument_formatting()<cr>
+  vnoremap <silent> <leader>f :call LanguageClient#textDocument_rangeFormatting()<cr>
+
+  nnoremap <silent> gd :call LanguageClient#textDocument_definition()<cr>
+  nnoremap <silent> gi :call LanguageClient#textDocument_implementation()<cr>
+  nnoremap <silent> gr :call LanguageClient#textDocument_references()<cr>
+
+  nnoremap <silent> <F6> :call LanguageClient#textDocument_rename()<cr>
 "}}}
 
 Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
@@ -570,7 +576,7 @@ command! -bang -nargs=* FindInExact
 function! SearchWordWithRg()
   execute 'FindInExact' expand('<cword>')
 endfunction
-nnoremap <silent> K :call SearchWordWithRg()<cr>
+" nnoremap <silent> K :call SearchWordWithRg()<cr>
 
 " Scroll search results
 autocmd FileType fzf tnoremap <buffer> <c-j> <down>
@@ -680,7 +686,7 @@ endfunc
 function! JavaFileSettings()
   setl sts=2 sw=2 ts=2
   setl colorcolumn=90
-  nnoremap K :JavaDocPreview<cr>
+  " nnoremap K :JavaDocPreview<cr>
   nnoremap <Leader>jr  :JavaRename 
   nnoremap <Leader>ji  :JavaImport<cr>
   nnoremap <Leader>jio :JavaImportOrganize<cr>
