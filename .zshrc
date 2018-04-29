@@ -200,7 +200,7 @@ fi
 
 # Show Kubernetes cluster if applicable
 if command -v kubectl &>/dev/null; then
-  PROMPT="${PROMPT}%F{blue}\$(kube_prompt_info)%f"
+  PROMPT="${PROMPT}%F{magenta}\$(kube_prompt_info)%f"
 fi
 
 export PROMPT="${PROMPT}%# "
