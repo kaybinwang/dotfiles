@@ -273,20 +273,13 @@ Plug 'autozimu/LanguageClient-neovim', {
 
   let g:LanguageClient_serverCommands = {
         \ 'html': ['html-languageserver', '--stdio'],
-        \ 'java': ['java',
-          \ '-Declipse.application=org.eclipse.jdt.ls.core.id1',
-          \ '-Declipse.product=org.eclipse.jdt.ls.core.product',
-          \ '-noverify',
-          \ '-Xms1G',
-          \ '-jar',
-          \ '~/Downloads/jdt-language-server-0.1.0-201702132114/plugins/org.eclipse.equinox.launcher_1.4.0.v20161219-1356.jar',
-          \ '-configuration',
-          \ '~/Downloads/jdt-language-server-0.1.0-201702132114/config_mac'],
+        \ 'java': ['jdtls', '-data', getcwd()],
         \ 'javascript': ['javascript-typescript-stdio'],
         \ 'javascript.jsx': ['javascript-typescript-stdio'],
         \ 'python': ['pyls'],
         \ }
 
+  let g:LanguageClient_loggingLevel = 'DEBUG'
   " call LanguageClient_setLoggingLevel('DEBUG')
 
   nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
