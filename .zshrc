@@ -249,6 +249,9 @@ fi
 # Load all ssh keys in keychain for MacOS.
 ssh-add -A &>/dev/null
 
+# allow for unquoted wildcards, e.g. `ls *.sh`.
+unsetopt no_match
+
 #===============================================================================
 # 5. Completion
 #===============================================================================
