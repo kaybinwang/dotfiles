@@ -1,0 +1,197 @@
+#!/bin/bash
+
+PROG_NAME="$(basename "$0")"
+CIPHERNAME='aes-256-cbc'
+
+# Encrypts the content in stdin and writes it to the input file.
+#
+# Args:
+#   $1 is the filename to store the encrypted data
+#
+# Output:
+#   None
+function encrypt_stdin() {
+  local filename="$1"
+  if [ -n "$filename" ]; then
+    # Run OpenSSL to encrypt the contents in stdin and output to the file
+    if ! openssl $CIPHERNAME -base64 -salt -out "$filename"; then
+      echo 'Unable to encrypt the file.' 1>&2
+      return 1
+    fi
+  else
+    echo 'No file provided.' 1>&2
+    return 1
+  fi
+}
+
+# Decrypts the contents of the file and outputs it to stdout.
+#
+# Args:
+#   $1 is the filename
+#
+# Output:
+#   Decrypted contents of filename to stdout
+function decrypt_stdout() {
+  local filename="$1"
+  if [ -e "$filename" ] ; then
+    # Run OpenSSL to decrypt the file and output the contents to stdout
+    if ! openssl $CIPHERNAME -d -base64 -in "$filename" 2>/dev/null; then
+      echo 'Wrong Password.' 1>&2
+      return 1
+    fi
+  else
+    echo 'No file provided.' 1>&2
+    return 1
+  fi
+}
+
+function cmd_list() {
+  find "$HOME/.secrets" -type f -name "*" -exec basename {} \;
+}
+
+function cmd_get() {
+  local secret="$1"
+  local usage
+  usage="$(cat <<EOM
+usage: $PROG_NAME get <secret>
+
+Fetches the secret and prompts the user for the password. If the secret is
+successfully decrypted, then it is copied to the system clipboard.
+
+Args:
+   <secret>   is the name of the secret to get
+EOM
+)"
+  # TODO: make this parse long options
+  if [ -z "$secret" ] || [ "$secret" = "--help" ]; then
+    echo "$usage"
+  elif [ -f "$HOME/.secrets/$secret" ]; then
+    # set pipefail if it isn't already set so that we error out in our pipes
+    local revert_pipefail=1
+    if [[ ! "$SHELLOPTS" =~ "pipefail" ]]; then
+      set -o pipefail
+      revert_pipefail=0
+    fi
+
+    # copy decrypted secret to system clipboard and capture exit code
+    decrypt_stdout "$HOME/.secrets/$secret" | pbcopy
+    local exit_code="$?"
+    if [ $exit_code = 0 ]; then
+      echo 'Copied to clipboard.'
+    fi
+
+    # revert the pipefail option if it was set by this function
+    if [ $revert_pipefail = 0 ]; then
+      set +o pipefail
+    fi
+    return "$exit_code"
+  else
+    echo "$PROG_NAME: '$secret' doesn't exist."
+    return 1
+  fi
+}
+
+function cmd_set() {
+  local secret_name="$1"
+  local usage
+  usage="$(cat <<EOM
+usage: $PROG_NAME set <secret_name>
+
+Creates a new secret with the provided name, reading the password from stdin.
+
+Args:
+   <secret_name>   is the name of the secret to create
+EOM
+)"
+
+  if [ -f "$HOME/.secrets/$secret_name" ]; then
+    echo "$PROG_NAME: '$secret_name' already exists."
+    return 1
+  fi
+
+  # Prompt user for secret to encode and confirm it's correct
+  local raw_secret
+  echo -n "Enter secret for $secret_name: "
+  read -rs raw_secret
+  echo
+  echo -n "Retype secret for $secret_name: "
+  read -rs raw_secret_confirm
+  echo
+  while [ "$raw_secret" != "$raw_secret_confirm" ]; do
+    echo "Secret mismatch. Please try again."
+    echo -n "Enter secret for $secret_name: "
+    read -rs raw_secret
+    echo
+    echo -n "Retype secret for $secret_name: "
+    read -rs raw_secret_confirm
+    echo
+  done
+
+  # TODO: make this parse long options
+  if [ -z "$secret_name" ] || [ "$secret_name" = "--help" ]; then
+    echo "$usage"
+  elif [ ! -f "$HOME/.secrets/$secret_name" ]; then
+    echo -n "$raw_secret" | encrypt_stdin "$HOME/.secrets/$secret_name"
+  else
+    echo "$PROG_NAME: '$secret_name' already exists."
+    return 1
+  fi
+}
+
+function cmd_delete() {
+  local secret_name="$1"
+  local usage
+  usage="$(cat <<EOM
+usage: $PROG_NAME delete <secret_name>
+
+Deletes the secret with the provided name.
+
+Args:
+   <secret_name>   is the name of the secret to delete
+EOM
+)"
+
+  # TODO: read from long options
+  if [ -z "$secret_name" ] || [ "$secret_name" = "help" ]; then
+    echo "$usage"
+  elif [ -f "$HOME/.secrets/$secret_name" ]; then
+    rm "$HOME/.secrets/$secret_name"
+    echo "Deleted '$secret_name'."
+    return 0
+  else
+    echo "$PROG_NAME: '$secret_name' does not exist." 1>&2
+    return 1
+  fi
+}
+
+function main() {
+  local cmd="$1"
+  local usage
+  usage="$(cat <<EOM
+usage: $PROG_NAME <command> [<args>]
+
+Manages secrets.
+
+Commands:
+   get      Decrypts a secret and copies it into the system clipboard
+   set      Creates a new secret
+   list     Lists all available secrets
+EOM
+)"
+  if [ -z "$cmd" ] || [ "$cmd" = "--help" ] || [ "$cmd" = "help" ]; then
+    echo "$usage"
+  elif [ "$cmd" = "list" ]; then
+    cmd_list "${@:2}"
+  elif [ "$cmd" = "get" ]; then
+    cmd_get "${@:2}"
+  elif [ "$cmd" = "set" ]; then
+    cmd_set "${@:2}"
+  elif [ "$cmd" = "delete" ]; then
+    cmd_delete "${@:2}"
+  else
+    echo "$PROG_NAME: '$cmd' is not a $PROG_NAME command. See '$PROG_NAME --help'."
+    return 1
+  fi
+}
+
+main "$@"
