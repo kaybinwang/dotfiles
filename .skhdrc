@@ -70,7 +70,7 @@ shift + ctrl - left  : chunkc tiling::window --warp-floating bottom-left
 shift + ctrl - right : chunkc tiling::window --warp-floating bottom-right
 
 # send window to desktop and follow focus
-shift + alt - x : chunkc tiling::window --send-to-desktop $(chunkc get _last_active_desktop); qes -k "cmd + alt - $(chunkc get _last_active_desktop)"
+shift + alt - x : chunkc tiling::window --send-to-desktop $(chunkc get _last_active_desktop); qes -k "ctrl + alt - $(chunkc get _last_active_desktop)"
 shift + alt - p : chunkc tiling::window --send-to-desktop prev; qes -k "ctrl + alt - p"
 shift + alt - n : chunkc tiling::window --send-to-desktop next; qes -k "ctrl + alt - n"
 shift + alt - 1 : chunkc tiling::window --send-to-desktop 1; qes -k "ctrl + alt - 1"
@@ -107,12 +107,12 @@ shift + cmd - s : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-wind
 shift + cmd - w : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge north
 shift + cmd - d : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge east
 
-# set insertion point for focused container
-ctrl + alt - f : chunkc tiling::window --use-insertion-point cancel
-ctrl + alt - h : chunkc tiling::window --use-insertion-point west
-ctrl + alt - j : chunkc tiling::window --use-insertion-point south
-ctrl + alt - k : chunkc tiling::window --use-insertion-point north
-ctrl + alt - l : chunkc tiling::window --use-insertion-point east
+# # set insertion point for focused container
+# ctrl + alt - f : chunkc tiling::window --use-insertion-point cancel
+# ctrl + alt - h : chunkc tiling::window --use-insertion-point west
+# ctrl + alt - j : chunkc tiling::window --use-insertion-point south
+# ctrl + alt - k : chunkc tiling::window --use-insertion-point north
+# ctrl + alt - l : chunkc tiling::window --use-insertion-point east
 
 # rotate tree
 alt - r : chunkc tiling::desktop --rotate 90
