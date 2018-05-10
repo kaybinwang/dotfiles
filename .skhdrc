@@ -89,7 +89,8 @@ cmd + alt - 3  : chunkc tiling::monitor -f 3
 
 # send window to monitor and follow focus
 shift + cmd - p  : chunkc tiling::window --send-to-monitor prev; chunkc tiling::monitor -f prev
-shift + cmd - n  : chunkc tiling::window --send-to-monitor next; chunkc tiling::monitor -f next
+# conflicts with chrome
+# shift + cmd - n  : chunkc tiling::window --send-to-monitor next; chunkc tiling::monitor -f next
 shift + cmd - 1  : chunkc tiling::window --send-to-monitor 1; chunkc tiling::monitor -f 1
 shift + cmd - 2  : chunkc tiling::window --send-to-monitor 2; chunkc tiling::monitor -f 2
 shift + cmd - 3  : chunkc tiling::window --send-to-monitor 3; chunkc tiling::monitor -f 3
