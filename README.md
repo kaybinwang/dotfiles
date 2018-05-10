@@ -30,9 +30,18 @@ Bugs, tech debt, etc
   package.
 
 ```bash
+# installs SF fonts to general fonts
 $ cd /Applications/Utilities/Terminal.app/Contents/Resources/Fonts/
 $ cp *.otf ~/Library/Fonts/
+
+# brew install fontforge
+git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git
+cd nerd-fonts
+ls $HOME/Library/Fonts/SFMono-*.otf | xargs -L 1 ./font-patcher --complete --outputdir $HOME/Library/Fonts/
+cd ..
+rm -rf nerd-fonts
 ```
+
 
 ```bash
 brew cask tap
