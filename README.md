@@ -29,6 +29,16 @@ Bugs, tech debt, etc
 - move setup github into it's own utility? actually this makes more sense as a
   package.
 
+```bash
+$ cd /Applications/Utilities/Terminal.app/Contents/Resources/Fonts/
+$ cp *.otf ~/Library/Fonts/
+```
+
+```bash
+brew cask tap
+brew cask install font-dejavusansmono-nerd-font
+```
+
 Features
 - 100% coverage of brew list
 - Have a `update_dotfiles` command in `PATH` that will execute the install
