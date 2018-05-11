@@ -2,6 +2,7 @@
 
 PROG_NAME="$(basename "$0")"
 CIPHERNAME='aes-256-cbc'
+CLIPBOARD_TTL_SECS=30
 
 # Encrypts the content in stdin and writes it to the input file.
 #
@@ -36,7 +37,7 @@ function decrypt_stdout() {
   if [ -e "$filename" ] ; then
     # Run OpenSSL to decrypt the file and output the contents to stdout
     if ! openssl $CIPHERNAME -d -base64 -in "$filename" 2>/dev/null; then
-      echo 'Wrong Password.' 1>&2
+      echo 'Wrong password.' 1>&2
       return 1
     fi
   else
@@ -77,7 +78,8 @@ EOM
     decrypt_stdout "$HOME/.secrets/$secret" | pbcopy
     local exit_code="$?"
     if [ $exit_code = 0 ]; then
-      echo 'Copied to clipboard.'
+      echo "Copied to clipboard. Clearing after $CLIPBOARD_TTL_SECS seconds"
+      (sleep $CLIPBOARD_TTL_SECS; pbcopy </dev/null) &
     fi
 
     # revert the pipefail option if it was set by this function
