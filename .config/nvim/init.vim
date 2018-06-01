@@ -335,6 +335,14 @@ set termguicolors                   " true color
 set background=dark
 colorscheme jellybeans
 
+" Magic cursor switching?
+if !has('nvim')
+  let &t_ti.="\e[1 q"
+  let &t_SI.="\e[5 q"
+  let &t_EI.="\e[1 q"
+  let &t_te.="\e[0 q"
+endif
+
 " Use true color
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
@@ -457,11 +465,15 @@ nnoremap <c-k> <c-w><c-k>
 nnoremap <c-l> <c-w><c-l>
 
 nnoremap <silent> <c-t> :vsplit<cr>:terminal<cr>
-tnoremap <silent> <c-t> <c-\><c-n>:vsplit<cr>:terminal<cr>
+if has('nvim')
+  tnoremap <silent> <c-t> <c-\><c-n>:vsplit<cr>:terminal<cr>
+endif
 
 " New tab
 nnoremap <silent> <c-w>t :tabnew<cr>
-tnoremap <silent> <c-w>t <c-\><c-n>:tabnew<cr>
+if has('nvim')
+  tnoremap <silent> <c-w>t <c-\><c-n>:tabnew<cr>
+endif
 
 " Terminal window navigation
 if has('nvim')
@@ -505,10 +517,14 @@ nnoremap Y y$
 
 nnoremap <silent> <c-s> :update<cr>
 
-tnoremap <c-[> <c-\><c-n>
+if has('nvim')
+  tnoremap <c-[> <c-\><c-n>
+endif
 
 " Close
-tnoremap <c-q> <c-\><c-n>ZZ
+if has('nvim')
+  tnoremap <c-q> <c-\><c-n>ZZ
+endif
 nnoremap <c-q> ZZ
 
 " Close all folds except the current line
@@ -589,7 +605,9 @@ let g:netrw_liststyle = 3
 "}}}
 
 " Normal mode in terminal
-tnoremap <c-[> <c-\><c-n>
+if has('nvim')
+  tnoremap <c-[> <c-\><c-n>
+endif
 
 " Toggle hard word wrap
 function! ToggleWordWrap()
