@@ -252,6 +252,20 @@ ssh-add -A &>/dev/null
 # allow for unquoted wildcards, e.g. `ls *.sh`.
 unsetopt no_match
 
+# History
+#set history size
+export HISTSIZE=10000
+#save history after logout
+export SAVEHIST=10000
+#history file
+export HISTFILE=~/.zhistory
+#append into history file
+setopt INC_APPEND_HISTORY
+#save only one command if 2 common are same and consistent
+setopt HIST_IGNORE_DUPS
+#add timestamp for each entry
+setopt EXTENDED_HISTORY
+
 #===============================================================================
 # 5. Completion
 #===============================================================================
@@ -271,3 +285,9 @@ compdef '__gitcomp_nl "$(__git_heads '' $track)"' gbd
 compdef '__gitcomp_nl "$(__git_heads '' $track)"' gbD
 
 #test -z "$TMUX" && (tmux attach || tmux new-session)
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
