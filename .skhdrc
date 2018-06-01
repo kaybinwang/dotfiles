@@ -30,6 +30,30 @@
 #                                  an EOL character signifies the end of the bind.
 
 
+# cmd + ctrl                   unused
+# ctrl + alt - (hjkl)          unused
+
+# WINDOW COMMANDS
+# alt - (hjkl)                 focus windows
+# alt - (pn)                   cycle windows
+#
+# alt + shift - (hjkl)         move (swap) windows
+# alt + ctrl  - (hjkl)         move (warp) windows
+
+# DESKTOP COMMANDS
+# alt + shift - (pn)           move window to prev/next desktop and ff
+# alt + shift - \d             move window to desktop \d and ff
+# alt + ctrl  - \d             move to desktop \d
+# alt + ctrl  - (pn)           move to prev/next desktop
+
+# MONITOR COMMANDS
+# cmd + shift - (pn)           move window to prev/next monitor and ff
+# cmd + shift - \d             move window to monitor \d and ff
+# cmd + ctrl  - \d             move to monitor \d
+#
+# TOGGLE COMMANDS
+# alt + ctrl - (asd)           bst, monocle, float layouts
+
 # open terminal, blazingly fast compared to iTerm/Hyper
 #cmd - return : open -na /Applications/iTerm.app
 
@@ -71,8 +95,8 @@ shift + ctrl - right : chunkc tiling::window --warp-floating bottom-right
 
 # send window to desktop and follow focus
 shift + alt - x : chunkc tiling::window --send-to-desktop $(chunkc get _last_active_desktop); qes -k "ctrl + alt - $(chunkc get _last_active_desktop)"
-shift + alt - p : chunkc tiling::window --send-to-desktop prev; qes -k "ctrl + alt - p"
-shift + alt - n : chunkc tiling::window --send-to-desktop next; qes -k "ctrl + alt - n"
+shift + alt - z : chunkc tiling::window --send-to-desktop prev; qes -k "ctrl + alt - z"
+shift + alt - c : chunkc tiling::window --send-to-desktop next; qes -k "ctrl + alt - c"
 shift + alt - 1 : chunkc tiling::window --send-to-desktop 1; qes -k "ctrl + alt - 1"
 shift + alt - 2 : chunkc tiling::window --send-to-desktop 2; qes -k "ctrl + alt - 2"
 shift + alt - 3 : chunkc tiling::window --send-to-desktop 3; qes -k "ctrl + alt - 3"
@@ -88,24 +112,23 @@ cmd + alt - 2  : chunkc tiling::monitor -f 2
 cmd + alt - 3  : chunkc tiling::monitor -f 3
 
 # send window to monitor and follow focus
-shift + cmd - p  : chunkc tiling::window --send-to-monitor prev; chunkc tiling::monitor -f prev
-# conflicts with chrome
-# shift + cmd - n  : chunkc tiling::window --send-to-monitor next; chunkc tiling::monitor -f next
+shift + cmd - z  : chunkc tiling::window --send-to-monitor prev; chunkc tiling::monitor -f prev
+shift + cmd - c  : chunkc tiling::window --send-to-monitor next; chunkc tiling::monitor -f next
 shift + cmd - 1  : chunkc tiling::window --send-to-monitor 1; chunkc tiling::monitor -f 1
 shift + cmd - 2  : chunkc tiling::window --send-to-monitor 2; chunkc tiling::monitor -f 2
 shift + cmd - 3  : chunkc tiling::window --send-to-monitor 3; chunkc tiling::monitor -f 3
 
-# increase region size
-shift + alt - a : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge west
-shift + alt - s : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge south
-shift + alt - w : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge north
-shift + alt - d : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge east
+# # increase region size
+# shift + alt - a : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge west
+# shift + alt - s : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge south
+# shift + alt - w : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge north
+# shift + alt - d : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge east
 
-# decrease region size
-shift + cmd - a : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge west
-shift + cmd - s : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge south
-shift + cmd - w : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge north
-shift + cmd - d : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge east
+# # decrease region size
+# shift + cmd - a : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge west
+# shift + cmd - s : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge south
+# shift + cmd - w : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge north
+# shift + cmd - d : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge east
 
 # # set insertion point for focused container
 # ctrl + alt - f : chunkc tiling::window --use-insertion-point cancel
