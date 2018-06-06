@@ -24,6 +24,7 @@ bin/pass
 
 # Files to be symlinked from script directory into $HOME
 declare -r DOTFILES='
+.env
 .zshrc
 .bash_profile
 .bash_aliases
