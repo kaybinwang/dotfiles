@@ -37,6 +37,7 @@ declare -r DOTFILES='
 .config/kitty/kitty.conf
 .chunkwmrc
 .skhdrc
+.vimrc
 '
 
 PROGRAM="$(basename "$0")"
