@@ -34,6 +34,7 @@ declare -r DOTFILES='
 .tern-config
 .tmux.conf
 .config/nvim/init.vim
+.config/kitty/kitty.conf
 .chunkwmrc
 .skhdrc
 '
