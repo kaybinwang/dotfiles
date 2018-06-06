@@ -1,5 +1,3 @@
-export IDEAVIMRC="$HOME/.ideavimrc"
-
 alias sudo='sudo '
 
 ## a quick way to get out of current directory ##
@@ -20,14 +18,19 @@ alias ll='ls -FGlAhprt'                       # ls with info
 alias mkdir='mkdir -pv'                      # mkdir with parents
 alias less='less -FSRXc'                    # Preferred 'less' implementation
 
-alias ebp="vi $HOME/.bash_profile"
-alias eba="vi $HOME/.bash_aliases"
-alias ebe="vi $HOME/.bash_extras"
+alias ebp="$EDITOR $HOME/.bash_profile"
+alias eba="$EDITOR $HOME/.bash_aliases"
+alias ebe="$EDITOR $HOME/.bash_extras"
 alias sbp="source $HOME/.bash_profile"
+
+alias ekc="$EDITOR $HOME/.config/kitty/kitty.conf"
+
+alias esc="$EDITOR $HOME/.ssh/config"
 
 if command -v zsh &>/dev/null; then
   alias szp="source $HOME/.zshrc"
-  alias ezp="vi $HOME/.zshrc"
+  alias eze="$EDITOR $HOME/.env"
+  alias ezp="$EDITOR $HOME/.zshrc"
 fi
 
 alias c='clear'
@@ -38,7 +41,7 @@ alias tmux='tmux -2'
 function tmux-new() {
   tmux -2 new-session -s main -n system \; \
       split-window -dv htop \; \
-    new-window -n dotfiles -c "$DOTFILE_PATH" 'nvim ~/.config/nvim/init.vim' \; \
+    new-window -n dotfiles -c "$DOTFILE_PATH" '$EDITOR ~/.config/nvim/init.vim' \; \
       split-window -dv -c "$DOTFILE_PATH" -p 10 \; \
     new-window -n dev -c "$PROJECT_PERSONAL" \; \
     attach -t main \;
@@ -48,6 +51,8 @@ function tmux-new() {
 if command -v nvim &>/dev/null; then
   alias vi='nvim'                             # neovim
   alias vim='nvim'                            # neovim
+elif command -v vim &>/dev/null; then
+  alias vi='vim'
 fi
 
 alias grep='grep --color=auto'
