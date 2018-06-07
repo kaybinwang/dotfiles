@@ -18,6 +18,10 @@ alias ll='ls -FGlAhprt'                       # ls with info
 alias mkdir='mkdir -pv'                      # mkdir with parents
 alias less='less -FSRXc'                    # Preferred 'less' implementation
 
+if [ "$TERM" = 'xterm-kitty' ]; then
+  alias ssh='kitty +kitten ssh'
+fi
+
 alias ebp="$EDITOR $HOME/.bash_profile"
 alias eba="$EDITOR $HOME/.bash_aliases"
 alias ebe="$EDITOR $HOME/.bash_extras"
@@ -25,6 +29,7 @@ alias sbp="source $HOME/.bash_profile"
 
 alias ekc="$EDITOR $HOME/.config/kitty/kitty.conf"
 
+alias egc="$EDITOR $HOME/.gitconfig"
 alias esc="$EDITOR $HOME/.ssh/config"
 
 if command -v zsh &>/dev/null; then
