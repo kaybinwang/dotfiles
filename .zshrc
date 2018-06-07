@@ -20,8 +20,8 @@ export ZPLUG_HOME=/usr/local/opt/zplug
 source $ZPLUG_HOME/init.zsh
 
 # Make sure to use double quotes
-zplug "zsh-users/zsh-history-substring-search"
 zplug "zsh-users/zsh-autosuggestions"
+zplug "zsh-users/zsh-completions"
 
 # Set the priority when loading
 # e.g., zsh-syntax-highlighting must be loaded
@@ -37,13 +37,23 @@ if ! zplug check --verbose; then
   fi
 fi
 
+# Needs to happen before zsh-syntax-highlighting is loaded
+# Can it happen after zplug load? idk...
+autoload -U history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+
 zplug load
 
 #===============================================================================
 # 2. Vim Bindings
 #===============================================================================
 
-export VISUAL=nvim
+if command -v nvim &>/dev/null; then
+  export VISUAL=nvim
+elif command -v vim &>/dev/null; then
+  export VISUAL=vim
+fi
 export EDITOR="$VISUAL"
 
 # Vim mode
@@ -56,8 +66,8 @@ bindkey -v '^?' backward-delete-char
 bindkey -v '^h' backward-delete-char
 
 # Scroll through partial matches when in insert mode
-bindkey '^p' history-substring-search-up
-bindkey '^n' history-substring-search-down
+bindkey '^p' history-beginning-search-backward-end
+bindkey '^n' history-beginning-search-forward-end
 
 # Complete autosuggestion when in insert mode
 bindkey '^ ' autosuggest-accept
@@ -138,6 +148,13 @@ function parse_git_branch() {
   git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1) /'
 }
 
+function git_user_email() {
+  local email="$(git config user.email 2>/dev/null)"
+  if [ -n "$email" ]; then
+    echo "($email) "
+  fi
+}
+
 # GCP context
 function gcp_prompt_info() {
   local cfg="$(cat ~/.config/gcloud/active_config 2>/dev/null)"
@@ -191,6 +208,11 @@ PROMPT="${PROMPT}%F{blue}%~%f "
 # Trailing space should be appended in parse_git_branch.
 if command -v git &>/dev/null; then
   PROMPT="${PROMPT}%F{yellow}\$(parse_git_branch)%f"
+fi
+
+# Show git user email if applicable
+if command -v git &>/dev/null; then
+  PROMPT="${PROMPT}%F{magenta}\$(git_user_email)%f"
 fi
 
 # Show Google Cloud Project if applicable
@@ -284,10 +306,14 @@ compdef '__gitcomp_nl "$(__git_heads '' $track)"' gco
 compdef '__gitcomp_nl "$(__git_heads '' $track)"' gbd
 compdef '__gitcomp_nl "$(__git_heads '' $track)"' gbD
 
-#test -z "$TMUX" && (tmux attach || tmux new-session)
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+if command -v brew &>/dev/null; then
+  export PATH="/usr/local/sbin:$PATH"
+fi
+
+# Attach to tmux or start a new session
+#test -z "$TMUX" && (tmux attach || tmux-new || tmux new-session)
