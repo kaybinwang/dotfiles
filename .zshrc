@@ -16,24 +16,26 @@
 # 1. Plugins
 #===============================================================================
 
-export ZPLUG_HOME=/usr/local/opt/zplug
-source $ZPLUG_HOME/init.zsh
+if command -v zplug &>/dev/null; then
+  export ZPLUG_HOME=/usr/local/opt/zplug
+  source $ZPLUG_HOME/init.zsh
 
-# Make sure to use double quotes
-zplug "zsh-users/zsh-autosuggestions"
-zplug "zsh-users/zsh-completions"
+  # Make sure to use double quotes
+  zplug "zsh-users/zsh-autosuggestions"
+  zplug "zsh-users/zsh-completions"
 
-# Set the priority when loading
-# e.g., zsh-syntax-highlighting must be loaded
-# after executing compinit command and sourcing other plugins
-# (If the defer tag is given 2 or above, run after compinit command)
-zplug "zsh-users/zsh-syntax-highlighting", defer:2
+  # Set the priority when loading
+  # e.g., zsh-syntax-highlighting must be loaded
+  # after executing compinit command and sourcing other plugins
+  # (If the defer tag is given 2 or above, run after compinit command)
+  zplug "zsh-users/zsh-syntax-highlighting", defer:2
 
-# Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-  printf "Install? [y/N]: "
-  if read -q; then
-    echo; zplug install
+  # Install plugins if there are plugins that have not been installed
+  if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+      echo; zplug install
+    fi
   fi
 fi
 
@@ -43,7 +45,9 @@ autoload -U history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 
-zplug load
+if command -v zplug &>/dev/null; then
+  zplug load
+fi
 
 #===============================================================================
 # 2. Vim Bindings
