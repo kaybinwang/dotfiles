@@ -189,7 +189,10 @@ Plug 'w0rp/ale'
 
   let g:ale_linters = {
   \ 'javascript': ['eslint'],
+  \ 'python': ['flake8'],
   \}
+
+  let g:ale_python_flake8_options = '--max-line-length 120'
 
   " Error and warning signs.
   let g:ale_sign_error = '⤫'
@@ -213,84 +216,103 @@ Plug 'chrisbra/Colorizer'
   nnoremap <silent> <c-h> :ColorToggle<cr>
 "}}}
 
-Plug 'pangloss/vim-javascript'
-"{{{
-  let g:javascript_plugin_jsdoc = 1
-  let g:javascript_plugin_flow = 1
-"}}}
-Plug 'mxw/vim-jsx'
-"{{{
-  let g:jsx_ext_required = 0
-"}}}
-Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  "{{{ deoplete
 
-Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
-"{{{ vim-go
-  let g:go_highlight_build_constraints = 1
-  let g:go_highlight_extra_types = 1
-  let g:go_highlight_fields = 1
-  let g:go_highlight_functions = 1
-  let g:go_highlight_methods = 1
-  let g:go_highlight_operators = 1
-  let g:go_highlight_structs = 1
-  let g:go_highlight_types = 1
+    if has('nvim')
+      " Enable deoplete on startup
+      let g:deoplete#enable_at_startup = 1
+    endif
 
-  " Semantic type inference on higlight
-  let g:go_auto_type_info = 1
+    let g:python_host_prog = '/usr/local/bin/python2'
+    let g:python3_host_prog = '/usr/local/bin/python3'"
 
-  " Auto import on write
-  let g:go_fmt_command = 'goimports'
-  "let g:go_decls_mode = 'fzf'
+    function! s:is_whitespace()
+      let col = col('.') - 1
+      return ! col || getline('.')[col - 1] =~? '\s'
+    endfunction
 
-  " Highlight same variable name
-  "let g:go_auto_sameids = 1
+    " Use tab to c-j cycle, otherwise navigate insert mode
+    " TODO: potentially switch to TAB because it's colliding with insert mode
+    " navigations..
+    inoremap <silent><expr><c-j> pumvisible() ? "\<c-n>" : "\<c-o>j"
+    " Use tab to c-k cycle
+    inoremap <silent><expr><c-k> pumvisible() ? "\<c-p>" : "\<c-o>k"
 
-  " :GoAddTags will default to snakecase when generating tags
-  let g:go_addtags_transform = "snakecase"
+    " Hide preview window after closing completion
+    autocmd InsertLeave * if pumvisible() == 0 | pclose | endif
 
-"}}}
-
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-"{{{ deoplete
-
-  if has('nvim')
-    " Enable deoplete on startup
+    " Java completion settings
     let g:deoplete#enable_at_startup = 1
-  endif
+    let g:deoplete#omni_patterns = {}
+    let g:deoplete#omni_patterns.java = '[^. *\t]\.\w*'
+    let g:deoplete#sources = {}
+    let g:deoplete#sources._ = []
+    let g:deoplete#file#enable_buffer_path = 1
 
-  let g:python_host_prog = '/usr/local/bin/python2'
-  let g:python3_host_prog = '/usr/local/bin/python3'"
+  "}}}
+endif
 
-  function! s:is_whitespace()
-    let col = col('.') - 1
-    return ! col || getline('.')[col - 1] =~? '\s'
-  endfunction
+if executable('go')
+  Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+  "{{{ vim-go
+    let g:go_highlight_build_constraints = 1
+    let g:go_highlight_extra_types = 1
+    let g:go_highlight_fields = 1
+    let g:go_highlight_functions = 1
+    let g:go_highlight_methods = 1
+    let g:go_highlight_operators = 1
+    let g:go_highlight_structs = 1
+    let g:go_highlight_types = 1
 
-  " Use tab to c-j cycle, otherwise navigate insert mode
-  " TODO: potentially switch to TAB because it's colliding with insert mode
-  " navigations..
-  inoremap <silent><expr><c-j> pumvisible() ? "\<c-n>" : "\<c-o>j"
-  " Use tab to c-k cycle
-  inoremap <silent><expr><c-k> pumvisible() ? "\<c-p>" : "\<c-o>k"
+    " Semantic type inference on higlight
+    let g:go_auto_type_info = 1
 
-  " Hide preview window after closing completion
-  autocmd InsertLeave * if pumvisible() == 0 | pclose | endif
+    " Auto import on write
+    let g:go_fmt_command = 'goimports'
+    "let g:go_decls_mode = 'fzf'
 
-  " Java completion settings
-  let g:deoplete#enable_at_startup = 1
-  let g:deoplete#omni_patterns = {}
-  let g:deoplete#omni_patterns.java = '[^. *\t]\.\w*'
-  let g:deoplete#sources = {}
-  let g:deoplete#sources._ = []
-  let g:deoplete#file#enable_buffer_path = 1
+    " Highlight same variable name
+    "let g:go_auto_sameids = 1
 
-"}}}
-Plug 'zchee/deoplete-go', { 'do': 'make'}
+    " :GoAddTags will default to snakecase when generating tags
+    let g:go_addtags_transform = "snakecase"
 
-Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
-Plug 'zchee/deoplete-jedi'
+  "}}}
+  Plug 'zchee/deoplete-go', { 'do': 'make'}
+endif
+
+if executable('npm')
+  Plug 'pangloss/vim-javascript'
+  "{{{
+    let g:javascript_plugin_jsdoc = 1
+    let g:javascript_plugin_flow = 1
+  "}}}
+  Plug 'mxw/vim-jsx'
+  "{{{
+    let g:jsx_ext_required = 0
+  "}}}
+  Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
+  Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+endif
+
+if has('nvim')
+  Plug 'zchee/deoplete-jedi'
+  "{{{
+    let g:deoplete#sources#jedi#show_docstring = 1
+  "}}}
+endif
+
+Plug 'davidhalter/jedi-vim'
 "{{{
-  let g:deoplete#sources#jedi#show_docstring = 1
+  let g:jedi#goto_command = 'gd'
+  let g:jedi#goto_assignments_command = '' " goto fallsback onto assignments
+  let g:jedi#goto_definitions_command = '' " deprecated!
+  let g:jedi#documentation_command = 'K'
+  let g:jedi#usages_command = '<leader>n'
+  let g:jedi#completions_command = '<C-Space>'
+  let g:jedi#rename_command = '<leader>r'
 "}}}
 
 " Text Editing
@@ -331,7 +353,9 @@ set showmatch                       " show unmatched parens
 set lazyredraw                      " don't draw everything
 set list                            " show invisible characters
 set listchars=tab:>·,trail:·,nbsp:¬ " but only show useful characters
-set termguicolors                   " true color
+if has('termguicolors')
+  set termguicolors                   " true color
+endif
 set background=dark
 colorscheme jellybeans
 
@@ -567,6 +591,13 @@ function! SearchWordWithRg()
 endfunction
 nnoremap <silent> K :call SearchWordWithRg()<cr>
 
+" Command for git grep
+" - fzf#vim#grep(command, with_column, [options], [fullscreen])
+command! -bang -nargs=* GGrep
+  \ call fzf#vim#grep(
+  \   'git grep --line-number '.shellescape(<q-args>), 0,
+  \   { 'dir': systemlist('git rev-parse --show-toplevel')[0] }, <bang>0)
+
 " Scroll search results
 autocmd FileType fzf tnoremap <buffer> <c-j> <down>
 autocmd FileType fzf tnoremap <buffer> <c-k> <up>
@@ -637,6 +668,7 @@ au FileType html call HtmlFileSettings()
 au FileType javascript call JavascriptFileSettings()
 au FileType java call JavaFileSettings()
 au FileType go call GoFileSettings()
+au FileType python call PythonFileSettings()
 au FileType markdown call PlainTextFileSettings()
 au FileType txt call PlainTextFileSettings()
 au FileType tex call PlainTextFileSettings()
@@ -677,6 +709,7 @@ endfunc
 function! JavaFileSettings()
   setl sts=2 sw=2 ts=2
   setl colorcolumn=90
+  setl textwidth=90
   nnoremap K :JavaDocPreview<cr>
   nnoremap <Leader>jr  :JavaRename 
   nnoremap <Leader>ji  :JavaImport<cr>
@@ -686,6 +719,13 @@ function! JavaFileSettings()
   nnoremap <Leader>jc  :JavaCorrect<cr>
   nnoremap <Leader>jcs :Checkstyle<cr>
 endfunc
+
+function! PythonFileSettings()
+  set sts=4 sw=4 ts=4
+  setl colorcolumn=120
+  setl textwidth=120
+endfunc
+
 
 function! EditZshrc()
   edit ~/.zshrc
