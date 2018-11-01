@@ -53,7 +53,10 @@ function tmux-new() {
 }
 
 # default to neovim if it exists
-if command -v nvim &>/dev/null; then
+if [ -e '/usr/local/bin/vim' ]; then
+  alias vi='/usr/local/bin/vim'
+  alias vim='/usr/local/bin/vim'
+elif command -v nvim &>/dev/null; then
   alias vi='nvim'                             # neovim
   alias vim='nvim'                            # neovim
 elif command -v vim &>/dev/null; then
@@ -112,13 +115,31 @@ alias gst='git stash'
 alias gstp='git stash pop'
 alias gsta='git stash apply'
 alias gg='git grep'
+if command -v __git_complete &>/dev/null; then
+  # Add git completion to aliases
+  __git_complete gm _git_merge
+
+  __git_complete g __git_main
+  __git_complete gs _git_status
+  __git_complete gd _git_diff
+  __git_complete gf _git_fetch
+  __git_complete grb _git_rebase
+  __git_complete grbi _git_rebase
+  __git_complete gl _git_log
+  __git_complete ga _git_add
+  __git_complete gb _git_branch
+  __git_complete gbd _git_branch
+  __git_complete gbD _git_branch
+  __git_complete gco _git_checkout
+  __git_complete gcob _git_checkout
+  __git_complete gc _git_commit
+  __git_complete gcm _git_commit
+  __git_complete gp _git_pull
+  __git_complete gpush _git_push
+fi
 
 alias pp="cd $PROJECT_PERSONAL"
 alias wp="cd $PROJECT_WORK"
-
-function pdf() {
-  pdflatex "$1".tex && rm "$1".out "$1".log "$1".aux && open "$1".pdf;
-}
 
 function chrome() {
   open -a "Google Chrome" "$1"
