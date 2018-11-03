@@ -85,8 +85,8 @@ elif command -v brew &>/dev/null; then
 fi
 
 # Source last since it might depend on the above scripts, e.g. __git_complete
-source .bash_aliases
-source .bash_extras
+source ~/.bash_aliases
+source ~/.bash_extras
 
 
 ################################################################################
@@ -143,8 +143,16 @@ function __prompt_command() {
     # Optional parameters, e.g. venv, git_branch, will always be include a
     # trailing space to preserve formatting
     PS1="${venv}${status} ${user}@${host}:${cwd} ${git_branch}$ "
+
+    __save_and_reload_history
 }
 
 function __parse_git_branch() {
   git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+
+function __save_and_reload_history() {
+  history -a # immediately append the current session to ~/.bash_history
+  history -c # clear the current session
+  history -r # reload the session from ~/.bash_history
 }
