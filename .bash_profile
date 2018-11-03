@@ -93,6 +93,12 @@ source ~/.bash_extras
 # 4. Helper Functions
 ################################################################################
 
+# This function is executed after each command and it will do the following:
+#   - Update the prompt to include additional information such as,
+#     - the python virtual env, if one is activated
+#     - the exit status of the previous command
+#     - the git branch, if inside an git directory
+#   - Flush the current shell's history session and reloads it
 function __prompt_command() {
     # This needs to be first to capture exit code of previous command
     local EXIT="$?"
