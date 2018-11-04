@@ -16,10 +16,12 @@
 # 1. Plugins
 #===============================================================================
 
-if command -v zplug &>/dev/null; then
-  export ZPLUG_HOME=/usr/local/opt/zplug
+export ZPLUG_HOME=/usr/local/opt/zplug
+if [ -e "$ZPLUG_HOME/init.zsh" ]; then
   source $ZPLUG_HOME/init.zsh
+fi
 
+if command -v zplug &>/dev/null; then
   # Make sure to use double quotes
   zplug "zsh-users/zsh-autosuggestions"
   zplug "zsh-users/zsh-completions"
@@ -60,14 +62,14 @@ elif command -v vim &>/dev/null; then
 fi
 export EDITOR="$VISUAL"
 
-# Vim mode
-bindkey -v
-bindkey "jj" vi-cmd-mode
+# # Vim mode
+# bindkey -v
+# bindkey "jj" vi-cmd-mode
 
-# Use real backspace instead of vi-backward-delete-char
-# https://unix.stackexchange.com/a/206933
-bindkey -v '^?' backward-delete-char
-bindkey -v '^h' backward-delete-char
+# # Use real backspace instead of vi-backward-delete-char
+# # https://unix.stackexchange.com/a/206933
+# bindkey -v '^?' backward-delete-char
+# bindkey -v '^h' backward-delete-char
 
 # Scroll through partial matches when in insert mode
 bindkey '^p' history-beginning-search-backward-end
@@ -76,33 +78,39 @@ bindkey '^n' history-beginning-search-forward-end
 # Complete autosuggestion when in insert mode
 bindkey '^ ' autosuggest-accept
 
-# Enable parens, quotes and surround text-objects
-# ciw ci" text objects
-# Source: https://www.reddit.com/r/vim/comments/4995nr/navigate_your_command_line_with_modal_vi/d0qmcbl/
-autoload -U select-bracketed
-zle -N select-bracketed
-for m in visual viopp; do
-    for c in {a,i}${(s..)^:-'()[]{}<>bB'}; do
-        bindkey -M $m $c select-bracketed
-    done
-done
+# use alt+left and alt right for words
+bindkey "^[[1;3C" forward-word
+bindkey "^[[1;3D" backward-word
 
-autoload -U select-quoted
-zle -N select-quoted
-for m in visual viopp; do
-  for c in {a,i}{\',\",\`}; do
-    bindkey -M $m $c select-quoted
-  done
-done
+bindkey -e
 
-autoload -Uz surround
-zle -N delete-surround surround
-zle -N change-surround surround
-zle -N add-surround surround
-bindkey -a cs change-surround
-bindkey -a ds delete-surround
-bindkey -a ys add-surround
-bindkey -M visual S add-surround
+# # Enable parens, quotes and surround text-objects
+# # ciw ci" text objects
+# # Source: https://www.reddit.com/r/vim/comments/4995nr/navigate_your_command_line_with_modal_vi/d0qmcbl/
+# autoload -U select-bracketed
+# zle -N select-bracketed
+# for m in visual viopp; do
+#     for c in {a,i}${(s..)^:-'()[]{}<>bB'}; do
+#         bindkey -M $m $c select-bracketed
+#     done
+# done
+
+# autoload -U select-quoted
+# zle -N select-quoted
+# for m in visual viopp; do
+#   for c in {a,i}{\',\",\`}; do
+#     bindkey -M $m $c select-quoted
+#   done
+# done
+
+# autoload -Uz surround
+# zle -N delete-surround surround
+# zle -N change-surround surround
+# zle -N add-surround surround
+# bindkey -a cs change-surround
+# bindkey -a ds delete-surround
+# bindkey -a ys add-surround
+# bindkey -M visual S add-surround
 
 #===============================================================================
 # 3. Interface
@@ -231,16 +239,16 @@ fi
 
 export PROMPT="${PROMPT}%# "
 
-# Update right side prompt that shows vim mode.
-function zle-line-init zle-keymap-select {
-  local NORMAL="%{$fg_bold[blue]%} [% NORMAL]% %{$reset_color%}"
-  local INSERT="%{$fg_bold[green]%} [% INSERT]% %{$reset_color%}"
-  RPS1="${${KEYMAP/vicmd/$NORMAL}/(main|viins)/$INSERT} $EPS1"
-  zle reset-prompt
-}
+# # Update right side prompt that shows vim mode.
+# function zle-line-init zle-keymap-select {
+#   local NORMAL="%{$fg_bold[blue]%} [% NORMAL]% %{$reset_color%}"
+#   local INSERT="%{$fg_bold[green]%} [% INSERT]% %{$reset_color%}"
+#   RPS1="${${KEYMAP/vicmd/$NORMAL}/(main|viins)/$INSERT} $EPS1"
+#   zle reset-prompt
+# }
 
-zle -N zle-line-init
-zle -N zle-keymap-select
+# zle -N zle-line-init
+# zle -N zle-keymap-select
 
 #===============================================================================
 # 4. Environment
@@ -268,8 +276,8 @@ if [ -f "$HOME/.bash_aliases" ]; then
   source "$HOME/.bash_aliases"
 fi
 
-if [ -f "$HOME/.env" ]; then
-  source "$HOME/.env"
+if [ -f "$HOME/.zsh_extras" ]; then
+  source "$HOME/.zsh_extras"
 fi
 
 # Load all ssh keys in keychain for MacOS.

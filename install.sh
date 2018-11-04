@@ -23,7 +23,7 @@ dotfiles
 
 # Files to be symlinked from script directory into $HOME
 declare -r DOTFILES='
-.env
+.zsh_extras
 .zshrc
 .bash_profile
 .bash_aliases

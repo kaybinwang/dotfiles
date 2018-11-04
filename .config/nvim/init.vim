@@ -698,7 +698,7 @@ au BufRead,BufNewFile *.tmpl call GoTmplFileSettings()
 au BufRead,BufNewFile *.sig setl filetype=sml
 au BufRead,BufNewFile *.bsh setl syntax=java
 au BufRead,BufNewFile .gitconfig-* setl filetype=gitconfig
-au BufRead,BufNewFile .env setl filetype=zsh
+au BufRead,BufNewFile .zsh_extras setl filetype=zsh
 au BufRead,BufNewFile .bash_extras setl filetype=sh
 
 function! PlainTextFileSettings()

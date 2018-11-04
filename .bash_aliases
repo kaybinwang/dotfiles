@@ -34,7 +34,7 @@ alias esc="$EDITOR $HOME/.ssh/config"
 
 if command -v zsh &>/dev/null; then
   alias szp="source $HOME/.zshrc"
-  alias eze="$EDITOR $HOME/.env"
+  alias eze="$EDITOR $HOME/.zsh_extras"
   alias ezp="$EDITOR $HOME/.zshrc"
 fi
 
