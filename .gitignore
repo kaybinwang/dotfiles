@@ -1,5 +1,4 @@
 .DS_STORE
-.bash_extras
-.gitconfig-work
-.setup
-.env
+homedir/.bash_extras
+homedir/.gitconfig-work
+homedir/.zsh_extras

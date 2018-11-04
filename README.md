@@ -1,8 +1,8 @@
 # kaybinwang's dotfiles
-The configuration I use on MacOS.
+MacOS dotfile configuration.
 
 ## Installation
-Clone the repository to a pl
+Clone the repository and run the install script.
 ```
 git clone https://github.com/kaybinwang/dotfiles
 cd dotfiles
