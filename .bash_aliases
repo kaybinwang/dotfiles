@@ -53,12 +53,12 @@ function tmux-new() {
 }
 
 # default to neovim if it exists
-if [ -e '/usr/local/bin/vim' ]; then
+if [ -x '/usr/local/bin/vim' ]; then
   alias vi='/usr/local/bin/vim'
   alias vim='/usr/local/bin/vim'
 elif command -v nvim &>/dev/null; then
-  alias vi='nvim'                             # neovim
-  alias vim='nvim'                            # neovim
+  alias vi='nvim'
+  alias vim='nvim'
 elif command -v vim &>/dev/null; then
   alias vi='vim'
 fi
@@ -66,6 +66,7 @@ fi
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
+alias zgrep='zgrep --color=auto'
 
 # Git aliases
 alias g='git'
