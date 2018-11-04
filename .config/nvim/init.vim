@@ -2,34 +2,62 @@
 " TODO
 "-------------------------------------------------------------------------------
 " Remove dependencies on lightline
+" Clean up editor settings
 " Make backwards compatible with vim
 " Document this file
+" Consider removing unused functionality
+"   - Unused plugins
+"   - Unused set options
+"   - Unused mappings
+"     - close all folds
+"     - set rnu
 
 "-------------------------------------------------------------------------------
 " Table of contents
 "-------------------------------------------------------------------------------
 " 1. Plugins
-"   1.1 Autoloading
+"   1.1 Bootstrap
 "   1.2 Plugin List
-"     1.2.1 Javascritp
-"     1.2.2
-"     1.2.3
+"     1.2.1 Themes & Appearance
+"     1.2.2 File Searching
+"     1.2.3 Navigation
+"     1.2.4 Text Editing
+"     1.2.5 Semantic Analysis
+"     1.2.6 Developer Tools
+"     1.2.7 Languages
 " 2. Editor Settings
 "   2.1 Interface
 "   2.2 Status Line
-" 4. File Specific Settings
 " 3. Key Mappings
-"   3.1 Training Wheels
-"   3.2 Movement / Navigation
-"   3.3 
+"   3.0 Training Wheels
+"   3.1 General
+"   3.2 Navigation
+"   3.3 Editing
+"   3.4 Terminal
+"   3.5 File Searching
+"   3.6 Git
+"   3.7 File Browser
+" 4. File Specific Settings
+" 5. Registered Commands
+" 6. Helper Functions
 
 "===============================================================================
 " 1. Plugins
 "===============================================================================
 
+"-------------------------------------------------------------------------------
+" 1.1 Bootstrap
+"
+" First time configuration and loading of plugins.
+"-------------------------------------------------------------------------------
+
 if has('nvim')
   let g:vim_plug_dir = expand('~/.config/nvim/autoload')
   let g:vimrc = expand('~/.config/nvim/init.vim')
+
+  " Point to a python interpreter with `neovim` RPC module installed
+  let g:python_host_prog = expand('~/.pyenv/versions/neovim2/bin/python')
+  let g:python3_host_prog = expand('~/.pyenv/versions/neovim3/bin/python')
 else
   let g:vim_plug_dir = expand('~/.vim/autoload')
   let g:vimrc = expand('~/.vimrc')
@@ -45,27 +73,20 @@ if !filereadable(vim_plug)
   execute 'source '.fnameescape(vim_plug)
 endif
 
+"-------------------------------------------------------------------------------
+" 1.2. Plugin List
+"-------------------------------------------------------------------------------
+
 call plug#begin('~/.vim/plugged')
+
+" 1.2.1 Themes & Appearance {{{
 Plug 'nanotech/jellybeans.vim'
 Plug 'joshdick/onedark.vim'
 
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
-Plug 'junegunn/fzf.vim'
-"{{{
-  "let g:fzf_nvim_statusline = 0 " disable statusline overwriting
-"}}}
-
-Plug 'tpope/vim-eunuch'
-"Plug 'justinmk/vim-dirvish'
-
-"Plug 'jiangmiao/auto-pairs'
-"{{{
-  " Disable <c-h> for deleting pairs.
-  let g:AutoPairsMapCh = 0
-"}}}
+Plug 'ryanoasis/vim-devicons'
 
 Plug 'itchyny/lightline.vim'
-"{{{
+" lightline.vim {{{
 
   let g:lightline = {
     \ 'colorscheme': 'jellybeans',
@@ -163,71 +184,48 @@ Plug 'itchyny/lightline.vim'
   let g:vimshell_force_overwrite_statusline = 0
   "}}}
 "}}}
+"}}}
 
-Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
 
-Plug 'tomlion/vim-solidity'
+" 1.2.2 File Searching {{{
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
+Plug 'junegunn/fzf.vim'
+" fzf.vim {{{
+  "let g:fzf_nvim_statusline = 0 " disable statusline overwriting
 
+  " Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
+  command! -bang -nargs=* Rg
+    \ call fzf#vim#grep(
+    \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+    \   <bang>0 ? fzf#vim#with_preview('up:60%')
+    \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+    \   <bang>0)
+
+"}}}
+"}}}
+
+
+" 1.2.3 Navigation {{{
+Plug 'tpope/vim-unimpaired'
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'qpkorr/vim-bufkill'
+"}}}
+
+
+" 1.2.4 Text Editing {{{
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-repeat'
-
-Plug 'ryanoasis/vim-devicons'
-
-Plug 'ConradIrwin/vim-bracketed-paste'
-
-Plug 'junegunn/vim-easy-align'
-"{{{
-  " Start interactive EasyAlign in visual mode (e.g. vipga)
-  xmap ga <Plug>(EasyAlign)
-
-  " Start interactive EasyAlign for a motion/text object (e.g. gaip)
-  nmap ga <Plug>(EasyAlign)
 "}}}
 
-Plug 'w0rp/ale'
-"{{{
 
-  let g:ale_linters = {
-  \ 'javascript': ['eslint'],
-  \ 'python': ['flake8'],
-  \}
+" 1.2.5 Semantic Analysis {{{
 
-  let g:ale_python_flake8_options = '--max-line-length 120'
-
-  " Error and warning signs.
-  let g:ale_sign_error = '⤫'
-  let g:ale_sign_warning = '⚠'
-
-  let g:ale_lint_on_save = 1
-  let g:ale_lint_on_text_changed = 0
-  let g:ale_lint_on_enter = 0
-  let g:ale_sign_warning = 'W>'
-  let g:ale_sign_error = 'E>'
-  let g:ale_set_quickfix = 1
-
-"}}}
-
-Plug 'sheerun/vim-polyglot'
-
-Plug 'hail2u/vim-css3-syntax'
-Plug 'chrisbra/Colorizer'
-"{{{
-  let g:colorizer_auto_filetype='css,html'
-  nnoremap <silent> <c-h> :ColorToggle<cr>
-"}}}
-
+" Code auto-completion
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  "{{{ deoplete
-
-    if has('nvim')
-      " Enable deoplete on startup
-      let g:deoplete#enable_at_startup = 1
-    endif
-
-    let g:python_host_prog = '/usr/local/bin/python2'
-    let g:python3_host_prog = '/usr/local/bin/python3'"
-
+  " deoplete {{{
+    " let g:deoplete#enable_at_startup = 1
     function! s:is_whitespace()
       let col = col('.') - 1
       return ! col || getline('.')[col - 1] =~? '\s'
@@ -254,9 +252,52 @@ if has('nvim')
   "}}}
 endif
 
+" Code linting
+Plug 'w0rp/ale'
+"{{{
+
+  let g:ale_linters = {
+  \ 'javascript': ['eslint'],
+  \ 'python': ['flake8', 'mypy'],
+  \}
+
+  let g:ale_python_flake8_options = '--max-line-length 120'
+
+  " Error and warning signs.
+  let g:ale_sign_error = '⤫'
+  let g:ale_sign_warning = '⚠'
+
+  let g:ale_lint_on_save = 1
+  let g:ale_lint_on_text_changed = 0
+  let g:ale_lint_on_enter = 0
+  let g:ale_sign_warning = 'W>'
+  let g:ale_sign_error = 'E>'
+  let g:ale_set_quickfix = 1
+
+"}}}
+
+"}}}
+
+
+" 1.2.6 Developer Tools {{{
+
+" Git
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
+Plug 'airblade/vim-gitgutter'
+
+" Unix commands
+Plug 'tpope/vim-eunuch'
+
+"}}}
+
+
+" 1.2.7 Languages {{{
+
+" Go
 if executable('go')
   Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
-  "{{{ vim-go
+  " vim-go {{{
     let g:go_highlight_build_constraints = 1
     let g:go_highlight_extra_types = 1
     let g:go_highlight_fields = 1
@@ -280,33 +321,35 @@ if executable('go')
     let g:go_addtags_transform = "snakecase"
 
   "}}}
-  Plug 'zchee/deoplete-go', { 'do': 'make'}
+  if has('nvim')
+    Plug 'zchee/deoplete-go', { 'do': 'make'}
+  endif
 endif
 
+" JavaScript
+Plug 'pangloss/vim-javascript'
+" vim-javascript {{{
+  let g:javascript_plugin_jsdoc = 1
+  let g:javascript_plugin_flow = 1
+"}}}
+Plug 'mxw/vim-jsx'
+" vim-jsx {{{
+  let g:jsx_ext_required = 0
+"}}}
 if executable('npm')
-  Plug 'pangloss/vim-javascript'
-  "{{{
-    let g:javascript_plugin_jsdoc = 1
-    let g:javascript_plugin_flow = 1
-  "}}}
-  Plug 'mxw/vim-jsx'
-  "{{{
-    let g:jsx_ext_required = 0
-  "}}}
   Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
   Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+  if has('nvim')
+    Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+  endif
 endif
 
-if has('nvim')
-  Plug 'zchee/deoplete-jedi'
-  "{{{
-    let g:deoplete#sources#jedi#show_docstring = 1
-  "}}}
-endif
-
+" Python
 Plug 'davidhalter/jedi-vim'
-"{{{
+" jedi-vim {{{
   let g:jedi#goto_command = 'gd'
+  let g:jedi#smart_auto_mappings = 0 " No auto import tyyping
+  let g:jedi#popup_on_dot = 0 " Manually activate completions
   let g:jedi#goto_assignments_command = '' " goto fallsback onto assignments
   let g:jedi#goto_definitions_command = '' " deprecated!
   let g:jedi#documentation_command = 'K'
@@ -314,20 +357,37 @@ Plug 'davidhalter/jedi-vim'
   let g:jedi#completions_command = '<C-Space>'
   let g:jedi#rename_command = '<leader>r'
 "}}}
+if has('nvim')
+  Plug 'zchee/deoplete-jedi'
+  " deoplete-jedi {{{
+    let g:deoplete#sources#jedi#show_docstring = 1
+  "}}}
+endif
 
-" Text Editing
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-unimpaired'
+" Additional Languages
+Plug 'affirm/vim-policy-syntax'
 
-" Navigation
-Plug 'christoomey/vim-tmux-navigator'
+Plug 'tomlion/vim-solidity'
 
-Plug 'qpkorr/vim-bufkill'
+Plug 'sheerun/vim-polyglot'
+
+Plug 'hail2u/vim-css3-syntax'
+Plug 'chrisbra/Colorizer'
+" Colorizer {{{
+  let g:colorizer_auto_filetype='css,html'
+  nnoremap <silent> <c-h> :ColorToggle<cr>
+"}}}
+"}}}
 
 call plug#end()
 
-" Interface
+
+"===============================================================================
+" 2. Editor Settings
+"===============================================================================
+
+colorscheme jellybeans
+
 filetype indent plugin on           " plugins
 set number                          " line numbers
 set cursorline                      " highlight current line
@@ -345,7 +405,8 @@ set splitbelow                      " create new splits below
 set splitright                      " create new splits to the right
 set wildmenu                        " enable wildmenu
 set wildmode=longest:full,full      " configure wildmenu
-"set path+=**                        " recursive searching
+set path+=**                        " recursive searching
+set complete-=i                     " don't include all files, it's slow
 set nostartofline                   " keeps cursor in place when switching buffers
 set laststatus=2                    " extra status (lightline)
 set noshowmode                      " hide the mode (lightline)
@@ -354,10 +415,10 @@ set lazyredraw                      " don't draw everything
 set list                            " show invisible characters
 set listchars=tab:>·,trail:·,nbsp:¬ " but only show useful characters
 if has('termguicolors')
-  set termguicolors                   " true color
+  set termguicolors                 " true color
 endif
 set background=dark
-colorscheme jellybeans
+set backspace=indent,eol,start      " allow backspace
 
 " Magic cursor switching?
 if !has('nvim')
@@ -431,16 +492,18 @@ if has('nvim')
   au BufEnter * if &buftype == 'terminal' | :startinsert | endif
 endif
 
+
 "===============================================================================
 " 3. Key Mappings
 "===============================================================================
 
 "-------------------------------------------------------------------------------
-" 3.1 Training Wheels
+" 3.0 Training Wheels
 "-------------------------------------------------------------------------------
 
+
 "-------------------------------------------------------------------------------
-" 3.2 General
+" 3.1 General
 "-------------------------------------------------------------------------------
 
 let mapleader = " "
@@ -466,42 +529,51 @@ nnoremap <silent> <return> :noh<cr><esc>
 " Faster playback
 nnoremap Q @q
 
+
 "-------------------------------------------------------------------------------
-" 3.2 Movement
+" 3.2 Navigation
 "-------------------------------------------------------------------------------
 
 " Move into line wraps
 nnoremap j gj
 nnoremap k gk
 
-" Faster ^ and $
-nnoremap H ^
-nnoremap L $
-
-"-------------------------------------------------------------------------------
-" 3.2 Windows
-"-------------------------------------------------------------------------------
-
-" Window nagivation
+" Nagivate window splits
 nnoremap <c-h> <c-w><c-h>
 nnoremap <c-j> <c-w><c-j>
 nnoremap <c-k> <c-w><c-k>
 nnoremap <c-l> <c-w><c-l>
 
-nnoremap <silent> <c-t> :vsplit<cr>:terminal<cr>
-if has('nvim')
-  tnoremap <silent> <c-t> <c-\><c-n>:vsplit<cr>:terminal<cr>
-endif
 
-" New tab
-nnoremap <silent> <c-w>t :tabnew<cr>
-if has('nvim')
-  tnoremap <silent> <c-w>t <c-\><c-n>:tabnew<cr>
-endif
+"-------------------------------------------------------------------------------
+" 3.3 Editing
+"-------------------------------------------------------------------------------
 
-" Terminal window navigation
-if has('nvim')
-" TODO: this conflicts with backspace
+" make Y like D
+nnoremap Y y$
+
+" Close all folds except the current line
+nnoremap zp zMzv
+
+" Toggle relative line numbers
+nnoremap <silent> <C-n> :call ToggleRelativeNumber()<cr>
+
+
+"-------------------------------------------------------------------------------
+" 3.4 Terminal
+"-------------------------------------------------------------------------------
+
+if has('nvim') || has('terminal')
+
+  " Create a new terminal
+  nnoremap <silent> <c-t> :vsplit<cr>:NewTerminal<cr>
+  tnoremap <silent> <c-t> <c-\><c-n>:vsplit<cr>:NewTerminal<cr>
+
+  " Escape out of terminal
+  tnoremap <c-[> <c-\><c-n>
+
+  " Window-related <C-W> commands, but in terminal mode
+  " TODO: this conflicts with backspace
   tnoremap <c-h> <c-\><c-n><c-w>h
   "TODO: this stays in normal if there's no window
   "maybe use alt-h instead for all window navs or tab...
@@ -519,45 +591,23 @@ if has('nvim')
   tnoremap <c-w>R <c-\><c-n><c-w>R
   tnoremap <c-w>T <c-\><c-n><c-w>T
 
-  " Vertical split
+  " New vertical split
   tnoremap <silent> <c-w>v <c-\><c-n>:vsplit<cr>
 
-  " Horizontal split
+  " New horizontal split
   tnoremap <silent> <c-w>s <c-\><c-n>:sp<cr>
+
+  " New tab
+  tnoremap <silent> <c-w>t <c-\><c-n>:tabnew<cr>
 
 " Close terminal window
   tnoremap <c-w>q <c-\><c-n><c-w>q
 endif
 
-" Close preview window
-nnoremap <silent> zz :pc<cr>
 
 "-------------------------------------------------------------------------------
-" 3.3 Editing
+" 3.5 File Searching
 "-------------------------------------------------------------------------------
-
-" make Y like D
-nnoremap Y y$
-
-nnoremap <silent> <c-s> :update<cr>
-
-if has('nvim')
-  tnoremap <c-[> <c-\><c-n>
-endif
-
-" Close
-if has('nvim')
-  tnoremap <c-q> <c-\><c-n>ZZ
-endif
-nnoremap <c-q> ZZ
-
-" Close all folds except the current line
-nnoremap zp zMzv
-
-"-------------------------------------------------------------------------------
-" 3.3 Search (FZF)
-"-------------------------------------------------------------------------------
-" {{{
 
 let g:fzf_action = {
   \ 'ctrl-t': 'tab split',
@@ -604,12 +654,10 @@ autocmd FileType fzf tnoremap <buffer> <c-k> <up>
 autocmd FileType fzf tnoremap <buffer> <c-h> <c-h>
 autocmd FileType fzf tnoremap <buffer> <c-l> <c-l>
 
-" }}}
 
 "-------------------------------------------------------------------------------
-" 3.4 Git (Fugitive, GitGutter)
+" 3.6 Git
 "-------------------------------------------------------------------------------
-" {{{
 
 " Move to next git modification
 nnoremap <silent> <leader>gp :GitGutterPreviewHunk<cr>
@@ -620,12 +668,10 @@ nnoremap <silent> <leader>gb :Gblame<cr>
 nnoremap <silent> <leader>gs :Gstatus<cr>
 nnoremap <silent> <leader>gc :Gcommit<cr>
 
-" }}}
 
 "-------------------------------------------------------------------------------
-" 3.5 File Browser (netrw)
+" 3.7 File Browser
 "-------------------------------------------------------------------------------
-"{{{
 
 " Turn off top banner by default (toggle with I)
 let g:netrw_banner = 0
@@ -633,37 +679,11 @@ let g:netrw_banner = 0
 " Tree view
 let g:netrw_liststyle = 3
 
-"}}}
 
-" Normal mode in terminal
-if has('nvim')
-  tnoremap <c-[> <c-\><c-n>
-endif
+"===============================================================================
+" 4. File Specific Settings
+"===============================================================================
 
-" Toggle hard word wrap
-function! ToggleWordWrap()
-  let format_option = strridx(&formatoptions, 't')
-  if format_option > 0
-    set formatoptions-=t
-    echo 'Word wrap disabled'
-  else
-    set formatoptions+=t
-    echo 'Word wrap enabled'
-  endif
-endfunc
-"nnoremap <silent> <c-e> :call ToggleWordWrap()<cr>
-
-" Toggle relative line numbers
-function! ToggleRelativeNumber()
-  if &relativenumber == 1
-    set norelativenumber
-  else
-    set relativenumber
-  endif
-endfunc
-nnoremap <silent> <C-n> :call ToggleRelativeNumber()<cr>
-
-" File Settings
 au FileType html call HtmlFileSettings()
 au FileType javascript call JavascriptFileSettings()
 au FileType java call JavaFileSettings()
@@ -672,11 +692,14 @@ au FileType python call PythonFileSettings()
 au FileType markdown call PlainTextFileSettings()
 au FileType txt call PlainTextFileSettings()
 au FileType tex call PlainTextFileSettings()
+au FileType python call PythonFileSettings()
 au BufRead,BufNewFile *.jsp call JspFileSettings()
 au BufRead,BufNewFile *.tmpl call GoTmplFileSettings()
 au BufRead,BufNewFile *.sig setl filetype=sml
 au BufRead,BufNewFile *.bsh setl syntax=java
-au BufRead,BufNewFile .gitconfig-* setl syntax=gitconfig
+au BufRead,BufNewFile .gitconfig-* setl filetype=gitconfig
+au BufRead,BufNewFile .env setl filetype=zsh
+au BufRead,BufNewFile .bash_extras setl filetype=sh
 
 function! PlainTextFileSettings()
   setl textwidth=80 wrap linebreak
@@ -727,6 +750,10 @@ function! PythonFileSettings()
 endfunc
 
 
+"===============================================================================
+" 5. Registered Commands
+"===============================================================================
+
 function! EditZshrc()
   edit ~/.zshrc
 endfunc
@@ -742,3 +769,28 @@ function! EditBashAliases()
 endfunc
 command! Eba call EditBashAliases()
 
+function! NewTerminal()
+  if has('nvim')
+    terminal
+  else
+    terminal++curwin
+  endif
+endfunc
+command! NewTerminal call NewTerminal()
+
+
+"===============================================================================
+" 6. Helper Functions
+"===============================================================================
+
+function! HasTerminal()
+  return has('nvim') || has('terminal')
+endfunc
+
+function! ToggleRelativeNumber()
+  if &relativenumber == 1
+    set norelativenumber
+  else
+    set relativenumber
+  endif
+endfunc
