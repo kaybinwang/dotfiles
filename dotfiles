@@ -19,7 +19,6 @@
 # Please keep make all binaries siblings to the script
 declare -r BINS='
 dotfiles
-bin/pass
 '
 
 # Files to be symlinked from script directory into $HOME
