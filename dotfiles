@@ -38,14 +38,17 @@ WHITE=$(echo -en '\033[01;37m')
 DF_PROG_NAME="$(basename "$0")"
 DEBUG=1
 
-DF_INFO_CMD='info'
+DF_STATUS_CMD='status'
 DF_SYNC_CMD='sync'
-DF_BACKUPS_CMD='backups'
+DF_BACKUP_CMD='backup'
 
 DF_BACKUP_PATH="$HOME/.dotfiles_backup"
 
-ERR_INVALID_ARG=200
-ERR_SYNC_INVALID_ARG=201
+DF_ERR_INVALID_ARG=200
+DF_ERR_SYNC_INVALID_ARG=201
+DF_ERR_BACKUP_INVALID_ARG=202
+DF_ERR_STATUS_INVALID_ARG=203
+DF_ERR_NO_MSG=204
 
 function df_usage() {
   cat <<EOF
@@ -57,11 +60,11 @@ Options:
 	-d	Enables debug mode.
 
 Subcommands:
-	$DF_INFO_CMD	Displays information about
+	$DF_STATUS_CMD	Displays status about
 
 	$DF_SYNC_CMD	Syncs, backing up existing configuration if necessary.
 
-	$DF_BACKUPS_CMD	list
+	$DF_BACKUP_CMD	list
 EOF
 }
 
@@ -84,23 +87,132 @@ function df_date_rfc() {
 }
 
 ################################################################################
-# df_sync: Subcommand for
+#
+# df_status: Subcommand for 
+#
+# Env:
+#   DOTFILE_PATH (required directory)
+#
+# See df_status_usage for documentation on options handled.
+#
 ################################################################################
-
-function df_sync() {
+function df_status() {
   # Parse options and shift to real arguments
   local OPTIND
-  while getopts 'dhn' o; do
+  while getopts 'dhf' o; do
     case "$o" in
       d)
         DEBUG=0
         ;;
       h)
-        exit $ERR_SYNC_INVALID_ARG
+        exit $DF_ERR_STATUS_INVALID_ARG
         ;;
       *)
-        df_echo "Unrecognized option: $o"
-        exit $ERR_SYNC_INVALID_ARG
+        df_error "Unrecognized option: $o."
+        exit $DF_ERR_STATUS_INVALID_ARG
+        ;;
+    esac
+  done
+  shift $((OPTIND-1))
+
+  df_echo "Dotfiles directory: ${MAGENTA}$DOTFILE_PATH${RESET_COLOR}"
+  local dotfile_root="${DOTFILE_PATH%/}/"
+  local -a synced=()
+  local -a missing=()
+  local -a conflict=()
+  while read -r dotfile; do # TODO: verify if this works with paths with spaces
+    local dotfile_relpath="${dotfile#$dotfile_root}"
+    local dotfile_home="$HOME/$dotfile_relpath"
+    df_debug "Comparing $dotfile to $dotfile_home..."
+    if [ ! -e "$dotfile_home" ] && [ ! -h "$dotfile_home" ]; then
+      df_debug "Adding $dotfile_relpath to missing array..."
+      missing+=("$dotfile_relpath")
+    elif [ "$(realpath "$dotfile_home" 2>/dev/null)" == "$(realpath "$dotfile")" ]; then
+      # TODO: remove dependencies on realpath
+      df_debug "Adding $dotfile_relpath to synced array..."
+      synced+=("$dotfile_relpath")
+    else
+      df_debug "Adding $dotfile_relpath to conflict array..."
+      conflict+=("$dotfile_relpath")
+    fi
+  done <<< "$(find "$DOTFILE_PATH" ! -type d)" # ! -type d to include symlinks
+
+  local df_status
+
+  df_debug "Printing out dotfiles in the synced list..."
+  if [ ${#synced[@]} -gt 0 ]; then
+    df_echo "Synced:"
+    for dotfile_relpath in "${synced[@]}"; do
+      df_echo "  ${GREEN}${dotfile_relpath}${RESET_COLOR}"
+    done
+    df_status=synced
+    df_echo
+  fi
+
+  df_debug "Printing out dotfiles in the missing list..."
+  if [ ${#missing[@]} -gt 0 ]; then
+    df_echo "Missing:"
+    for dotfile_relpath in "${missing[@]}"; do
+      df_echo "  ${YELLOW}${dotfile_relpath}${RESET_COLOR}"
+    done
+    df_status=missing
+    df_echo
+  fi
+
+  df_debug "Printing out dotfiles in the conflict list..."
+  if [ ${#conflict[@]} -gt 0 ]; then
+    df_echo "Conflicts:"
+    for dotfile_relpath in "${conflict[@]}"; do
+      df_echo "  ${RED}${dotfile_relpath}${RESET_COLOR}"
+    done
+    df_status=conflict
+    df_echo
+  fi
+
+  df_debug "Printing out information on how to resolve issues..."
+  case $df_status in
+    synced)
+      df_echo 'Dotfiles are fully synced.'
+      ;;
+    missing)
+      df_echo "Found missing dotfiles. Please run '$DF_PROG_NAME $DF_SYNC_CMD' to update."
+      exit $DF_ERR_NO_MSG
+      ;;
+    conflict)
+      df_echo "Found conflicting dotfiles. Please run '$DF_PROG_NAME $DF_SYNC_CMD' to update."
+      exit $DF_ERR_NO_MSG
+      ;;
+  esac
+}
+
+function df_status_usage() {
+  echo
+}
+
+################################################################################
+#
+# df_sync: Subcommand for syncing dotfiles to home directory.
+#
+# Env:
+#   DOTFILE_PATH (required directory)
+#
+# See df_sync_usage for documentation on options handled.
+#
+################################################################################
+function df_sync() {
+  # Parse options and shift to real arguments
+  local OPTIND
+  while getopts 'dhf' o; do
+    case "$o" in
+      d)
+        DEBUG=0
+        ;;
+      h)
+        exit $DF_ERR_SYNC_INVALID_ARG
+        ;;
+      *)
+        df_error "Unrecognized option: $o."
+        exit $DF_ERR_SYNC_INVALID_ARG
         ;;
     esac
   done
@@ -120,21 +232,29 @@ function df_sync() {
     local dotfile_relpath="${dotfile#$dotfile_root}"
     df_symlink_to_home "$dotfile_relpath" "$backup_dir"
     echo
-  done <<< "$(find "$DOTFILE_PATH" -type f)"
+  done <<< "$(find "$DOTFILE_PATH" ! -type d)"
 
   df_echo 'Finished syncing dotfiles!'
 }
 
+################################################################################
 #
-# df_symlink_to_home $1
+# df_symlink_to_home: Creates a symlink to a dotfile in the user's home dir.
 #
-# Creates a soft symlink from dst -> src
+# Env:
+#   DEBUG (boolean)
+#   HOME (directory)
+#   DOTFILE_PATH (directory)
+#   DF_BACKUP_PATH (directory)
 #
-# If dst already exists, then it is backed up to 
-# (dirname backup_dir/src) if backup_dir provided
+# Arguments:
+#   $1 - a relative path from DOTFILE_PATH that points to the dotfile.
+#   $2 - an optional directory to backup existing dotfiles to.
 #
-# please use relative paths
+# Returns an error if:
+#   The dotfile already exists in HOME, but no backup directory was provided.
 #
+################################################################################
 function df_symlink_to_home() {
   local -r dotfile_relpath="$1"
   local -r backup_root="$2"
@@ -144,7 +264,7 @@ function df_symlink_to_home() {
 
   df_echo "Creating symlink ${BLUE}$dst${RESET_COLOR} -> ${CYAN}$src${RESET_COLOR}"
   df_debug "Using ${YELLOW}$dotfile_relpath${RESET_COLOR} as the relative path."
-  if [ -e "$dst" ]; then
+  if [ -e "$dst" ] || [ -h "$dst" ]; then
     # Only backup if a backup directory was provided
     if [ -z "$backup_root" ]; then
       df_error "Unable to symlink. File $dst already exists."
@@ -174,71 +294,131 @@ function df_symlink_to_home() {
 
 function df_sync_usage() {
   cat <<EOF
-Usage: $DF_PROG_NAME $DF_SYNC_CMD [-dhn]
+Usage: $DF_PROG_NAME $DF_SYNC_CMD [-dhf]
 
 Options:
 	-h	Prints this message.
 
 	-d	Enables debug mode.
 
-	-s	Don't back up existing symlinks.
+	-f	Overwrite existing dotfiles without making a backup.
 EOF
 }
 
 
 ################################################################################
-# Subcommand for handling backups
+#
+# df_backup: Subcommand for managing dotfile backups.
+#
+# Env:
+#   DOTFILE_PATH (required directory)
+#
+# See df_backup_usage for documentation on options handled.
+#
 ################################################################################
-function df_backups() {
+function df_backup() {
   # Parse options and shift to real arguments
   local OPTIND
-  while getopts 'dDhr' o; do
+  local cmd
+  local backup
+  while getopts 'dD:hlr:' o; do
     case "$o" in
       d)
         DEBUG=0
         ;;
+      r)
+        cmd=$o
+        backup=$(awk '{$1=$1};1' <<< "$OPTARG")
+        ;;
+      D)
+        cmd=$o
+        backup=$(awk '{$1=$1};1' <<< "$OPTARG")
+        ;;
+      l)
+        cmd=$o
+        ;;
       h)
-        exit $ERR_SYNC_INVALID_ARG
+        exit $DF_ERR_BACKUP_INVALID_ARG
         ;;
       *)
-        df_echo "Unrecognized option: $o"
-        exit $ERR_SYNC_INVALID_ARG
+        df_error "Unrecognized option: $o."
+        exit $DF_ERR_BACKUP_INVALID_ARG
         ;;
     esac
   done
   shift $((OPTIND-1))
 
+  if [ "$cmd" == 'l' ]; then
+    df_backup_list
+  elif [ "$cmd" == 'D' ] || [ "$cmd" == 'r' ]; then
+    if [ -z "$backup" ]; then
+      df_error "$DF_BACKUP_CMD -$cmd requires an argument."
+      exit $DF_ERR_BACKUP_INVALID_ARG
+    fi
+
+    local backup_abspath="$DF_BACKUP_PATH/$backup"
+    df_debug "Attempting to remove backup at $backup_abspath..."
+    if ! df_backup_list | grep -wq "$backup"; then
+      df_debug "Unable to find the '$backup' in the backup list."
+      df_error "Backup '$backup' not found."
+      exit $DF_ERR_NO_MSG
+    fi
+
+    rm -rf "$backup_abspath"
+    df_debug "Removed $backup_abspath."
+  else
+    exit $DF_ERR_BACKUP_INVALID_ARG
+  fi
+}
+
+function df_backup_list() {
   find "$DF_BACKUP_PATH" ! -path "$DF_BACKUP_PATH" -type d -maxdepth 1 | xargs basename | sort
+}
+
+function df_backup_usage() {
+  cat <<EOF
+Usage: $DF_PROG_NAME $DF_BACKUP_CMD [-dh] -l
+       $DF_PROG_NAME $DF_BACKUP_CMD [-dh] -D BACKUP_TIMESTAMP
+       $DF_PROG_NAME $DF_BACKUP_CMD [-dh] -r BACKUP_TIMESTAMP
+
+Provides funcationality for managing dotfile backups.
+
+Options:
+	-h	Prints this message.
+
+	-d	Enables debug mode.
+
+	-l	Lists all the backups.
+
+	-D	Delete a specific backup.
+
+	-r	Restore a backup, backing up the current dotfiles first.
+EOF
 }
 
 ################################################################################
 #
 # main: Main entry point for executable.
 #
-# If DOTFILE_PATH is not set, then main will set it to the absolute directory
-# that this script lives in, resolving all symlinks and relative paths. It will
-# also append the variable to .bash_extras and export it as a global.
+# Processes the command line arguments and delegates to the appropriate
+# subcommand.
 #
 # Env:
 #   DOTFILE_PATH (required directory)
 #
-# Arguments:
-#   A list of packages (string[])
-#
-# Returns an error if:
-#   Setup of any of the packages fail.
+# See df_usage for documentation on all the different subcommands.
 #
 ################################################################################
 function main() {
   # Invariants
   if [ -z "$DOTFILE_PATH" ]; then
     df_error "${DF_PROG_NAME}: DOTFILE_PATH is not set."
-    exit $ERR_INVALID_ARG
+    exit $DF_ERR_INVALID_ARG
   elif [ ! -d "$DOTFILE_PATH" ]; then
     df_error "${DF_PROG_NAME}: DOTFILE_PATH is not a directory."
-    exit $ERR_INVALID_ARG
+    exit $DF_ERR_INVALID_ARG
   elif [ "$#" -eq 0 ]; then
-    exit $ERR_INVALID_ARG
+    exit $DF_ERR_INVALID_ARG
   fi
 
   # Parse options and shift to real arguments
@@ -249,11 +429,11 @@ function main() {
         DEBUG=0
         ;;
       h)
-        exit $ERR_INVALID_ARG
+        exit $DF_ERR_INVALID_ARG
         ;;
       *)
-        df_echo "Unrecognized option: $o"
-        exit $ERR_INVALID_ARG
+        df_error "Unrecognized option: $o."
+        exit $DF_ERR_INVALID_ARG
         ;;
     esac
   done
@@ -262,18 +442,18 @@ function main() {
   local subcommand="$1"
   shift
   case "$subcommand" in
-    $DF_INFO_CMD)
-      df_info "$*"
+    $DF_STATUS_CMD)
+      df_status "$*"
       ;;
     $DF_SYNC_CMD)
       df_sync "$*"
       ;;
-    $DF_BACKUPS_CMD)
-      df_backups "$*"
+    $DF_BACKUP_CMD)
+      df_backup "$*"
       ;;
     *)
-      df_echo "Unrecognized command: $1"
-      exit $ERR_INVALID_ARG
+      df_error "Unrecognized command: $subcommand."
+      exit $DF_ERR_INVALID_ARG
       ;;
   esac
 }
@@ -285,12 +465,23 @@ function handle_error() {
     0)
       exit 0
       ;;
-    $ERR_SYNC_INVALID_ARG)
+    $DF_ERR_SYNC_INVALID_ARG)
       df_sync_usage
       exit 1
       ;;
-    $ERR_INVALID_ARG)
+    $DF_ERR_STATUS_INVALID_ARG)
+      df_status_usage
+      exit 1
+      ;;
+    $DF_ERR_BACKUP_INVALID_ARG)
+      df_backup_usage
+      exit 1
+      ;;
+    $DF_ERR_INVALID_ARG)
       df_usage
+      exit 1
+      ;;
+    $DF_ERR_NO_MSG)
       exit 1
       ;;
     *)
