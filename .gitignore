@@ -1,4 +1,4 @@
 .DS_STORE
-homedir/.bash_extras
-homedir/.gitconfig-work
-homedir/.zsh_extras
+tilde/.bash_extras
+tilde/.gitconfig-work
+tilde/.zsh_extras
