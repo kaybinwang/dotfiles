@@ -61,9 +61,9 @@ PROMPT_COMMAND=__prompt_command
 ssh-add -A &>/dev/null
 
 # Disable XON/XOFF since it sometimes conflicts with ^s in bash
-stty -ixoff
-stty stop undef
-stty start undef
+# stty -ixoff
+# stty stop undef
+# stty start undef
 
 # Prefix search using ^P and ^N
 bind '"\C-P":history-search-backward'
@@ -74,8 +74,16 @@ bind '"\C-N":history-search-forward'
 # 3. Sourced Scripts
 ################################################################################
 
+# sourcing kitty terminal completions
+if command -v kitty &>/dev/null; then
+  source <(kitty + complete setup bash)
+fi
+
+# sourcing nvm and completions
 [ -s "$NVM_DIR/nvm.sh " ] && source "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+
+# sourcing bash completions from homebrew
 if [ -s /usr/local/etc/bash_completion ]; then
   source /usr/local/etc/bash_completion
 elif command -v brew &>/dev/null; then
