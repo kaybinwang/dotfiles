@@ -37,6 +37,7 @@
 "   3.5 File Searching
 "   3.6 Git
 "   3.7 File Browser
+"   3.8 Testing
 " 4. File Specific Settings
 " 5. Registered Commands
 " 6. Helper Functions
@@ -274,6 +275,16 @@ Plug 'w0rp/ale'
   let g:ale_sign_error = 'E>'
   let g:ale_set_quickfix = 1
 
+  let g:ale_fixers = {'python': ['isort']}
+  let g:ale_python_isort_options = ' --combine-as'.
+          \ ' --use-parentheses'.
+          \ ' --trailing-comma'.
+          \ ' --multi-line 3'.
+          \ ' -paffirm'.
+          \ ' -otyping'.
+          \ ' --line-width 100'.
+          \ ' --virtual-env '.$ATT_WORKSPACE
+
 "}}}
 
 "}}}
@@ -285,9 +296,21 @@ Plug 'w0rp/ale'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 Plug 'airblade/vim-gitgutter'
+Plug 'junegunn/gv.vim'
 
 " Unix commands
 Plug 'tpope/vim-eunuch'
+
+" Run tests
+Plug 'janko-m/vim-test'
+"{{{ vim-test
+  let test#python#runner = 'nose'
+  " if has('nvim')
+  "   let test#strategy = 'terminal'
+  " else
+  "   let test#strategy = 'vimterminal'
+  " endif
+"}}}
 
 "}}}
 
@@ -431,31 +454,13 @@ endif
 " Use true color
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
-" Terminal colors
-let g:terminal_color_0  = '#3b3b3b'
-let g:terminal_color_1  = '#ea8986'
-let g:terminal_color_2  = '#a4c38c'
-let g:terminal_color_3  = '#ffc68d'
-let g:terminal_color_4  = '#a7cae3'
-let g:terminal_color_5  = '#e8cefb'
-let g:terminal_color_6  = '#00a7a0'
-let g:terminal_color_7  = '#c9c9c9'
-let g:terminal_color_8  = '#3b3b3b'
-let g:terminal_color_9  = '#ffb2b0'
-let g:terminal_color_10 = '#c8e3b9'
-let g:terminal_color_11 = '#ffe2af'
-let g:terminal_color_12 = '#bee0f8'
-let g:terminal_color_13 = '#fce3ff'
-let g:terminal_color_14 = '#0cbeb7'
-let g:terminal_color_15 = '#c9c9c9'
-
 " Folding
 setl foldmethod=marker " hides markers within vim config
 setl foldlevel=0
 setl modelines=1
 
 " Background
-set mouse=a                     " enable mouse support
+set mouse=                      " enable mouse support
 set autoread                    " update file when changed outside of vim
 " set clipboard=unnamed           " use native clipboard
 set history=200                 " store last 200 commands as history
@@ -618,6 +623,7 @@ let g:fzf_action = {
 nnoremap <silent> <leader><leader> :Files<cr>
 nnoremap <silent> <leader>p :GFiles<cr>
 nnoremap <silent> <leader>m :GFiles?<cr>
+nnoremap <silent> <leader>b :Buffers<cr>
 nnoremap <silent> <leader>w :Windows<cr>
 nnoremap <silent> <leader>; :BLines<cr>
 nnoremap <silent> <leader>l :Lines<cr>
@@ -680,6 +686,24 @@ let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 
 
+"-------------------------------------------------------------------------------
+" 3.8 Testing
+"-------------------------------------------------------------------------------
+
+" Execute the test in the current file that's closest to the cursor
+" If the current file is not a test, then it reruns a previous nearest test
+nnoremap <silent> <leader>tn :TestNearest<cr>
+
+" Run tests for the current file. If the current file is not a test, then it
+" reruns a previously touched test file
+nnoremap <silent> <leader>tf :TestFile<cr>
+
+" Runs the most recently executed test
+nnoremap <silent> <leader>tl :TestLast<cr>
+
+" Open the last run test in the current buffer
+nnoremap <silent> <leader>tv :TestVisit<cr>
+
 "===============================================================================
 " 4. File Specific Settings
 "===============================================================================
@@ -693,6 +717,7 @@ au FileType markdown call PlainTextFileSettings()
 au FileType txt call PlainTextFileSettings()
 au FileType tex call PlainTextFileSettings()
 au FileType python call PythonFileSettings()
+au FileType cucumber call CucumberFileSettings()
 au BufRead,BufNewFile *.jsp call JspFileSettings()
 au BufRead,BufNewFile *.tmpl call GoTmplFileSettings()
 au BufRead,BufNewFile *.sig setl filetype=sml
@@ -749,6 +774,11 @@ function! PythonFileSettings()
   setl textwidth=120
 endfunc
 
+function! CucumberFileSettings()
+  set sts=4 sw=4 ts=4
+  setl colorcolumn=120
+  setl textwidth=120
+endfunc
 
 "===============================================================================
 " 5. Registered Commands
@@ -777,7 +807,6 @@ function! NewTerminal()
   endif
 endfunc
 command! NewTerminal call NewTerminal()
-
 
 "===============================================================================
 " 6. Helper Functions
