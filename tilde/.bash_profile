@@ -150,7 +150,7 @@ function __prompt_command() {
     if command -v git &>/dev/null; then
       git_branch="$(__parse_git_branch)"
       if [ -n "$git_branch" ]; then
-        git_branch="${purple}${git_branch}${reset} "
+        git_branch="${purple}(${git_branch})${reset} "
       fi
     fi
 
@@ -162,7 +162,7 @@ function __prompt_command() {
 }
 
 function __parse_git_branch() {
-  git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+  git rev-parse --abbrev-ref HEAD 2>/dev/null
 }
 
 function __save_and_reload_history() {
