@@ -11,6 +11,7 @@
 "   - Revisit FZF <-> RG integration
 "   - Compatible terminal keybindings across nvim/vim8
 "   - Fix bootstrapping errors from missing plugins
+"   - Symlink plugins / dotfiles at leaf nodes
 
 "===============================================================================
 " Philosophy
