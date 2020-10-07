@@ -11,6 +11,22 @@
 "   - Revisit FZF <-> RG integration
 "   - Compatible terminal keybindings across nvim/vim8
 
+"===============================================================================
+" Philosophy
+"===============================================================================
+"
+" Changes will be made to the appropriate files so that we minimize start up
+" time by only loading functionality when needed. For example Python
+" functionality will only be loaded when opening up a Python file for the first
+" time.
+"
+"   nvim/
+"   ├── .vim/
+"   │   ├── autoload/      - functions that are only called from mappings
+"   │   └── after/
+"   │       └── ftplugin/  - filetype specific configuration (e.g. Python spacing)
+"   └── init.vim           - personal configuration that's always loaded
+
 "-------------------------------------------------------------------------------
 " Table of contents
 "-------------------------------------------------------------------------------
