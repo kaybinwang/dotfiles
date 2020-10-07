@@ -177,6 +177,13 @@ set list                            " show invisible characters
 set listchars=tab:>·,trail:·,nbsp:¬ " but only show useful characters
 set lazyredraw                      " don't draw everything
 
+" Cursor settings:
+"  1 -> blinking block
+"  2 -> solid block
+"  3 -> blinking underscore
+"  4 -> solid underscore
+"  5 -> blinking vertical bar
+"  6 -> solid vertical bar
 if &term =~ 'xterm' && !has('nvim')
   let &t_EI = "\<Esc>[2 q"          " EI = NORMAL mode
   let &t_SI = "\<Esc>[6 q"          " SI = INSERT mode
