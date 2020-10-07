@@ -150,6 +150,8 @@ set history=200                     " store last 200 commands as history
 set noerrorbells                    " no error bells please
 set path+=**                        " recursive searching
 set complete-=i                     " don't include all files, it's slow
+set shortmess+=aAIsT                " disable welcome screen and other messages
+set nostartofline                   " keeps cursor in place when switching buffers
 
 " 2.1.1 Backups
 set nobackup                        " don't save backups
