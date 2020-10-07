@@ -105,10 +105,6 @@ Plug 'sheerun/vim-polyglot'
 Plug 'affirm/vim-policy-syntax'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'chrisbra/Colorizer'
-" Colorizer {{{
-  let g:colorizer_auto_filetype='css,html'
-  nnoremap <silent> <c-h> :ColorToggle<cr>
-"}}}
 
 " 1.2.2 Text Editing & Navigation
 Plug 'tpope/vim-surround'
@@ -119,14 +115,6 @@ Plug 'tpope/vim-unimpaired'
 " 1.2.3 Search
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
 Plug 'junegunn/fzf.vim'
-" fzf.vim {{{
-  command! -bang -nargs=* Rg
-    \ call fzf#vim#grep(
-    \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
-    \   <bang>0 ? fzf#vim#with_preview('up:60%')
-    \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-    \   <bang>0)
-" }}}
 
 " 1.2.4 Developer Tools
 Plug 'tpope/vim-fugitive'
@@ -134,15 +122,6 @@ Plug 'tpope/vim-rhubarb'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-eunuch'
 Plug 'janko-m/vim-test'
-" vim-test {{{
-  let test#python#runner = 'nose'
-  let test#python#options = '-s'
-  if has('nvim')
-    let test#strategy = 'terminal'
-  else
-    let test#strategy = 'vimterminal'
-  endif
-" }}}
 
 call plug#end()
 
@@ -316,6 +295,9 @@ nnoremap Y y$
 " Toggle relative line numbers
 nnoremap <silent> <C-n> :call togglernu#ToggleRelativeNumber()<cr>
 
+let g:colorizer_auto_filetype='css,html'
+nnoremap <silent> <c-h> :ColorToggle<cr>
+
 
 "-------------------------------------------------------------------------------
 " 3.4 Terminal
@@ -379,6 +361,13 @@ command! -bang -nargs=* GGrep
   \   'git grep --line-number '.shellescape(<q-args>), 0,
   \   { 'dir': systemlist('git rev-parse --show-toplevel')[0] }, <bang>0)
 
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
+
 " Scroll search results
 autocmd FileType fzf tnoremap <buffer> <c-j> <down>
 autocmd FileType fzf tnoremap <buffer> <c-k> <up>
@@ -414,6 +403,14 @@ let g:netrw_liststyle = 3
 "-------------------------------------------------------------------------------
 " 3.8 Testing
 "-------------------------------------------------------------------------------
+
+let test#python#runner = 'nose'
+let test#python#options = '-s'
+if has('nvim')
+  let test#strategy = 'terminal'
+else
+  let test#strategy = 'vimterminal'
+endif
 
 " Execute the test in the current file that's closest to the cursor
 " If the current file is not a test, then it reruns a previous nearest test
