@@ -12,6 +12,7 @@
 "   - Compatible terminal keybindings across nvim/vim8
 "   - Fix bootstrapping errors from missing plugins
 "   - Symlink plugins / dotfiles at leaf nodes
+"   - Statusline padding
 
 "===============================================================================
 " Philosophy
@@ -61,8 +62,6 @@
 "   3.6 Git
 "   3.7 File Browser
 "   3.8 Testing
-" 4. Registered Commands
-" 5. Helper Functions
 
 "===============================================================================
 " 1. Plugins
@@ -206,33 +205,33 @@ if &term =~ 'xterm' && !has('nvim')
 endif
 
 " 2.2.3 Status Line
-set noshowmode                              " hide mode in command line bar
-set noruler                                 " hide line, col number in command line bar
-set noshowcmd                               " hide in-flight keystrokes in command line bar
-set laststatus=2                            " always show a status lin v
+set noshowmode                               " hide mode in command line bar
+set noruler                                  " hide line, col number in command line bar
+set noshowcmd                                " hide in-flight keystrokes in command line bar
+set laststatus=2                             " always show a status lin v
 set statusline=
 set statusline+=\ 
-set statusline+=%{StatuslineMode()}         " current editor mode
-set statusline+=%{StatuslinePaste()}        " flag if paste is enabled
+set statusline+=%{statusline#Mode()}         " current editor mode
+set statusline+=%{statusline#Paste()}        " flag if paste is enabled
 set statusline+=\ 
 set statusline+=%#Pmenu#
-set statusline+=%{StatuslineGitBranch()}    " current git branch
+set statusline+=%{statusline#GitBranch()}    " current git branch
 set statusline+=\|\ 
-set statusline+=%{StatuslineReadonly()}     " flag is file is readonly
-set statusline+=%f                          " relative path to current buffer
-set statusline+=%{StatuslineModified()}     " flag if file is modified
+set statusline+=%{statusline#Readonly()}     " flag is file is readonly
+set statusline+=%f                           " relative path to current buffer
+set statusline+=%{statusline#Modified()}     " flag if file is modified
 set statusline+=\ 
 set statusline+=%#Visual#
 set statusline+=%=
-set statusline+=%{StatuslineFileformat()}   " fileformat
+set statusline+=%{statusline#Fileformat()}   " fileformat
 set statusline+=\ \|\ 
-set statusline+=%{StatuslineFileencoding()} " fileencoding
+set statusline+=%{statusline#Fileencoding()} " fileencoding
 set statusline+=\ \|\ 
-set statusline+=%{StatuslineFiletype()}     " filetype
+set statusline+=%{statusline#Filetype()}     " filetype
 set statusline+=\ \|\ 
-set statusline+=%3p%%                       " percentage through file in lines
+set statusline+=%3p%%                        " percentage through file in lines
 set statusline+=\ \|\ 
-set statusline+=%4l:%-4c                    " line number : column number
+set statusline+=%4l:%-4c                     " line number : column number
 
 
 "-------------------------------------------------------------------------------
@@ -429,75 +428,3 @@ nnoremap <silent> <leader>tl :TestLast<cr>
 
 " Open the last run test in the current buffer
 nnoremap <silent> <leader>tv :TestVisit<cr>
-
-
-"===============================================================================
-" 4. Registered Commands
-"===============================================================================
-
-
-"===============================================================================
-" 5. Helper Functions
-"===============================================================================
-
-let g:statuslinemode = {
-  \ 'n': 'NORMAL',
-  \ 'no': 'N·Operator Pending',
-  \ 'v': 'VISUAL',
-  \ 'V': 'V-LINE',
-  \ 'x22': 'V-BLOCK',
-  \ "\<C-v>": 'V-BLOCK',
-  \ 's': 'SELECT',
-  \ 'S': 'S-LINE',
-  \ "\<C-s>": 'S-BLOCK',
-  \ 'i': 'INSERT',
-  \ 'R': 'REPLACE',
-  \ 'Rv': 'V-REPLACE',
-  \ 'c': 'COMMAND',
-  \ 'cv': 'Vim Ex',
-  \ 'ce': 'Ex',
-  \ 'r': 'Prompt',
-  \ 'rm': 'More',
-  \ 'r?': 'Confirm',
-  \ '!': 'Shell',
-  \ 't': 'TERMINAL',
-  \}
-
-function! StatuslineMode()
-  return g:statuslinemode[mode()]
-endfunction
-
-function! StatuslinePaste()
-    if &paste == 1
-        return "PASTE"
-    else
-        return ""
-    endif
-endfunction
-
-function! StatuslineGitBranch()
-  " use fugitive instead of making an external call on each statusline render
-  let l:mark = ' '
-  let l:branch = fugitive#head()
-  return l:branch != '' ? l:mark.l:branch : ''
-endfunction
-
-function! StatuslineFiletype()
-  return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
-endfunction
-
-function! StatuslineFileformat()
-  return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
-endfunction
-
-function! StatuslineModified()
-  return &ft =~ 'help' ? '' : &modified ? '+' : &modifiable ? '' : '-'
-endfunction
-
-function! StatuslineReadonly()
-  return &ft !~? 'help' && &readonly ? '' : ''
-endfunction
-
-function! StatuslineFileencoding()
-  return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
-endfunction
