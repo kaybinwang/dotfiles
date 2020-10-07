@@ -303,6 +303,17 @@ nnoremap <silent> <C-n> :call ToggleRelativeNumber()<cr>
 
 " TODO: unify terminal bindings across nvim/vim8
 
+" bring vim 8.2 bindings to nvim
+if has('nvim')
+  tnoremap <C-w>N <C-\><C-n>
+  tnoremap <C-w>: <C-\><C-n>:
+
+  tnoremap <C-w>h <C-\><C-n><C-w>h
+  tnoremap <C-w>j <C-\><C-n><C-w>j
+  tnoremap <C-w>k <C-\><C-n><C-w>k
+  tnoremap <C-w>l <C-\><C-n><C-w>l
+endif
+
 
 "-------------------------------------------------------------------------------
 " 3.5 File Searching
