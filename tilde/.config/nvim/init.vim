@@ -10,6 +10,7 @@
 "   - Revisit multiplexing in vim terminal / kitty / tmux
 "   - Revisit FZF <-> RG integration
 "   - Compatible terminal keybindings across nvim/vim8
+"   - Fix bootstrapping errors from missing plugins
 
 "===============================================================================
 " Philosophy
@@ -73,7 +74,7 @@
 "-------------------------------------------------------------------------------
 if has('nvim')
   let g:vim_plug_dir = expand('~/.config/nvim/autoload')
-  let g:vim_plugin_dir = expand('~/.config/nvim/plugged')
+  let g:vim_plugin_dir = expand('~/.config/nvim/.vim/plugged')
   let g:vimrc = expand('~/.config/nvim/init.vim')
 else
   let g:vim_plug_dir = expand('~/.vim/autoload')
@@ -84,11 +85,10 @@ endif
 " Install vim-plug if not available
 let g:vim_plug = g:vim_plug_dir.'/plug.vim'
 if !filereadable(g:vim_plug)
-  echo "Installing vim-plug..."
-  call mkdir(g:vim_plug_dir, 'p')
   silent! execute '!curl -fLo '.g:vim_plug.' --create-dirs '.
         \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  execute 'source '.fnameescape(g:vim_plug)
+  " Note that --sync flag is used to block the execution until the installer finishes.
+  autocmd VimEnter * PlugInstall --sync | source g:vimrc
 endif
 
 
