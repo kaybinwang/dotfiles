@@ -73,9 +73,11 @@
 "-------------------------------------------------------------------------------
 if has('nvim')
   let g:vim_plug_dir = expand('~/.config/nvim/autoload')
+  let g:vim_plugin_dir = expand('~/.config/nvim/plugged')
   let g:vimrc = expand('~/.config/nvim/init.vim')
 else
   let g:vim_plug_dir = expand('~/.vim/autoload')
+  let g:vim_plugin_dir = expand('~/.vim/plugged')
   let g:vimrc = expand('~/.vimrc')
 endif
 
@@ -94,7 +96,7 @@ endif
 " 1.2 Plugin List
 "-------------------------------------------------------------------------------
 
-call plug#begin('~/.vim/plugged')
+call plug#begin(g:vim_plugin_dir)
 
 " 1.2.1 User Interface
 Plug 'nanotech/jellybeans.vim'
@@ -312,7 +314,7 @@ nnoremap k gk
 nnoremap Y y$
 
 " Toggle relative line numbers
-nnoremap <silent> <C-n> :call ToggleRelativeNumber()<cr>
+nnoremap <silent> <C-n> :call togglernu#ToggleRelativeNumber()<cr>
 
 
 "-------------------------------------------------------------------------------
@@ -498,11 +500,3 @@ endfunction
 function! StatuslineFileencoding()
   return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
 endfunction
-
-function! ToggleRelativeNumber()
-  if &relativenumber == 1
-    set norelativenumber
-  else
-    set relativenumber
-  endif
-endfunc
