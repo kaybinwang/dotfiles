@@ -113,7 +113,7 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-unimpaired'
 
 " 1.2.3 Search
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 " 1.2.4 Developer Tools
@@ -328,10 +328,21 @@ endif
 " 3.5 File Searching
 "-------------------------------------------------------------------------------
 
-let g:fzf_action = {
-  \ 'ctrl-t': 'tab split',
-  \ 'ctrl-x': 'split',
-  \ 'ctrl-v': 'vsplit' }
+let g:fzf_colors = {
+  \ 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'Ignore'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment']
+  \}
 
 " Open search
 nnoremap <silent> <leader><leader> :Files<cr>
@@ -342,38 +353,14 @@ nnoremap <silent> <leader>w :Windows<cr>
 nnoremap <silent> <leader>; :BLines<cr>
 nnoremap <silent> <leader>l :Lines<cr>
 nnoremap <silent> <leader>h :History<cr>
-nnoremap <silent> <leader>a :FindInExact<cr>
-
-command! -bang -nargs=* FindIn
-  \ call fzf#vim#grep(
-  \ 'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
-  \ {'options': '--delimiter : --nth 4..'},
-  \ <bang>0)
-
-command! -bang -nargs=* FindInExact
-  \ call fzf#vim#grep(
-  \ 'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
-  \ {'options': '--delimiter : --nth 4.. --exact'},
-  \ <bang>0)
-
-function! SearchWordWithRg()
-  execute 'FindInExact' expand('<cword>')
-endfunction
-nnoremap <silent> K :call SearchWordWithRg()<cr>
-
-" Command for git grep
-" - fzf#vim#grep(command, with_column, [options], [fullscreen])
-command! -bang -nargs=* GGrep
-  \ call fzf#vim#grep(
-  \   'git grep --line-number '.shellescape(<q-args>), 0,
-  \   { 'dir': systemlist('git rev-parse --show-toplevel')[0] }, <bang>0)
+nnoremap <silent> <leader>a :Rg<cr>
 
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
-  \   <bang>0 ? fzf#vim#with_preview('up:60%')
-  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \   <bang>0)
+  \   'rg --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
+  \   fzf#vim#with_preview(), <bang>0)
+
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
 " Scroll search results
 autocmd FileType fzf tnoremap <buffer> <c-j> <down>
