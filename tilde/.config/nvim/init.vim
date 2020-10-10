@@ -73,13 +73,13 @@
 " First time configuration and loading of plugins.
 "-------------------------------------------------------------------------------
 if has('nvim')
-  let g:vim_plug_dir = expand('~/.config/nvim/autoload')
-  let g:vim_plugin_dir = expand('~/.config/nvim/.vim/plugged')
-  let g:vimrc = expand('~/.config/nvim/init.vim')
+  let g:vim_plug_dir = resolve(expand('~/.config/nvim/autoload'))
+  let g:vim_plugin_dir = resolve(expand('~/.config/nvim/.vim/plugged'))
+  let g:vimrc = resolve(expand('~/.config/nvim/init.vim'))
 else
-  let g:vim_plug_dir = expand('~/.vim/autoload')
-  let g:vim_plugin_dir = expand('~/.vim/plugged')
-  let g:vimrc = expand('~/.vimrc')
+  let g:vim_plug_dir = resolve(expand('~/.vim/autoload'))
+  let g:vim_plugin_dir = resolve(expand('~/.vim/plugged'))
+  let g:vimrc = resolve(expand('~/.vimrc'))
 endif
 
 " Install vim-plug if not available
