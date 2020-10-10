@@ -321,6 +321,9 @@ if has('nvim')
   tnoremap <C-w>j <C-\><C-n><C-w>j
   tnoremap <C-w>k <C-\><C-n><C-w>k
   tnoremap <C-w>l <C-\><C-n><C-w>l
+
+  autocmd TermOpen * setl nonumber norelativenumber
+  autocmd BufEnter * if &buftype == 'terminal' | :startinsert | endif
 endif
 
 
