@@ -392,6 +392,7 @@ nnoremap <silent> <leader>gu :GitGutterUndoHunk<cr>
 
 " Fugitive Git commands
 nnoremap <silent> <leader>gb :Gblame<cr>
+nnoremap <silent> <leader>gd :Gdiff<cr>
 nnoremap <silent> <leader>gs :Gstatus<cr>
 nnoremap <silent> <leader>gc :Gcommit<cr>
 
