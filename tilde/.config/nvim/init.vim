@@ -193,7 +193,7 @@ endif
 " 2.2.3 Status Line
 set noshowmode                               " hide mode in command line bar
 set noruler                                  " hide line, col number in command line bar
-set noshowcmd                                " hide in-flight keystrokes in command line bar
+set showcmd                                  " show in-flight keystrokes in command line bar
 set laststatus=2                             " always show a status lin v
 set statusline=
 set statusline+=\ 
