@@ -180,6 +180,7 @@ set cursorline                      " highlight current line
 set list                            " show invisible characters
 set listchars=tab:>·,trail:·,nbsp:¬ " but only show useful characters
 set lazyredraw                      " don't draw everything
+set updatetime=100                  " faster updates, used for gitgutter
 
 " Cursor settings:
 "  1 -> blinking block
