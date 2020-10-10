@@ -373,8 +373,6 @@ command! -bang -nargs=* Rg
   \   'rg --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
   \   fzf#vim#with_preview(), <bang>0)
 
-command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
-
 " Scroll search results
 autocmd FileType fzf tnoremap <buffer> <c-j> <down>
 autocmd FileType fzf tnoremap <buffer> <c-k> <up>
