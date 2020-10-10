@@ -44,6 +44,7 @@
 "   2.1 General
 "     2.1.1 Backups
 "     2.1.2 Undo History
+"     2.1.3 Auto Save
 "   2.2 User Interface
 "     2.2.1 Theme
 "     2.2.2 Buffers
@@ -160,6 +161,10 @@ set nowritebackup                   " don't save a backup while editing
 set undodir=~/.vim/undodir          " set undofile location
 set undofile                        " maintain undo history between sessions
 set undolevels=1000                 " store 1000 undos
+
+" 2.1.3 Auto Save
+autocmd FocusGained,BufEnter * :checktime          " auto read
+autocmd FocusLost,WinLeave * :silent! noautocmd w  " auto write
 
 
 "-------------------------------------------------------------------------------
