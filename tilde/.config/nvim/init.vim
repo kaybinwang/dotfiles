@@ -100,6 +100,7 @@ call plug#begin(g:vim_plugin_dir)
 
 " 1.2.1 User Interface
 Plug 'nanotech/jellybeans.vim'
+Plug 'danilo-augusto/vim-afterglow'
 Plug 'ryanoasis/vim-devicons'
 Plug 'sheerun/vim-polyglot'
 Plug 'affirm/vim-policy-syntax'
@@ -166,8 +167,11 @@ set undolevels=1000                 " store 1000 undos
 "-------------------------------------------------------------------------------
 
 " 2.2.1 Theme
-colorscheme jellybeans              " current theme
-set termguicolors                   " true colors
+if &runtimepath =~? "afterglow"
+  colorscheme afterglow
+endif
+set background=dark
+" set termguicolors                   " true colors
 
 " 2.2.2 Buffers
 syntax on                           " syntax highlighting
