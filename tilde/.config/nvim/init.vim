@@ -101,6 +101,7 @@ call plug#begin(g:vim_plugin_dir)
 
 " 1.2.1 User Interface
 Plug 'nanotech/jellybeans.vim'
+Plug 'NLKNguyen/papercolor-theme'
 Plug 'danilo-augusto/vim-afterglow'
 Plug 'ryanoasis/vim-devicons'
 Plug 'sheerun/vim-polyglot'
@@ -172,10 +173,8 @@ autocmd FocusLost,WinLeave * :silent! noautocmd w  " auto write
 "-------------------------------------------------------------------------------
 
 " 2.2.1 Theme
-if &runtimepath =~? "afterglow"
-  colorscheme afterglow
-endif
-set background=dark
+set background=light
+colorscheme PaperColor
 " set termguicolors                   " true colors
 
 " 2.2.2 Buffers
@@ -296,10 +295,10 @@ nnoremap j gj
 nnoremap k gk
 
 " Nagivate window splits
-" nnoremap <C-h> <C-w><C-h>
-" nnoremap <C-j> <C-w><C-j>
-" nnoremap <C-k> <C-w><C-k>
-" nnoremap <C-l> <C-w><C-l>
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
 
 "-------------------------------------------------------------------------------
@@ -313,7 +312,7 @@ nnoremap Y y$
 nnoremap <silent> <C-n> :call togglernu#ToggleRelativeNumber()<cr>
 
 let g:colorizer_auto_filetype='css,html'
-nnoremap <silent> <c-h> :ColorToggle<cr>
+" nnoremap <silent> <c-h> :ColorToggle<cr>
 
 
 "-------------------------------------------------------------------------------
@@ -324,17 +323,24 @@ nnoremap <silent> <c-h> :ColorToggle<cr>
 
 " bring vim 8.2 bindings to nvim
 if has('nvim')
-  tnoremap <C-w>N <C-\><C-n>
-  tnoremap <C-w>: <C-\><C-n>:
+  tmap <C-w>N <C-\><C-n>
+  tmap <C-w>: <C-\><C-n>:
 
-  tnoremap <C-w>h <C-\><C-n><C-w>h
-  tnoremap <C-w>j <C-\><C-n><C-w>j
-  tnoremap <C-w>k <C-\><C-n><C-w>k
-  tnoremap <C-w>l <C-\><C-n><C-w>l
+  " Nagivate window splits
+  tmap <C-w>h <C-w>N<C-w>h
+  tmap <C-w>j <C-w>N<C-w>j
+  tmap <C-w>k <C-w>N<C-w>k
+  tmap <C-w>l <C-w>N<C-w>l
 
   autocmd TermOpen * setl nonumber norelativenumber
   autocmd BufEnter * if &buftype == 'terminal' | :startinsert | endif
 endif
+
+" Nagivate window splits
+tnoremap <C-h> <C-w>h
+tnoremap <C-j> <C-w>j
+tnoremap <C-k> <C-w>k
+tnoremap <C-l> <C-w>l
 
 
 "-------------------------------------------------------------------------------
