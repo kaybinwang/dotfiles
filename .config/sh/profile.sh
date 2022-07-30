@@ -34,8 +34,7 @@ source ~/.config/sh/aliases.sh
 #===============================================================================
 
 # Prefix search using ^P and ^N
-bind '"\C-P":history-search-backward'
-bind '"\C-N":history-search-forward'
+__enable_history_search_with_prefix
 
 #===============================================================================
 # 3. Interface
