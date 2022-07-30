@@ -1,4 +1,3 @@
 .DS_STORE
-tilde/.bash_extras
-tilde/.gitconfig-work
-tilde/.zsh_extras
+.config/sh/work.sh
+.gitconfig-work
