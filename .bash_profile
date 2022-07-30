@@ -1,3 +1,13 @@
+#===============================================================================
+# .bashrc - bash configuration
+#===============================================================================
+# This file uses the generic shell configuration defined in profile.sh. The only
+# thing we need to do is to define the hooks that invoked by profile.sh.
+#
+# Note that we should avoid defining any configuration in this file. This should
+# be defined in profile.sh instead.
+#===============================================================================
+
 __PROMPT_RESET='\[\e[0m\]'
 __PROMPT_RED='\[\e[0;31m\]'
 __PROMPT_GREEN='\[\e[0;32m\]'

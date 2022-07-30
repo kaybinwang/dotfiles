@@ -1,15 +1,26 @@
 #===============================================================================
-# Table of contents
+# profile.sh - a generic shell configuration
 #===============================================================================
-# 1. Sourced Scripts
+# This file contains an abstract configuration for a shell. It defines how the
+# shell should be configured, but leaves out most of the implementation. This is
+# because every shell has a different way of configuring things and the syntax
+# is usually not compatible. We use this abstract configuration so that we can
+# expect similar functionality, regardless of the shell we're using.
+# 
+# In order to use this configuration, you need to provide an implementation for
+# all the hooks that are used in this file, e.g. __enable_command_completion,
+# before sourcing.
+#
+# Sections:
+# 1. Source Scripts
 # 2. Key Bindings
 # 3. Settings
-# 4. Startup Commands
-# 5. Prompt
+# 4. Prompt
+# 5. Run Commands
 #===============================================================================
 
 #===============================================================================
-# 1. Sourced Scripts
+# 1. Source Scripts
 #===============================================================================
 
 source ~/.config/sh/env.sh
@@ -40,14 +51,7 @@ __enable_command_completion
 __enable_shared_history
 
 #===============================================================================
-# 4. Startup Commands
-#===============================================================================
-
-# Load all ssh keys in keychain for MacOS.
-ssh-add -A &>/dev/null
-
-#===============================================================================
-# 5. Prompt
+# 4. Prompt
 #===============================================================================
 
 # This function is executed after each command and it will do the following:
@@ -101,3 +105,11 @@ __prompt_command() {
 __parse_git_branch() {
   git rev-parse --abbrev-ref HEAD 2>/dev/null
 }
+
+#===============================================================================
+# 5. Run Commands
+#===============================================================================
+
+# Load all ssh keys in keychain for MacOS.
+ssh-add -A &>/dev/null
+
