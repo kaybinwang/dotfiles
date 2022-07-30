@@ -12,10 +12,10 @@ alias .5='cd ../../../../..'
 alias -- -='cd -'
 
 ## Show hidden files ##
-alias ls='ls -G'
+alias ls='ls --color=auto'
 alias la='ls -a'
-alias ll='ls -FGlAhprt'                       # ls with info
-alias mkdir='mkdir -pv'                      # mkdir with parents
+alias ll='ls -FGlAhprt'                     # ls with info
+alias mkdir='mkdir -pv'                     # mkdir with parents
 alias less='less -FSRXc'                    # Preferred 'less' implementation
 
 if [ "$TERM" = 'xterm-kitty' ]; then
@@ -32,18 +32,16 @@ alias ekc="$EDITOR $HOME/.config/kitty/kitty.conf"
 alias egc="$EDITOR $HOME/.gitconfig"
 alias esc="$EDITOR $HOME/.ssh/config"
 
-if command -v zsh &>/dev/null; then
-  alias szp="source $HOME/.zshrc"
-  alias eze="$EDITOR $HOME/.zsh_extras"
-  alias ezp="$EDITOR $HOME/.zshrc"
-fi
+alias szp="source $HOME/.zshrc"
+alias eze="$EDITOR $HOME/.zsh_extras"
+alias ezp="$EDITOR $HOME/.zshrc"
 
 alias c='clear'
 
 # tmux with 256 colors
 alias tmux='tmux -2'
 
-function tmux-new() {
+tmux-new() {
   tmux -2 new-session -s main -n system \; \
       split-window -dv htop \; \
     new-window -n dotfiles -c "$DOTFILE_PATH" '$EDITOR ~/.config/nvim/init.vim' \; \
@@ -53,10 +51,7 @@ function tmux-new() {
 }
 
 # default to neovim if it exists
-if [ -x '/usr/local/bin/vim' ]; then
-  alias vi='/usr/local/bin/vim'
-  alias vim='/usr/local/bin/vim'
-elif command -v nvim &>/dev/null; then
+if command -v nvim &>/dev/null; then
   alias vi='nvim'
   alias vim='nvim'
 elif command -v vim &>/dev/null; then
@@ -74,16 +69,14 @@ alias gs='git status'
 alias ga='git add'
 alias gau='git add -u'
 alias gb='git branch'
-#alias gbd='git branch -d'
-#alias gbD='git branch -D'
-function gbd() {
+gbd() {
   if [[ "$1" = "-" ]]; then
     git branch -d '@{-1}'
   else
     git branch -d "$@"
   fi
 }
-function gbD() {
+gbD() {
   if [[ "$1" = "-" ]]; then
     git branch -D '@{-1}'
   else
@@ -95,7 +88,7 @@ alias gc='git commit'
 alias gcm='git commit -m'
 alias gca='git commit --amend'
 alias gcane='git commit --amend --no-edit'
-function gco() {
+gco() {
   git checkout "$@"
 }
 alias gcor='git checkout'
@@ -137,4 +130,6 @@ if command -v __git_complete &>/dev/null; then
   __git_complete gcm _git_commit
   __git_complete gp _git_pull
   __git_complete gpush _git_push
+else
+  echo "[WARN] git complete not installed."
 fi

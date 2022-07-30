@@ -1,101 +1,51 @@
 ################################################################################
 # Table of contents
 ################################################################################
-# 1. Environment Variables
+# 1. Sourced Scripts
 # 2. Key Bindings
-# 3. Sourced Scripts
+# 3. Start Up
 # 4. Helper Functions
 ################################################################################
 
-
 ################################################################################
-# 1. Environment Variables
+# 1. Sourced Scripts
 ################################################################################
 
-export CLICOLOR=1
-export LIGHT_COLORS=false
+source ~/.config/sh/env.sh
 
-if [ $LIGHT_COLORS ]; then
-  export LSCOLORS=ExFxBxDxCxegedabagacad
-else
-  export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
+# sourcing nvm and completions
+__source_if_exists "$NVM_DIR/nvm.sh"
+__source_if_exists "$NVM_DIR/bash_completion"
+
+__source_if_exists ~/.config/sh/work.sh
+
+# sourcing bash completions from homebrew
+if command -v brew &>/dev/null; then
+  __source_if_exists "$(brew --prefix)/etc/bash_completion"
 fi
-
-if command -v nvim &>/dev/null; then
-  export VISUAL=nvim
-elif command -v vim &>/dev/null; then
-  export VISUAL=vim
-fi
-export EDITOR="$VISUAL"
-
-# Special paths
-export PROJECT_PERSONAL="$HOME/projects/personal"
-export PROJECT_WORK="$HOME/projects/work"
-export GOPATH="$PERSONAL_PROJECT/go"
-export NVM_DIR="$HOME/.nvm"
-
-# Extend $PATH
-export PATH="/usr/local/opt/icu4c/bin:$PATH"
-export PATH="/usr/local/opt/icu4c/sbin:$PATH"
-export PATH=$GOPATH/bin:$PATH
-
-# --files: List files that would be searched but do not search
-# --no-ignore: Do not respect .gitignore, etc...
-# --hidden: Search hidden files and folders
-# --follow: Follow symlinks
-# --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
-export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
-export FZF_DEFAULT_OPTS='
-  --color fg:188,hl:110,fg+:222,bg+:234,hl+:111
-  --color info:183,prompt:110,spinner:107,pointer:167,marker:215
-'
-
-PROMPT_COMMAND=__prompt_command
-
-
-################################################################################
-# 2. Key Bindings
-################################################################################
-
-# Load all ssh keys in keychain for MacOS.
-ssh-add -A &>/dev/null
-
-# Disable XON/XOFF since it sometimes conflicts with ^s in bash
-# stty -ixoff
-# stty stop undef
-# stty start undef
-
-# Prefix search using ^P and ^N
-bind '"\C-P":history-search-backward'
-bind '"\C-N":history-search-forward'
-
-
-################################################################################
-# 3. Sourced Scripts
-################################################################################
 
 # sourcing kitty terminal completions
 if command -v kitty &>/dev/null; then
   source <(kitty + complete setup bash)
 fi
 
-# sourcing nvm and completions
-[ -s "$NVM_DIR/nvm.sh " ] && source "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
-
-# sourcing bash completions from homebrew
-if [ -s /usr/local/etc/bash_completion ]; then
-  source /usr/local/etc/bash_completion
-elif command -v brew &>/dev/null; then
-  if [ -s "$(brew --prefix)/etc/bash_completion" ]; then
-    source "$(brew --prefix)/etc/bash_completion"
-  fi
-fi
-
 # Source last since it might depend on the above scripts, e.g. __git_complete
-source ~/.bash_aliases
-source ~/.bash_extras
+source ~/.config/sh/aliases.sh
 
+################################################################################
+# 2. Key Bindings
+################################################################################
+
+# Prefix search using ^P and ^N
+bind '"\C-P":history-search-backward'
+bind '"\C-N":history-search-forward'
+
+################################################################################
+# 3. Start Up
+################################################################################
+
+# Load all ssh keys in keychain for MacOS.
+ssh-add -A &>/dev/null
 
 ################################################################################
 # 4. Helper Functions
@@ -107,7 +57,7 @@ source ~/.bash_extras
 #     - the exit status of the previous command
 #     - the git branch, if inside an git directory
 #   - Flush the current shell's history session and reloads it
-function __prompt_command() {
+__prompt_command() {
     # This needs to be first to capture exit code of previous command
     local EXIT="$?"
 
@@ -161,19 +111,20 @@ function __prompt_command() {
     __save_and_reload_history
 }
 
-function __parse_git_branch() {
+__parse_git_branch() {
   git rev-parse --abbrev-ref HEAD 2>/dev/null
 }
 
-function __save_and_reload_history() {
+__save_and_reload_history() {
   history -a # immediately append the current session to ~/.bash_history
   history -c # clear the current session
   history -r # reload the session from ~/.bash_history
 }
 
-# For compilers to find zlib you may need to set:
-export LDFLAGS="${LDFLAGS} -L/usr/local/opt/zlib/lib"
-export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/zlib/include"
-
-# For pkg-config to find zlib you may need to set:
-export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/zlib/lib/pkgconfig"
+__source_if_exists() {
+  if [ -s "$1" ]; then
+    source "$1"
+  else
+    echo "[WARN] Unable to source '$1'."
+  fi
+}
