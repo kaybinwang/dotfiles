@@ -131,5 +131,5 @@ if command -v __git_complete &>/dev/null; then
   __git_complete gp _git_pull
   __git_complete gpush _git_push
 else
-  echo "[WARN] git complete not installed."
+  __print_warning "__git_complete not installed."
 fi

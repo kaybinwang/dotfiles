@@ -12,6 +12,7 @@
 ################################################################################
 
 source ~/.config/sh/env.sh
+source ~/.config/sh/helpers.sh
 
 # sourcing nvm and completions
 __source_if_exists "$NVM_DIR/nvm.sh"
@@ -22,11 +23,6 @@ __source_if_exists ~/.config/sh/work.sh
 # sourcing bash completions from homebrew
 if command -v brew &>/dev/null; then
   __source_if_exists "$(brew --prefix)/etc/bash_completion"
-fi
-
-# sourcing kitty terminal completions
-if command -v kitty &>/dev/null; then
-  source <(kitty + complete setup bash)
 fi
 
 # Source last since it might depend on the above scripts, e.g. __git_complete
@@ -46,6 +42,8 @@ bind '"\C-N":history-search-forward'
 
 # Load all ssh keys in keychain for MacOS.
 ssh-add -A &>/dev/null
+
+PROMPT_COMMAND=__prompt_command
 
 ################################################################################
 # 4. Helper Functions
@@ -119,12 +117,4 @@ __save_and_reload_history() {
   history -a # immediately append the current session to ~/.bash_history
   history -c # clear the current session
   history -r # reload the session from ~/.bash_history
-}
-
-__source_if_exists() {
-  if [ -s "$1" ]; then
-    source "$1"
-  else
-    echo "[WARN] Unable to source '$1'."
-  fi
 }
