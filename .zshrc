@@ -1,66 +1,45 @@
-#===============================================================================
-# TODO
-#===============================================================================
-# make sure .zsh is a real directory
-# number the table of contents
+__PROMPT_RESET='%f'
+__PROMPT_RED='%F{red}'
+__PROMPT_GREEN='%F{green}'
+__PROMPT_YELLOW='%F{yellow}'
+__PROMPT_BLUE='%F{blue}'
+__PROMPT_MAGENTA='%F{magenta}'
+__PROMPT_CYAN='%F{cyan}'
+
+__PROMPT_USER='%n'
+__PROMPT_HOST='%m'
+__PROMPT_CWD='%~'
+
+__PROMPT_EOL='%%'  # requires extra % for escaping
+
+__bind_key_for_history_prefix_search_backward() {
+  bindkey "$1" history-beginning-search-backward
+}
+
+__bind_key_for_history_prefix_search_forward() {
+  bindkey "$1" history-beginning-search-forward
+}
+
+__enable_command_completion() {
+  autoload -U compinit; compinit
+}
+
+__enable_shared_history() {
+  setopt share_history
+}
+
+# __save_and_reload_history is a no-op since we enabled shared history
+__save_and_reload_history() {}
+
+precmd() {
+  __prompt_command
+}
+
+source ~/.config/sh/profile.sh
 
 #===============================================================================
-# Table of contents
+# 2. Key Bindings
 #===============================================================================
-# 1. Plugins
-# 2. Vim Bindings
-# 3. Keybindings
-# 4. Interface
-
-#===============================================================================
-# 1. Plugins
-#===============================================================================
-
-export ZPLUG_HOME=/usr/local/opt/zplug
-if [ -e "$ZPLUG_HOME/init.zsh" ]; then
-  source $ZPLUG_HOME/init.zsh
-fi
-
-if command -v zplug &>/dev/null; then
-  # Make sure to use double quotes
-  zplug "zsh-users/zsh-autosuggestions"
-  zplug "zsh-users/zsh-completions"
-
-  # Set the priority when loading
-  # e.g., zsh-syntax-highlighting must be loaded
-  # after executing compinit command and sourcing other plugins
-  # (If the defer tag is given 2 or above, run after compinit command)
-  zplug "zsh-users/zsh-syntax-highlighting", defer:2
-
-  # Install plugins if there are plugins that have not been installed
-  if ! zplug check --verbose; then
-    printf "Install? [y/N]: "
-    if read -q; then
-      echo; zplug install
-    fi
-  fi
-fi
-
-# Needs to happen before zsh-syntax-highlighting is loaded
-# Can it happen after zplug load? idk...
-autoload -U history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-
-if command -v zplug &>/dev/null; then
-  zplug load
-fi
-
-#===============================================================================
-# 2. Vim Bindings
-#===============================================================================
-
-if command -v nvim &>/dev/null; then
-  export VISUAL=nvim
-elif command -v vim &>/dev/null; then
-  export VISUAL=vim
-fi
-export EDITOR="$VISUAL"
 
 # # Vim mode
 # bindkey -v
@@ -72,17 +51,15 @@ export EDITOR="$VISUAL"
 # bindkey -v '^h' backward-delete-char
 
 # Scroll through partial matches when in insert mode
-bindkey '^p' history-beginning-search-backward-end
-bindkey '^n' history-beginning-search-forward-end
 
 # Complete autosuggestion when in insert mode
-bindkey '^ ' autosuggest-accept
+# bindkey '^ ' autosuggest-accept
 
-# use alt+left and alt right for words
-bindkey "^[[1;3C" forward-word
-bindkey "^[[1;3D" backward-word
+# # use alt+left and alt right for words
+# bindkey "^[[1;3C" forward-word
+# bindkey "^[[1;3D" backward-word
 
-bindkey -e
+# bindkey -e
 
 # # Enable parens, quotes and surround text-objects
 # # ciw ci" text objects
@@ -117,17 +94,10 @@ bindkey -e
 #===============================================================================
 
 #-------------------------------------------------------------------------------
-# 3.1 Colors
-#-------------------------------------------------------------------------------
-
-export CLICOLOR
-export LSCOLORS=ExFxBxDxCxegedabagacad
-
-#-------------------------------------------------------------------------------
 # 3.2 Syntax Hightlighting
 #-------------------------------------------------------------------------------
 
-ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+# ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 
 # path zsh syntax highlighting
 #ZSH_HIGHLIGHT_STYLES[default]='fg=blue'
@@ -135,7 +105,7 @@ ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 #ZSH_HIGHLIGHT_STYLES[path]='fg=blue,bold,dim'
 
 # Syntax highlighting for previous command suggestions
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
+# ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
 
 # To differentiate aliases from other command types
 #ZSH_HIGHLIGHT_STYLES[alias]='fg=magenta,bold'
@@ -151,181 +121,181 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
 # 3.3 Prompt
 #-------------------------------------------------------------------------------
 
-setopt prompt_subst
+#setopt prompt_subst
 
-unset PROMPT
+#unset PROMPT
 
-# Git context
-function parse_git_branch() {
-  git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1) /'
-}
+## Git context
+#function parse_git_branch() {
+#  git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1) /'
+#}
 
-function git_user_email() {
-  local email="$(git config user.email 2>/dev/null)"
-  if [ -n "$email" ]; then
-    echo "($email) "
-  fi
-}
+#function git_user_email() {
+#  local email="$(git config user.email 2>/dev/null)"
+#  if [ -n "$email" ]; then
+#    echo "($email) "
+#  fi
+#}
 
-# GCP context
-function gcp_prompt_info() {
-  local cfg="$(cat ~/.config/gcloud/active_config 2>/dev/null)"
-  if [ -n "$cfg" ]; then
-    case "$cfg" in
-      *development*)
-        cfg='dev'
-        ;;
-      *testing*)
-        cfg='test'
-        ;;
-      *production*)
-        cfg='prod'
-        ;;
-      *)
-        ;;
-    esac
-    echo -n "(gcp:$cfg) "
-  fi
-}
+## GCP context
+#function gcp_prompt_info() {
+#  local cfg="$(cat ~/.config/gcloud/active_config 2>/dev/null)"
+#  if [ -n "$cfg" ]; then
+#    case "$cfg" in
+#      *development*)
+#        cfg='dev'
+#        ;;
+#      *testing*)
+#        cfg='test'
+#        ;;
+#      *production*)
+#        cfg='prod'
+#        ;;
+#      *)
+#        ;;
+#    esac
+#    echo -n "(gcp:$cfg) "
+#  fi
+#}
 
-# Kubernetes context
-function kube_prompt_info() {
-  local cfg="$(kubectl config current-context 2>/dev/null)"
-  if [ -n "$cfg" ]; then
-    case "$cfg" in
-      *development*)
-        cfg='dev'
-        ;;
-      *testing*)
-        cfg='test'
-        ;;
-      *production*)
-        cfg='prod'
-        ;;
-      *)
-        ;;
-    esac
-    echo -n "(kub:$cfg) "
-  fi
-}
+## Kubernetes context
+#function kube_prompt_info() {
+#  local cfg="$(kubectl config current-context 2>/dev/null)"
+#  if [ -n "$cfg" ]; then
+#    case "$cfg" in
+#      *development*)
+#        cfg='dev'
+#        ;;
+#      *testing*)
+#        cfg='test'
+#        ;;
+#      *production*)
+#        cfg='prod'
+#        ;;
+#      *)
+#        ;;
+#    esac
+#    echo -n "(kub:$cfg) "
+#  fi
+#}
 
 
-PROMPT="${PROMPT}%(?.%F{green}[✔]%f.%F{red}[✘]%f) "
+#PROMPT="${PROMPT}%(?.%F{green}[✔]%f.%F{red}[✘]%f) "
 
-# Show current working directory, favoring ~ for home
-PROMPT="${PROMPT}%F{blue}%~%f "
+## Show current working directory, favoring ~ for home
+#PROMPT="${PROMPT}%F{blue}%~%f "
 
-# Show working git branch if applicable
-# We can't encode a trailing space or else it will always be present.
-# Trailing space should be appended in parse_git_branch.
-if command -v git &>/dev/null; then
-  PROMPT="${PROMPT}%F{yellow}\$(parse_git_branch)%f"
-fi
+## Show working git branch if applicable
+## We can't encode a trailing space or else it will always be present.
+## Trailing space should be appended in parse_git_branch.
+#if command -v git &>/dev/null; then
+#  PROMPT="${PROMPT}%F{yellow}\$(parse_git_branch)%f"
+#fi
 
-# Show git user email if applicable
-if command -v git &>/dev/null; then
-  PROMPT="${PROMPT}%F{magenta}\$(git_user_email)%f"
-fi
+## Show git user email if applicable
+#if command -v git &>/dev/null; then
+#  PROMPT="${PROMPT}%F{magenta}\$(git_user_email)%f"
+#fi
 
-# Show Google Cloud Project if applicable
-if command -v gcloud &>/dev/null; then
-  PROMPT="${PROMPT}%F{red}\$(gcp_prompt_info)%f"
-fi
+## Show Google Cloud Project if applicable
+#if command -v gcloud &>/dev/null; then
+#  PROMPT="${PROMPT}%F{red}\$(gcp_prompt_info)%f"
+#fi
 
-# Show Kubernetes cluster if applicable
-if command -v kubectl &>/dev/null; then
-  PROMPT="${PROMPT}%F{magenta}\$(kube_prompt_info)%f"
-fi
+## Show Kubernetes cluster if applicable
+#if command -v kubectl &>/dev/null; then
+#  PROMPT="${PROMPT}%F{magenta}\$(kube_prompt_info)%f"
+#fi
 
-export PROMPT="${PROMPT}%# "
+#export PROMPT="${PROMPT}%# "
 
-# # Update right side prompt that shows vim mode.
-# function zle-line-init zle-keymap-select {
-#   local NORMAL="%{$fg_bold[blue]%} [% NORMAL]% %{$reset_color%}"
-#   local INSERT="%{$fg_bold[green]%} [% INSERT]% %{$reset_color%}"
-#   RPS1="${${KEYMAP/vicmd/$NORMAL}/(main|viins)/$INSERT} $EPS1"
-#   zle reset-prompt
-# }
+## # Update right side prompt that shows vim mode.
+## function zle-line-init zle-keymap-select {
+##   local NORMAL="%{$fg_bold[blue]%} [% NORMAL]% %{$reset_color%}"
+##   local INSERT="%{$fg_bold[green]%} [% INSERT]% %{$reset_color%}"
+##   RPS1="${${KEYMAP/vicmd/$NORMAL}/(main|viins)/$INSERT} $EPS1"
+##   zle reset-prompt
+## }
 
-# zle -N zle-line-init
-# zle -N zle-keymap-select
+## zle -N zle-line-init
+## zle -N zle-keymap-select
 
-#===============================================================================
-# 4. Environment
-#===============================================================================
+##===============================================================================
+## 4. Environment
+##===============================================================================
 
-# --files: List files that would be searched but do not search
-# --no-ignore: Do not respect .gitignore, etc...
-# --hidden: Search hidden files and folders
-# --follow: Follow symlinks
-# --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
-export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
-export FZF_DEFAULT_OPTS='
-  --color fg:188,hl:110,fg+:222,bg+:234,hl+:111
-  --color info:183,prompt:110,spinner:107,pointer:167,marker:215
-'
+## --files: List files that would be searched but do not search
+## --no-ignore: Do not respect .gitignore, etc...
+## --hidden: Search hidden files and folders
+## --follow: Follow symlinks
+## --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
+#export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
+#export FZF_DEFAULT_OPTS='
+#  --color fg:188,hl:110,fg+:222,bg+:234,hl+:111
+#  --color info:183,prompt:110,spinner:107,pointer:167,marker:215
+#'
 
-export PROJECT_PERSONAL="$HOME/projects/personal"
-export PROJECT_WORK="$HOME/projects/work"
-export PATH="/usr/local/opt/icu4c/bin:$PATH"
-export PATH="/usr/local/opt/icu4c/sbin:$PATH"
-export GOPATH="$PROJECT_PERSONAL/go"
-export PATH=$GOPATH/bin:$PATH
+#export PROJECT_PERSONAL="$HOME/projects/personal"
+#export PROJECT_WORK="$HOME/projects/work"
+#export PATH="/usr/local/opt/icu4c/bin:$PATH"
+#export PATH="/usr/local/opt/icu4c/sbin:$PATH"
+#export GOPATH="$PROJECT_PERSONAL/go"
+#export PATH=$GOPATH/bin:$PATH
 
-if [ -f "$HOME/.bash_aliases" ]; then
-  source "$HOME/.bash_aliases"
-fi
+#if [ -f "$HOME/.bash_aliases" ]; then
+#  source "$HOME/.bash_aliases"
+#fi
 
-if [ -f "$HOME/.zsh_extras" ]; then
-  source "$HOME/.zsh_extras"
-fi
+#if [ -f "$HOME/.zsh_extras" ]; then
+#  source "$HOME/.zsh_extras"
+#fi
 
-# Load all ssh keys in keychain for MacOS.
-ssh-add -A &>/dev/null
+## Load all ssh keys in keychain for MacOS.
+#ssh-add -A &>/dev/null
 
-# allow for unquoted wildcards, e.g. `ls *.sh`.
-unsetopt no_match
+## allow for unquoted wildcards, e.g. `ls *.sh`.
+#unsetopt no_match
 
-# History
-#set history size
-export HISTSIZE=10000
-#save history after logout
-export SAVEHIST=10000
-#history file
-export HISTFILE=~/.zhistory
-#append into history file
-setopt INC_APPEND_HISTORY
-#save only one command if 2 common are same and consistent
-setopt HIST_IGNORE_DUPS
-#add timestamp for each entry
-setopt EXTENDED_HISTORY
+## History
+##set history size
+#export HISTSIZE=10000
+##save history after logout
+#export SAVEHIST=10000
+##history file
+#export HISTFILE=~/.zhistory
+##append into history file
+#setopt INC_APPEND_HISTORY
+##save only one command if 2 common are same and consistent
+#setopt HIST_IGNORE_DUPS
+##add timestamp for each entry
+#setopt EXTENDED_HISTORY
 
-#===============================================================================
-# 5. Completion
-#===============================================================================
+##===============================================================================
+## 5. Completion
+##===============================================================================
 
-# menu if nb items > 2
-zstyle ':completion:*' menu select=2
+## menu if nb items > 2
+#zstyle ':completion:*' menu select=2
 
-#-------------------------------------------------------------------------------
-# 5.1 Git Completion
-#-------------------------------------------------------------------------------
+##-------------------------------------------------------------------------------
+## 5.1 Git Completion
+##-------------------------------------------------------------------------------
 
-compdef g=git
+#compdef g=git
 
-_git 2>/dev/null
-compdef '__gitcomp_nl "$(__git_heads '' $track)"' gco
-compdef '__gitcomp_nl "$(__git_heads '' $track)"' gbd
-compdef '__gitcomp_nl "$(__git_heads '' $track)"' gbD
+#_git 2>/dev/null
+#compdef '__gitcomp_nl "$(__git_heads '' $track)"' gco
+#compdef '__gitcomp_nl "$(__git_heads '' $track)"' gbd
+#compdef '__gitcomp_nl "$(__git_heads '' $track)"' gbD
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+#[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-if command -v brew &>/dev/null; then
-  export PATH="/usr/local/sbin:$PATH"
-fi
+#if command -v brew &>/dev/null; then
+#  export PATH="/usr/local/sbin:$PATH"
+#fi
 
-# Attach to tmux or start a new session
-#test -z "$TMUX" && (tmux attach || tmux-new || tmux new-session)
+## Attach to tmux or start a new session
+##test -z "$TMUX" && (tmux attach || tmux-new || tmux new-session)

@@ -88,17 +88,13 @@ alias gc='git commit'
 alias gcm='git commit -m'
 alias gca='git commit --amend'
 alias gcane='git commit --amend --no-edit'
-gco() {
-  git checkout "$@"
-}
-alias gcor='git checkout'
+alias gco="git checkout"
 alias gcob='git checkout -b'
 alias gf='git fetch'
 alias gd='git diff'
 alias grb='git rebase'
 alias grbi='git rebase -i'
 alias gr='git reset'
-alias grh='git reset HEAD'
 alias gl='git log'
 alias gls='git ls'
 alias gm='git merge'
@@ -114,8 +110,7 @@ if command -v __git_complete &>/dev/null; then
   __git_complete gm _git_merge
 
   __git_complete g __git_main
-  __git_complete gs _git_status
-  __git_complete gd _git_diff
+  __git_complete gs _git_status __git_complete gd _git_diff
   __git_complete gf _git_fetch
   __git_complete grb _git_rebase
   __git_complete grbi _git_rebase
@@ -128,8 +123,6 @@ if command -v __git_complete &>/dev/null; then
   __git_complete gcob _git_checkout
   __git_complete gc _git_commit
   __git_complete gcm _git_commit
-  __git_complete gp _git_pull
-  __git_complete gpush _git_push
 else
   __print_warning "__git_complete not found. Did you install bash-completion?"
 fi
