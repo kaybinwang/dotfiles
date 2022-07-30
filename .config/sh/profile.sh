@@ -112,4 +112,3 @@ __parse_git_branch() {
 
 # Load all ssh keys in keychain for MacOS.
 ssh-add -A &>/dev/null
-
