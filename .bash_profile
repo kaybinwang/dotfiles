@@ -22,7 +22,7 @@ __source_if_exists ~/.config/sh/work.sh
 
 # sourcing bash completions from homebrew
 if command -v brew &>/dev/null; then
-  __source_if_exists "$(brew --prefix)/etc/bash_completion"
+  __source_if_exists "$(brew --prefix)/etc/profile.d/bash_completion.sh"
 fi
 
 # Source last since it might depend on the above scripts, e.g. __git_complete
