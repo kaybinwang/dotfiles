@@ -138,10 +138,3 @@ if command -v __git_complete &>/dev/null; then
   __git_complete gp _git_pull
   __git_complete gpush _git_push
 fi
-
-alias pp="cd $PROJECT_PERSONAL"
-alias wp="cd $PROJECT_WORK"
-
-function chrome() {
-  open -a "Google Chrome" "$1"
-}
