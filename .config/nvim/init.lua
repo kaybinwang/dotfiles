@@ -248,7 +248,7 @@ vim.api.nvim_set_keymap("n", "<leader>gn", ":GitGutterUndoHunk<cr>", { noremap =
 -- Fugitive Git commands
 vim.api.nvim_set_keymap("n", "<leader>gb", ":Gblame<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>gd", ":Gdiff<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>gs", ":Gstatus<cr>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>gs", ":Git<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>gc", ":Gcommit<cr>", { noremap = true, silent = true })
 
 
