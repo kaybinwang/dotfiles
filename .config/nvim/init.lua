@@ -338,6 +338,8 @@ local lspconfig = require("lspconfig")
 
 lspconfig.bashls.setup({on_attach = on_attach})
 
+lspconfig.kotlin_language_server.setup({on_attach = on_attach})
+
 lspconfig.pylsp.setup({on_attach = on_attach})
 
 lspconfig.sumneko_lua.setup({
