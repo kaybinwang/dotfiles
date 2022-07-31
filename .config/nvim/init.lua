@@ -37,10 +37,10 @@ Sections:
 local install_path = vim.fn.stdpath("data").."/site/pack/packer/start/packer.nvim"
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
    packer_bootstrap = vim.fn.system({
-     "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_path
+      "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_path
    })
    vim.o.runtimepath = table.concat({
-     vim.fn.stdpath("data"), "/site/pack/*/start/*,", vim.o.runtimepath
+      vim.fn.stdpath("data"), "/site/pack/*/start/*,", vim.o.runtimepath
    })
 end
 
@@ -50,40 +50,40 @@ end
 --------------------------------------------------------------------------------
 
 require("packer").startup(function(use)
-  -- make sure to add this line to let packer manage itself
-  use "wbthomason/packer.nvim"
+   -- make sure to add this line to let packer manage itself
+   use "wbthomason/packer.nvim"
 
-  -- 1.2.1 User Interface
-  use "neovim/nvim-lspconfig" -- Configurations for Nvim LSP
-  use "NLKNguyen/papercolor-theme"
-  use "kyazdani42/nvim-web-devicons"
+   -- 1.2.1 User Interface
+   use "neovim/nvim-lspconfig" -- Configurations for Nvim LSP
+   use "NLKNguyen/papercolor-theme"
+   use "kyazdani42/nvim-web-devicons"
 
-  -- 1.2.2 Text Editing & Navigation
-  use "tpope/vim-surround"
-  use "tpope/vim-commentary"
-  use "tpope/vim-repeat"
-  use "tpope/vim-unimpaired"
+   -- 1.2.2 Text Editing & Navigation
+   use "tpope/vim-surround"
+   use "tpope/vim-commentary"
+   use "tpope/vim-repeat"
+   use "tpope/vim-unimpaired"
 
-  -- 1.2.3 Search
-  use { "junegunn/fzf", run = "./install --bin" }
-  use "junegunn/fzf.vim"
-  -- use { "ibhagwan/fzf-lua",
-  --   -- optional for icon support
-  --   requires = { "kyazdani42/nvim-web-devicons" }
-  -- }
+   -- 1.2.3 Search
+   use { "junegunn/fzf", run = "./install --bin" }
+   use "junegunn/fzf.vim"
+   -- use { "ibhagwan/fzf-lua",
+   --   -- optional for icon support
+   --   requires = { "kyazdani42/nvim-web-devicons" }
+   -- }
 
-  -- 1.2.4 Developer Tools
-  use 'tpope/vim-fugitive'
-  use 'tpope/vim-rhubarb'
-  use 'airblade/vim-gitgutter'
-  use 'tpope/vim-eunuch'
-  use 'janko-m/vim-test'
+   -- 1.2.4 Developer Tools
+   use 'tpope/vim-fugitive'
+   use 'tpope/vim-rhubarb'
+   use 'airblade/vim-gitgutter'
+   use 'tpope/vim-eunuch'
+   use 'janko-m/vim-test'
 
-  -- Automatically set up your configuration after cloning packer.nvim
-  -- Put this at the end after all plugins
-  if packer_bootstrap then
-    require("packer").sync()
-  end
+   -- Automatically set up your configuration after cloning packer.nvim
+   -- Put this at the end after all plugins
+   if packer_bootstrap then
+      require("packer").sync()
+   end
 end)
 
 -- require("fzf-lua").setup({
@@ -235,7 +235,7 @@ vim.api.nvim_set_keymap("n", "<leader><leader>", ":Files<cr>", { noremap = true,
 vim.api.nvim_set_keymap("n", "<leader>p", ":GFiles<cr>", { noremap = true, silent = true })
 
 vim.api.nvim_create_user_command(
-   'Rg',
+   "Rg",
    function(opts)
       vim.fn["fzf#vim#grep"](
          "rg --column --line-number --no-heading --color=always --smart-case -- ",
@@ -279,31 +279,31 @@ vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist, opts)
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
-  -- Enable completion triggered by <c-x><c-o>
-  vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+   -- Enable completion triggered by <c-x><c-o>
+   vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
-  -- Mappings.
-  -- See `:help vim.lsp.*` for documentation on any of the below functions
-  local bufopts = { noremap=true, silent=true, buffer=bufnr }
-  vim.keymap.set("n", "gD", vim.lsp.buf.declaration, bufopts)
-  vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
-  vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
-  vim.keymap.set("n", "gi", vim.lsp.buf.implementation, bufopts)
-  vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, bufopts)
-  vim.keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder, bufopts)
-  vim.keymap.set("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, bufopts)
-  vim.keymap.set("n", "<space>wl", function()
-    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-  end, bufopts)
-  vim.keymap.set("n", "<space>D", vim.lsp.buf.type_definition, bufopts)
-  vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, bufopts)
-  vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, bufopts)
-  vim.keymap.set("n", "gr", vim.lsp.buf.references, bufopts)
-  vim.keymap.set("n", "<space>f", vim.lsp.buf.formatting, bufopts)
+   -- Mappings.
+   -- See `:help vim.lsp.*` for documentation on any of the below functions
+   local bufopts = { noremap=true, silent=true, buffer=bufnr }
+   vim.keymap.set("n", "gD", vim.lsp.buf.declaration, bufopts)
+   vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
+   vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
+   vim.keymap.set("n", "gi", vim.lsp.buf.implementation, bufopts)
+   vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, bufopts)
+   vim.keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder, bufopts)
+   vim.keymap.set("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, bufopts)
+   vim.keymap.set("n", "<space>wl", function()
+      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+   end, bufopts)
+   vim.keymap.set("n", "<space>D", vim.lsp.buf.type_definition, bufopts)
+   vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, bufopts)
+   vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, bufopts)
+   vim.keymap.set("n", "gr", vim.lsp.buf.references, bufopts)
+   vim.keymap.set("n", "<space>f", vim.lsp.buf.formatting, bufopts)
 end
 
 require("lspconfig")["pylsp"].setup({
-    on_attach = on_attach,
+   on_attach = on_attach,
 })
 
 return
