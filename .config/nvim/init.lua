@@ -288,7 +288,7 @@ vim.api.nvim_set_keymap("n", "<leader>gp", ":GitGutterPreviewHunk<cr>", { norema
 vim.api.nvim_set_keymap("n", "<leader>gn", ":GitGutterUndoHunk<cr>", { noremap = true, silent = true })
 
 -- Fugitive Git commands
-vim.api.nvim_set_keymap("n", "<leader>gbr", ":GBrowse master %<cr>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>gbr", ":GBrowse master:%<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>gbl", ":Git blame<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>gd", ":Gdiffsplit<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>gs", ":Git<cr>", { noremap = true, silent = true })
