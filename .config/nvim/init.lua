@@ -56,6 +56,12 @@ require("packer").startup(function(use)
    -- 1.2.1 User Interface
    use { "sonph/onehalf", rtp = "vim", config = "vim.cmd 'colorscheme onehalflight'" }
    use "kyazdani42/nvim-web-devicons"
+   use {
+      "nvim-treesitter/nvim-treesitter",
+      run = function()
+         require("nvim-treesitter.install").update({ with_sync = true })
+      end,
+   }
 
    -- 1.2.2 Text Editing & Navigation
    use "tpope/vim-surround"
@@ -73,11 +79,11 @@ require("packer").startup(function(use)
 
    -- 1.2.4 Developer Tools
    use "neovim/nvim-lspconfig"    -- Configurations for Nvim LSP
-   use 'tpope/vim-fugitive'
-   use 'tpope/vim-rhubarb'        -- GitHub extension for vim-fugitive
-   use 'airblade/vim-gitgutter'
-   use 'tpope/vim-eunuch'
-   use 'janko-m/vim-test'
+   use "tpope/vim-fugitive"
+   use "tpope/vim-rhubarb"        -- GitHub extension for vim-fugitive
+   use "airblade/vim-gitgutter"
+   use "tpope/vim-eunuch"
+   use "janko-m/vim-test"
 
    -- Automatically set up your configuration after cloning packer.nvim
    -- Put this at the end after all plugins
@@ -91,11 +97,11 @@ end)
 --
 -- You'll need to restart nvim, and then it will work.
 if is_bootstrap then
-  print '=================================='
-  print '    Plugins are being installed'
-  print '    Wait until Packer completes,'
-  print '       then restart nvim'
-  print '=================================='
+  print "=================================="
+  print "    Plugins are being installed"
+  print "    Wait until Packer completes,"
+  print "       then restart nvim"
+  print "=================================="
   return
 end
 
@@ -364,6 +370,37 @@ lspconfig.sumneko_lua.setup({
          },
       },
    },
+})
+
+require("nvim-treesitter.configs").setup({
+  -- A list of parser names, or "all"
+  ensure_installed = { "python", "lua" },
+
+  -- Install parsers synchronously (only applied to `ensure_installed`)
+  sync_install = false,
+
+  -- Automatically install missing parsers when entering buffer
+  auto_install = true,
+
+  -- List of parsers to ignore installing (for "all")
+  ignore_install = { "javascript" },
+
+  highlight = {
+    -- `false` will disable the whole extension
+    enable = true,
+
+    -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+    -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+    -- the name of the parser)
+    -- list of language that will be disabled
+    disable = {},
+
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
 })
 
 return
