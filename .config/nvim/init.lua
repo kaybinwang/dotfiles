@@ -55,7 +55,7 @@ require("packer").startup(function(use)
 
    -- 1.2.1 User Interface
    use "neovim/nvim-lspconfig" -- Configurations for Nvim LSP
-   use "NLKNguyen/papercolor-theme"
+   use { "sonph/onehalf", rtp = "vim", config = "vim.cmd 'colorscheme onehalflight'" }
    use "kyazdani42/nvim-web-devicons"
 
    -- 1.2.2 Text Editing & Navigation
@@ -135,7 +135,7 @@ vim.opt.undolevels = 10000                            -- store 10000 undos
 --------------------------------------------------------------------------------
 
 -- 2.2.1 Theme
-vim.api.nvim_command "colorscheme PaperColor"
+-- vim.cmd "colorscheme onehalflight"
 vim.opt.background = "light"
 
 -- 2.2.2 Buffers
