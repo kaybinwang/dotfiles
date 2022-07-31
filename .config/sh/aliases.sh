@@ -22,9 +22,9 @@ if [ "$TERM" = 'xterm-kitty' ]; then
   alias ssh='kitty +kitten ssh'
 fi
 
-alias ebp="$EDITOR $HOME/.bash_profile"
-alias eba="$EDITOR $HOME/.bash_aliases"
-alias ebe="$EDITOR $HOME/.bash_extras"
+alias ebc="$EDITOR $HOME/.bashrc"
+alias esa="$EDITOR $HOME/.config/sh/aliases.sh"
+alias esw="$EDITOR $HOME/.config/sh/work.sh"
 alias sbp="source $HOME/.bash_profile"
 
 alias ekc="$EDITOR $HOME/.config/kitty/kitty.conf"
@@ -32,9 +32,8 @@ alias ekc="$EDITOR $HOME/.config/kitty/kitty.conf"
 alias egc="$EDITOR $HOME/.gitconfig"
 alias esc="$EDITOR $HOME/.ssh/config"
 
-alias szp="source $HOME/.zshrc"
-alias eze="$EDITOR $HOME/.zsh_extras"
-alias ezp="$EDITOR $HOME/.zshrc"
+alias szc="source $HOME/.zshrc"
+alias ezc="$EDITOR $HOME/.zshrc"
 
 alias c='clear'
 
