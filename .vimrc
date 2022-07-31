@@ -105,7 +105,6 @@ Plug 'NLKNguyen/papercolor-theme'
 Plug 'danilo-augusto/vim-afterglow'
 Plug 'ryanoasis/vim-devicons'
 Plug 'sheerun/vim-polyglot'
-Plug 'affirm/vim-policy-syntax'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'chrisbra/Colorizer'
 
@@ -161,7 +160,7 @@ set nowritebackup                   " don't save a backup while editing
 " 2.1.2 Undo History
 set undodir=~/.vim/undodir          " set undofile location
 set undofile                        " maintain undo history between sessions
-set undolevels=1000                 " store 1000 undos
+set undolevels=10000                " store 1000 undos
 
 " 2.1.3 Auto Save
 autocmd FocusGained,BufEnter * :checktime          " auto read
@@ -271,19 +270,16 @@ set smartcase                       " search queries are case-sensitive when cas
 let mapleader = " "
 
 " Open vimrc
-nnoremap <leader>ov :execute 'edit' g:vimrc<cr>
+nnoremap <leader>ov :edit $MYVIMRC<cr>
 
 " Edit vimrc
-nnoremap <silent> <leader>ev :execute 'vsplit '.fnameescape(g:vimrc)<cr>
+nnoremap <silent> <leader>ev :vsplit $MYVIMRC<cr>
 
 " Source vimrc 
-nnoremap <silent> <leader>sv :execute 'source '.fnameescape(g:vimrc)<cr>
-
-" Reload plugins
-nnoremap <silent> <leader>rp :update<cr>:execute 'source '.fnameescape(g:vimrc)<cr>:PlugInstall<cr>
+nnoremap <silent> <leader>sv :source $MYVIMRC<cr>
 
 " Clear search
-nnoremap <silent> <return> :noh<cr><esc>
+nnoremap <silent> <return> :noh<esc>
 
 
 "-------------------------------------------------------------------------------
@@ -379,18 +375,12 @@ command! -bang -nargs=* Rg
   \   'rg --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
   \   fzf#vim#with_preview(), <bang>0)
 
-" Scroll search results
-autocmd FileType fzf tnoremap <buffer> <c-j> <down>
-autocmd FileType fzf tnoremap <buffer> <c-k> <up>
-autocmd FileType fzf tnoremap <buffer> <c-h> <c-h>
-autocmd FileType fzf tnoremap <buffer> <c-l> <c-l>
-
 
 "-------------------------------------------------------------------------------
 " 3.6 Git
 "-------------------------------------------------------------------------------
 
-" Move to next git modification
+" Preview and revert a chunk of changes
 nnoremap <silent> <leader>gp :GitGutterPreviewHunk<cr>
 nnoremap <silent> <leader>gu :GitGutterUndoHunk<cr>
 
