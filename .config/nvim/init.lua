@@ -8,11 +8,11 @@ functionality will only be loaded when opening up a Python file for the first
 time.
 
    nvim/
-   ├── .vim/
-   │   ├── autoload/      - functions that are only called from mappings
-   │   └── after/
-   │       └── ftplugin/  - filetype specific configuration (e.g. Python spacing)
-   └── init.lua           - personal configuration that's always loaded
+   ├── ftplugin/           - filetype specific configuration
+   │   └── python.lua      - python filetype configuration
+   ├── lua/                - lua modules that are loaded on-demand at runtime
+   │   └── statusline.lua  - loaded via `require("statusline")`
+   └── init.lua            - personal configuration that's always loaded
 
 Sections:
 1. Plugins
@@ -85,17 +85,6 @@ require("packer").startup(function(use)
       require("packer").sync()
    end
 end)
-
--- require("fzf-lua").setup({
---   winopts = {
---     preview = { default = "bat_native" }
---   },
---   -- fzf_opts = { ["--ansi"] = false },
---   files = {
---     git_icons = false,
---     -- file_icons = false,
---   }
--- })
 
 
 --==============================================================================
