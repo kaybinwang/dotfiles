@@ -54,7 +54,6 @@ require("packer").startup(function(use)
    use "wbthomason/packer.nvim"
 
    -- 1.2.1 User Interface
-   use "neovim/nvim-lspconfig" -- Configurations for Nvim LSP
    use { "sonph/onehalf", rtp = "vim", config = "vim.cmd 'colorscheme onehalflight'" }
    use "kyazdani42/nvim-web-devicons"
 
@@ -73,6 +72,7 @@ require("packer").startup(function(use)
    -- }
 
    -- 1.2.4 Developer Tools
+   use "neovim/nvim-lspconfig"    -- Configurations for Nvim LSP
    use 'tpope/vim-fugitive'
    use 'tpope/vim-rhubarb'        -- GitHub extension for vim-fugitive
    use 'airblade/vim-gitgutter'
