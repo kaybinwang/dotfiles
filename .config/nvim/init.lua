@@ -334,11 +334,13 @@ local on_attach = function(client, bufnr)
    vim.keymap.set("n", "<space>f", vim.lsp.buf.formatting, bufopts)
 end
 
-require("lspconfig").pylsp.setup({
-   on_attach = on_attach,
-})
+local lspconfig = require("lspconfig")
 
-require("lspconfig").sumneko_lua.setup({
+lspconfig.bashls.setup({on_attach = on_attach})
+
+lspconfig.pylsp.setup({on_attach = on_attach})
+
+lspconfig.sumneko_lua.setup({
    on_attach = on_attach,
    settings = {
       Lua = {
