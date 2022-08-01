@@ -27,7 +27,7 @@
 source ~/.config/sh/env.sh
 source ~/.config/sh/helpers.sh
 
-__source_if_exists "$PERSONAL_PROJECTS/nav.sh"
+__source_if_exists "$PERSONAL_PROJECTS/nav/nav.sh"
 
 # sourcing nvm and completions
 __source_if_exists "$NVM_DIR/nvm.sh"
