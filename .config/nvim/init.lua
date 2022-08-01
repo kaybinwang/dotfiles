@@ -54,13 +54,7 @@ require("packer").startup(function(use)
    use "wbthomason/packer.nvim"
 
    -- 1.2.1 User Interface
-   use {
-      "sonph/onehalf",
-      rtp = "vim",
-      -- need to delay setting colorscheme since plugin isn't added RTP until
-      -- the plugin loads
-      config = "vim.cmd 'colorscheme onehalflight'"
-   }
+   use "projekt0n/github-nvim-theme"
    use "kyazdani42/nvim-web-devicons"     -- accessors for dev icons
    use {
       "nvim-treesitter/nvim-treesitter",  -- semantic syntax highlighting
@@ -147,7 +141,10 @@ vim.opt.undolevels = 10000                            -- store 10000 undos
 
 -- 2.2.1 Theme
 -- vim.cmd "colorscheme onehalflight"
-vim.opt.background = "light"
+require('github-theme').setup({
+  theme_style = "light"
+})
+-- vim.opt.background = "light"
 
 -- 2.2.2 Buffers
 vim.opt.number = true                        -- line numbers
