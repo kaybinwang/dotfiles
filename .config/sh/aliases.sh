@@ -23,17 +23,18 @@ if [ "$TERM" = 'xterm-kitty' ]; then
 fi
 
 alias ebc="$EDITOR $HOME/.bashrc"
+alias sbc="source $HOME/.bashrc"
 alias esa="$EDITOR $HOME/.config/sh/aliases.sh"
+alias ese="$EDITOR $HOME/.config/sh/env.sh"
+alias esp="$EDITOR $HOME/.config/sh/profile.sh"
 alias esw="$EDITOR $HOME/.config/sh/work.sh"
-alias sbp="source $HOME/.bash_profile"
+alias szc="source $HOME/.zshrc"
+alias ezc="$EDITOR $HOME/.zshrc"
 
 alias ekc="$EDITOR $HOME/.config/kitty/kitty.conf"
 
 alias egc="$EDITOR $HOME/.gitconfig"
 alias esc="$EDITOR $HOME/.ssh/config"
-
-alias szc="source $HOME/.zshrc"
-alias ezc="$EDITOR $HOME/.zshrc"
 
 alias c='clear'
 
@@ -56,6 +57,9 @@ if command -v nvim &>/dev/null; then
 elif command -v vim &>/dev/null; then
   alias vi='vim'
 fi
+
+# run brew using Intel
+alias brow='arch --x86_64 /usr/local/Homebrew/bin/brew'
 
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
