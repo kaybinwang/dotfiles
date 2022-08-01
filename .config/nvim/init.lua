@@ -200,16 +200,16 @@ vim.opt.smartcase = true            -- search queries are case-sensitive when ca
 vim.g.mapleader = " "
 
 -- Open vimrc
-vim.api.nvim_set_keymap("n", "<leader>ov", ":edit $MYVIMRC<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>ov", ":edit $MYVIMRC<cr>", { noremap = true, silent = true })
 
 -- Edit vimrc
-vim.api.nvim_set_keymap("n", "<leader>ev", ":vsplit $MYVIMRC<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>ev", ":vsplit $MYVIMRC<cr>", { noremap = true, silent = true })
 
 -- Source vimrc
-vim.api.nvim_set_keymap("n", "<leader>sv", ":source $MYVIMRC<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>sv", ":source $MYVIMRC<cr>", { noremap = true, silent = true })
 
 -- Clear search
-vim.api.nvim_set_keymap("n", "<return>", ":noh<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<return>", ":noh<cr>", { noremap = true, silent = true })
 
 
 --------------------------------------------------------------------------------
@@ -217,14 +217,14 @@ vim.api.nvim_set_keymap("n", "<return>", ":noh<cr>", { noremap = true, silent = 
 --------------------------------------------------------------------------------
 
 -- Move into line wraps
-vim.api.nvim_set_keymap("n", "j", "gj", { noremap = true })
-vim.api.nvim_set_keymap("n", "k", "gk", { noremap = true })
+vim.keymap.set("n", "j", "gj", { noremap = true })
+vim.keymap.set("n", "k", "gk", { noremap = true })
 
 -- Nagivate window splits
-vim.api.nvim_set_keymap("n", "<C-h>", "<C-w>h", { noremap = true })
-vim.api.nvim_set_keymap("n", "<C-j>", "<C-w>j", { noremap = true })
-vim.api.nvim_set_keymap("n", "<C-k>", "<C-w>k", { noremap = true })
-vim.api.nvim_set_keymap("n", "<C-l>", "<C-w>l", { noremap = true })
+vim.keymap.set("n", "<C-h>", "<C-w>h", { noremap = true })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { noremap = true })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { noremap = true })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { noremap = true })
 
 
 --------------------------------------------------------------------------------
@@ -232,7 +232,7 @@ vim.api.nvim_set_keymap("n", "<C-l>", "<C-w>l", { noremap = true })
 --------------------------------------------------------------------------------
 
 -- make Y like D
-vim.api.nvim_set_keymap("n", "Y", "y$", { noremap = true })
+vim.keymap.set("n", "Y", "y$", { noremap = true })
 
 
 --------------------------------------------------------------------------------
@@ -254,8 +254,8 @@ require("fzf-lua").setup({
   }
 })
 
-vim.api.nvim_set_keymap("n", "<leader>p", ":lua require('fzf-lua').files()<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader><leader>", ":Files<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>p", ":lua require('fzf-lua').files()<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader><leader>", ":Files<cr>", { noremap = true, silent = true })
 vim.api.nvim_create_user_command(
    "Rg",
    function(opts)
@@ -277,11 +277,12 @@ vim.api.nvim_set_keymap("n", "<leader>gp", ":GitGutterPreviewHunk<cr>", { norema
 vim.api.nvim_set_keymap("n", "<leader>gu", ":GitGutterUndoHunk<cr>", { noremap = true, silent = true })
 
 -- Fugitive Git commands
-vim.api.nvim_set_keymap("n", "<leader>gbr", ":GBrowse master:%<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>gbl", ":Git blame<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>gd", ":Gdiffsplit<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>gs", ":Git<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>gc", ":Git commit<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>gbr", ":GBrowse master:%<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>gbl", ":Git blame<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>gd", ":Gdiffsplit<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>gs", ":Git<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>gc", ":Git commit<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>gp", ":Git push<cr>", { noremap = true, silent = true })
 
 
 --------------------------------------------------------------------------------
