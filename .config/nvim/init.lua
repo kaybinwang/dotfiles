@@ -273,20 +273,17 @@ vim.api.nvim_set_keymap("n", "Y", "y$", { noremap = true })
 -- 3.5 File Searching
 --------------------------------------------------------------------------------
 
+vim.api.nvim_set_keymap("n", "<leader>p", "<cmd>lua require('fzf-lua').files()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader><leader>", ":Files<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>p", ":GFiles<cr>", { noremap = true, silent = true })
-
 vim.api.nvim_create_user_command(
    "Rg",
    function(opts)
-      vim.fn["fzf#vim#grep"](
-         "rg --column --line-number --no-heading --color=always --smart-case -- ",
-         1,
-         vim.fn["fzf#vim#with_preview"](),
-         "<bang>0"
-      )
+      require("fzf-lua").grep({
+         search = opts.args,
+         rg_opts = "--hidden --column --line-number --no-heading --color=always --smart-case -g '!{.git,node_modules}/*'",
+      })
    end,
-   { nargs = 1 }
+   { nargs = "*" }
 )
 
 
