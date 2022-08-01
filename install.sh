@@ -33,9 +33,11 @@ PACKAGES=(
   coreutils
   fzf
   git
+  jq
   kotlin-language-server
   lua-language-server
   neovim
+  ripgrep
   shellcheck
   zsh
 )
