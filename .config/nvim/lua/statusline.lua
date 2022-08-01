@@ -95,9 +95,9 @@ local function modified()
    end
    local modified = vim.bo.modified
    if modified then
-      return "[+] "
+      return "+ "
    else
-      return "[-] "
+      return ""
    end
 end
 
@@ -113,7 +113,37 @@ local function readonly()
    return ""
 end
 
+local function setup()
+   vim.opt.statusline = table.concat({
+      " ",
+      "%-{luaeval('require(\"statusline\").mode()')}",
+      "%-{luaeval('require(\"statusline\").paste()')}",
+      "%#Pmenu#",
+      "| ",
+      "%-{luaeval('require(\"statusline\").git_branch()')}",
+      " | ",
+      "%-{luaeval('require(\"statusline\").readonly()')}",
+      "%f ",
+      "%-{luaeval('require(\"statusline\").modified()')}",
+      " ",
+      "%#Visual#",
+      "%=",
+      "%-{luaeval('require(\"statusline\").file_format()')}",
+      " | ",
+      "%-{luaeval('require(\"statusline\").file_encoding()')}",
+      " | ",
+      "%-{luaeval('require(\"statusline\").file_type()')}",
+      " | ",
+      "%3p%%",                                        -- percentage through file in lines
+      " | ",
+      "%4l:%-4c",                                     -- line number : column number
+   })
+end
+
 return {
+   -- TODO: export less by making this more configurable
+   -- probably only want to call out to lua twice, e.g. render_left & render_right
+   setup = setup,
    file_encoding = file_encoding,
    file_format = file_format,
    file_type = file_type,

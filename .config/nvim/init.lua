@@ -158,33 +158,7 @@ vim.opt.lazyredraw = true                    -- don't draw everything
 vim.opt.updatetime = 100                     -- faster updates, used for git gutter
 
 -- 2.2.3 Status Line
-
-statusline = require("statusline")
-
-vim.opt.statusline = table.concat({
-   " ",
-   "%-{luaeval('statusline.mode()')}",
-   "%-{luaeval('statusline.paste()')}",
-   "%#Pmenu#",
-   "| ",
-   "%-{luaeval('statusline.git_branch()')}",
-   "| ",
-   "%-{luaeval('statusline.readonly()')}",
-   "%f ",
-   "%-{luaeval('statusline.modified()')}",
-   " ",
-   "%#Visual#",
-   "%=",
-   "%-{luaeval('statusline.file_format()')}",
-   " | ",
-   "%-{luaeval('statusline.file_encoding()')}",
-   " | ",
-   "%-{luaeval('statusline.file_type()')}",
-   " | ",
-   "%3p%%",                                        -- percentage through file in lines
-   " | ",
-   "%4l:%-4c",                                     -- line number : column number
-})
+require("statusline").setup()
 
 
 --------------------------------------------------------------------------------
