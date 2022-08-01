@@ -247,7 +247,17 @@ vim.api.nvim_set_keymap("n", "Y", "y$", { noremap = true })
 -- 3.5 File Searching
 --------------------------------------------------------------------------------
 
-vim.api.nvim_set_keymap("n", "<leader>p", "<cmd>lua require('fzf-lua').files()<CR>", { noremap = true, silent = true })
+require("fzf-lua").setup({
+  winopts = {
+    preview = { default = 'bat' }
+  },
+  files = {
+    git_icons = false, -- disable since this degrades performance the most
+    file_icons = true,
+  }
+})
+
+vim.api.nvim_set_keymap("n", "<leader>p", ":lua require('fzf-lua').files()<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader><leader>", ":Files<cr>", { noremap = true, silent = true })
 vim.api.nvim_create_user_command(
    "Rg",
