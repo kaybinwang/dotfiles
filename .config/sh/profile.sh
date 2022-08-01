@@ -112,3 +112,11 @@ __parse_git_branch() {
 
 # Load all ssh keys in keychain for MacOS.
 ssh-add -A &>/dev/null
+local arch=$(uname -p)
+if [ "$arch" = 'arm' ]; then
+  if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  else
+    __print_warning "Couldn't find an ARM installation of Homebrew."
+  fi
+fi
