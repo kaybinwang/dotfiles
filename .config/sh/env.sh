@@ -1,6 +1,6 @@
 # shellcheck shell=sh
-export PROJECT_PERSONAL="$HOME/projects/personal"
-export PROJECT_WORK="$HOME/projects/work"
+export PERSONAL_PROJECTS="$HOME/projects/personal"
+export WORK_PROJECTS="$HOME/projects/work"
 
 if command -v nvim &>/dev/null; then
   export VISUAL=nvim
