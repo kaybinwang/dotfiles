@@ -1,3 +1,4 @@
+# shellcheck shell=sh
 export PROJECT_PERSONAL="$HOME/projects/personal"
 export PROJECT_WORK="$HOME/projects/work"
 

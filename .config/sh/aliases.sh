@@ -1,3 +1,4 @@
+# shellcheck shell=sh
 alias sudo='sudo '
 
 ## a quick way to get out of current directory ##
