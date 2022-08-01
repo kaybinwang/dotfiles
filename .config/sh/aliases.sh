@@ -130,3 +130,20 @@ if command -v __git_complete &>/dev/null; then
 else
   __print_warning "__git_complete not found. Did you install bash-completion?"
 fi
+greplace() {
+  local -r temp_ext=original
+  local -r src="$1"
+  local -r dst="$2"
+  if [[ -z "$src" ]]; then
+    echo "Need to provide an input." >&2
+    return 1
+  fi
+  if [[ -z "$dst" ]]; then
+    echo "Need to provide a replacement for the input." >&2
+    return 1
+  fi
+  local -r modified_files=$(git grep -l "$src" | tee >(xargs sed -i .$temp_ext "s/$src/$dst/g"))
+  for file in $modified_files; do
+    rm $file.$temp_ext
+  done
+}
