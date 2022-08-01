@@ -26,6 +26,7 @@ REPOS=(
 )
 
 PACKAGES=(
+  # TODO: make `nav` a brew formula and update shell profile to source brew path
   bash
   bash-completion
   bash-language-server
@@ -74,7 +75,8 @@ for dotfile in "${DOTFILES[@]}"; do
     rm "$dst"
   fi
   if [ -e "$dst" ]; then
-    # not sure if it's safe to remove, so user needs to manually verify
+    # we shouldn't automatically delete a pre-existing file/directory, so the
+    # user needs to manually verify it's safe to remove before trying again
     echo "ERROR: $dst already exists. Please remove before trying again."
     continue
   fi
