@@ -54,35 +54,40 @@ require("packer").startup(function(use)
    use "wbthomason/packer.nvim"
 
    -- 1.2.1 User Interface
-   use { "sonph/onehalf", rtp = "vim", config = "vim.cmd 'colorscheme onehalflight'" }
-   use "kyazdani42/nvim-web-devicons"
    use {
-      "nvim-treesitter/nvim-treesitter",
+      "sonph/onehalf",
+      rtp = "vim",
+      -- need to delay setting colorscheme since plugin isn't added RTP until
+      -- the plugin loads
+      config = "vim.cmd 'colorscheme onehalflight'"
+   }
+   use "kyazdani42/nvim-web-devicons"     -- accessors for dev icons
+   use {
+      "nvim-treesitter/nvim-treesitter",  -- semantic syntax highlighting
       run = function()
          require("nvim-treesitter.install").update({ with_sync = true })
       end,
    }
 
    -- 1.2.2 Text Editing & Navigation
-   use "tpope/vim-surround"
-   use "tpope/vim-commentary"
-   use "tpope/vim-repeat"
-   use "tpope/vim-unimpaired"
+   use "tpope/vim-surround"      -- wrap text objects with ({[
+   use "tpope/vim-commentary"    -- toggle comments
+   use "tpope/vim-unimpaired"    -- pairwise mappings e.g. ]q and [q,
+   use "tpope/vim-repeat"        -- repeat tpope's mappings
 
    -- 1.2.3 Search
-   use { "junegunn/fzf", run = "./install --bin" }
-   use "junegunn/fzf.vim"
-   -- use { "ibhagwan/fzf-lua",
-   --   -- optional for icon support
-   --   requires = { "kyazdani42/nvim-web-devicons" }
-   -- }
+   use {
+      "ibhagwan/fzf-lua",        -- FZF integration for fuzzy searching
+      -- optional for icon support
+      requires = { "kyazdani42/nvim-web-devicons" }
+   }
 
    -- 1.2.4 Developer Tools
-   use "neovim/nvim-lspconfig"    -- Configurations for Nvim LSP
+   use "neovim/nvim-lspconfig"   -- Configurations for Nvim LSP
    use "tpope/vim-fugitive"
-   use "tpope/vim-rhubarb"        -- GitHub extension for vim-fugitive
-   use "airblade/vim-gitgutter"
-   use "tpope/vim-eunuch"
+   use "tpope/vim-rhubarb"       -- GitHub extension for vim-fugitive
+   use "airblade/vim-gitgutter"  -- show modified hunks in column margins
+   use "tpope/vim-eunuch"        -- Vim sugar for UNIX commands
    use "janko-m/vim-test"
 
    -- Automatically set up your configuration after cloning packer.nvim
