@@ -69,9 +69,14 @@ echo "Installing dotfiles..."
 for dotfile in "${DOTFILES[@]}"; do
   src="$DOTFILES_PATH/$dotfile"
   dst="$HOME/$dotfile"
-  if [ -h "$dst" ]; then
+  if [ -L "$dst" ]; then
     # safe to delete symlink
     rm "$dst"
+  fi
+  if [ -e "$dst" ]; then
+    # not sure if it's safe to remove, so user needs to manually verify
+    echo "ERROR: $dst already exists. Please remove before trying again."
+    continue
   fi
   echo "Creating symlink from $dst -> $src..."
   ln -s "$src" "$dst"
