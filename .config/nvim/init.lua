@@ -80,6 +80,11 @@ require("packer").startup(function(use)
    }
 
    -- 1.2.5 Completion
+   use "hrsh7th/nvim-cmp"        -- Completion engine
+   use "hrsh7th/cmp-buffer"      -- Completions for text in buffers
+   use "hrsh7th/cmp-nvim-lsp"    -- Completions for Neovim LSP
+   use "hrsh7th/cmp-nvim-lua"    -- Completions for Neovim Lua API
+   use "hrsh7th/cmp-path"        -- Completions for system paths
 
    -- 1.2.6 Developer Tools
    use "tpope/vim-eunuch"        -- Vim sugar for UNIX commands
@@ -160,7 +165,6 @@ vim.opt.cursorline = true                     -- highlight current line
 vim.opt.list = true                           -- show invisible characters
 vim.opt.listchars = "tab:>·,trail:·,nbsp:¬"   -- but only show useful characters
 vim.opt.lazyredraw = true                     -- don't draw everything
-vim.opt.updatetime = 100                      -- faster updates, used for git gutter
 
 -- 2.2.3 Status Line
 vim.opt.laststatus = 3                        -- global status line
@@ -334,7 +338,77 @@ vim.keymap.set("n", "<leader>gp", ":Git push<cr>", { noremap = true, silent = tr
 
 
 --------------------------------------------------------------------------------
--- 3.7 File Browser
+-- 3.7 Completion
+--------------------------------------------------------------------------------
+
+local cmp = require("cmp")
+
+cmp.setup({
+   -- snippet = {
+   -- -- REQUIRED - you must specify a snippet engine
+   -- expand = function(args)
+   --    -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+   --    -- require("luasnip").lsp_expand(args.body) -- For `luasnip` users.
+   --    -- require("snippy").expand_snippet(args.body) -- For `snippy` users.
+   --    -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+   -- end,
+   -- },
+   -- window = {
+   -- -- completion = cmp.config.window.bordered(),
+   -- -- documentation = cmp.config.window.bordered(),
+   -- },
+
+   mapping = cmp.mapping.preset.insert({
+      ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+      ["<C-f>"] = cmp.mapping.scroll_docs(4),
+      ["<C-Space>"] = cmp.mapping.complete(),
+      ["<C-e>"] = cmp.mapping.abort(),
+      -- Accept currently selected item. Set `select` to `false` to only
+      -- confirm explicitly selected items.
+      ["<CR>"] = cmp.mapping.confirm({ select = true }),
+   }),
+
+   sources = cmp.config.sources({
+      -- priority of completions are based on array order
+      -- completions are defined in fallback groups
+      { name = "nvim_lua" },
+      { name = "nvim_lsp" },
+      { name = "luasnip" },
+   }, {
+      { name = "buffer" },
+   })
+})
+
+-- Set configuration for specific filetype.
+cmp.setup.filetype("gitcommit", {
+   sources = cmp.config.sources({
+      { name = "cmp_git" }, -- You can specify the `cmp_git` source if you were installed it.
+   }, {
+      { name = "buffer" },
+   })
+})
+
+-- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline("/", {
+   mapping = cmp.mapping.preset.cmdline(),
+   sources = {
+      { name = "buffer" }
+   }
+})
+
+-- Use cmdline & path source for ":" (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline(":", {
+   mapping = cmp.mapping.preset.cmdline(),
+   sources = cmp.config.sources({
+      { name = "path" }
+   }, {
+      { name = "cmdline" }
+   })
+})
+
+
+--------------------------------------------------------------------------------
+-- 3.9 File Browser
 --------------------------------------------------------------------------------
 
 
@@ -345,6 +419,9 @@ vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
 vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist, opts)
+
+-- nvim-cmp almost supports LSP capabilities so we advertise it to LSP servers
+local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
@@ -374,13 +451,14 @@ end
 
 local lspconfig = require("lspconfig")
 
-lspconfig.bashls.setup({on_attach = on_attach})
+lspconfig.bashls.setup({capabilities = capabilities, on_attach = on_attach})
 
-lspconfig.kotlin_language_server.setup({on_attach = on_attach})
+lspconfig.kotlin_language_server.setup({capabilities = capabilities, on_attach = on_attach})
 
-lspconfig.pylsp.setup({on_attach = on_attach})
+lspconfig.pylsp.setup({capabilities = capabilities, on_attach = on_attach})
 
 lspconfig.sumneko_lua.setup({
+   capabilities = capabilities,
    on_attach = on_attach,
    settings = {
       Lua = {
