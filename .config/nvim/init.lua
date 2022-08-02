@@ -151,6 +151,15 @@ vim.opt.undofile = true                               -- maintain undo history b
 vim.opt.undolevels = 10000                            -- store 10000 undos
 
 -- 2.1.3 Auto Save
+vim.api.nvim_create_autocmd({"FocusGained", "BufEnter"}, {   -- auto read
+   pattern = "*",
+   command = ":checktime",
+})
+vim.api.nvim_create_autocmd({"FocusGained", "BufEnter"}, {   -- auto write
+   pattern = "*",
+   command = ":silent! noautocmd w",
+})
+
 
 --------------------------------------------------------------------------------
 -- 2.2 User Interface
