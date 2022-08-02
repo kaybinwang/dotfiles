@@ -56,18 +56,12 @@ require("packer").startup(function(use)
    -- 1.2.1 User Interface
    use "projekt0n/github-nvim-theme"
    use "kyazdani42/nvim-web-devicons"     -- accessors for dev icons
-   use {
-      "nvim-treesitter/nvim-treesitter",  -- semantic syntax highlighting
-      run = function()
-         require("nvim-treesitter.install").update({ with_sync = true })
-      end,
-   }
 
    -- 1.2.2 Text Editing & Navigation
    use "tpope/vim-surround"      -- wrap text objects with ({[
    use "tpope/vim-commentary"    -- toggle comments
    use "tpope/vim-unimpaired"    -- pairwise mappings e.g. ]q and [q,
-   use "tpope/vim-repeat"        -- repeat tpope's mappings
+   use "tpope/vim-repeat"        -- make custom and commands repeatable
 
    -- 1.2.3 Search
    use {
@@ -76,12 +70,26 @@ require("packer").startup(function(use)
       requires = { "kyazdani42/nvim-web-devicons" }
    }
 
-   -- 1.2.4 Developer Tools
+   -- 1.2.4 Language Support
    use "neovim/nvim-lspconfig"   -- Configurations for Nvim LSP
-   use "tpope/vim-fugitive"
-   use "tpope/vim-rhubarb"       -- GitHub extension for vim-fugitive
-   use "lewis6991/gitsigns.nvim" -- show modified hunks in column margins
+   use {                         -- Semantic syntax highlighting
+      "nvim-treesitter/nvim-treesitter",
+      run = function()
+         require("nvim-treesitter.install").update({ with_sync = true })
+      end,
+   }
+
+   -- 1.2.5 Completion
+
+   -- 1.2.6 Developer Tools
    use "tpope/vim-eunuch"        -- Vim sugar for UNIX commands
+
+   -- 1.2.7 Git
+   use "tpope/vim-fugitive"      -- Wrapper around Git
+   use "tpope/vim-rhubarb"       -- GitHub extension for vim-fugitive
+   use "lewis6991/gitsigns.nvim" -- Show/stage/reset git hunks
+
+   -- 1.2.8 Testing
    use "janko-m/vim-test"
 
    -- Automatically set up your configuration after cloning packer.nvim
