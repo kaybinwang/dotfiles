@@ -147,15 +147,17 @@ require("github-theme").setup({
 -- vim.opt.background = "light"
 
 -- 2.2.2 Buffers
-vim.opt.number = true                        -- line numbers
-vim.opt.cursorline = true                    -- highlight current line
-vim.opt.list = true                          -- show invisible characters
-vim.opt.listchars = "tab:>·,trail:·,nbsp:¬"  -- but only show useful characters
-vim.opt.lazyredraw = true                    -- don't draw everything
-vim.opt.updatetime = 100                     -- faster updates, used for git gutter
+vim.opt.number = true                         -- line numbers
+vim.opt.cursorline = true                     -- highlight current line
+vim.opt.list = true                           -- show invisible characters
+vim.opt.listchars = "tab:>·,trail:·,nbsp:¬"   -- but only show useful characters
+vim.opt.lazyredraw = true                     -- don't draw everything
+vim.opt.updatetime = 100                      -- faster updates, used for git gutter
 
 -- 2.2.3 Status Line
-require("statusline").setup()
+vim.opt.laststatus = 3                        -- global status line
+
+require("statusline").setup()                 -- configure statusline
 
 
 --------------------------------------------------------------------------------
