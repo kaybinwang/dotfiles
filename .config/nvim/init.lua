@@ -85,6 +85,7 @@ require("packer").startup(function(use)
    use "hrsh7th/cmp-nvim-lsp"    -- Completions for Neovim LSP
    use "hrsh7th/cmp-nvim-lua"    -- Completions for Neovim Lua API
    use "hrsh7th/cmp-path"        -- Completions for system paths
+   use "saadparwaiz1/cmp_luasnip"  -- Completions for luasnip
 
    -- 1.2.6 Developer Tools
    use "tpope/vim-eunuch"        -- Vim sugar for UNIX commands
@@ -96,6 +97,9 @@ require("packer").startup(function(use)
 
    -- 1.2.8 Testing
    use "janko-m/vim-test"
+
+   -- 1.2.9 Snippets
+   use "L3MON4D3/LuaSnip"        -- Snippets
 
    -- Automatically set up your configuration after cloning packer.nvim
    -- Put this at the end after all plugins
@@ -344,19 +348,16 @@ vim.keymap.set("n", "<leader>gp", ":Git push<cr>", { noremap = true, silent = tr
 local cmp = require("cmp")
 
 cmp.setup({
-   -- snippet = {
-   -- -- REQUIRED - you must specify a snippet engine
-   -- expand = function(args)
-   --    -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-   --    -- require("luasnip").lsp_expand(args.body) -- For `luasnip` users.
-   --    -- require("snippy").expand_snippet(args.body) -- For `snippy` users.
-   --    -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-   -- end,
-   -- },
-   -- window = {
-   -- -- completion = cmp.config.window.bordered(),
-   -- -- documentation = cmp.config.window.bordered(),
-   -- },
+   snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+         require("luasnip").lsp_expand(args.body)
+      end,
+   },
+   window = {
+      completion = cmp.config.window.bordered(),
+      documentation = cmp.config.window.bordered(),
+   },
 
    mapping = cmp.mapping.preset.insert({
       ["<C-b>"] = cmp.mapping.scroll_docs(-4),
@@ -404,6 +405,32 @@ cmp.setup.cmdline(":", {
    }, {
       { name = "cmdline" }
    })
+})
+
+
+--------------------------------------------------------------------------------
+-- 3.8 Snippets
+--------------------------------------------------------------------------------
+
+local ls = require("luasnip")
+local snip = ls.snippet
+local node = ls.snippet_node
+local text = ls.text_node
+local insert = ls.insert_node
+local func = ls.function_node
+local choice = ls.choice_node
+local dynamicn = ls.dynamic_node
+local date = function() return {os.date('%Y-%m-%d')} end
+ls.add_snippets(nil, {
+    all = {
+        snip({
+            trig = "date",
+            namr = "Date",
+            dscr = "Date in the form of YYYY-MM-DD",
+        }, {
+            func(date, {}),
+        }),
+    },
 })
 
 
