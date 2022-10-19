@@ -137,8 +137,8 @@ vim.opt.backspace = "indent,eol,start"                -- allow backspace, ^W, ^U
 vim.opt.history = 200                                 -- store last 200 commands as history
 vim.opt.errorbells = false                            -- no error bells please
 vim.opt.path = vim.opt.path:append("**")              -- recursive searching
-vim.opt.complete = vim.opt.complete:remove("i")       -- don't include all files, it's slow
-vim.opt.shortmess = vim.opt.shortmess:append("aAIsT") -- disable welcome screen and other messages
+vim.opt.complete:remove("i")                          -- don't include all files, it's slow
+vim.opt.shortmess:append("aAIsT")                     -- disable welcome screen and other messages
 vim.opt.startofline = false                           -- keeps cursor in place when switching buffers
 
 -- 2.1.1 Backups
