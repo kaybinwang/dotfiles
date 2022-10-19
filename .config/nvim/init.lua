@@ -346,6 +346,7 @@ require("gitsigns").setup({
 
 -- Fugitive Git commands
 vim.keymap.set("n", "<leader>gbr", ":GBrowse master:%<cr>", { noremap = true, silent = true })
+vim.keymap.set("v", "<leader>gbr", ":GBrowse master:%<cr>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>gbl", ":Git blame<cr>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>gd", ":Gdiffsplit<cr>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>gs", ":Git<cr>", { noremap = true, silent = true })
