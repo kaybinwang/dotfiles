@@ -515,7 +515,28 @@ lspconfig.bashls.setup({capabilities = capabilities, on_attach = on_attach})
 
 lspconfig.kotlin_language_server.setup({capabilities = capabilities, on_attach = on_attach})
 
-lspconfig.pylsp.setup({capabilities = capabilities, on_attach = on_attach})
+lspconfig.pylsp.setup({
+   capabilities = capabilities,
+   on_attach = on_attach,
+   settings = {
+      pylsp = {
+         plugins = {
+            flake8 = {
+               enabled = false,
+            },
+            pycodestyle = {
+               enabled = true,
+               -- ignore = {'W391'},
+               maxLineLength = 120,
+            },
+            pylint = {
+               enabled = true,
+               args = {"py3k", "score=n", "disable=F0001", "--max-line-length=120"},
+            },
+         },
+      },
+   },
+})
 
 lspconfig.sumneko_lua.setup({
    capabilities = capabilities,
