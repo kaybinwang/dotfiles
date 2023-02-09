@@ -24,6 +24,10 @@
 # 1. Source Scripts
 #===============================================================================
 
+# this needs to happen first because certain env.sh depends on nvim being in the
+# PATH
+source ~/.config/sh/load_brew.sh
+
 source ~/.config/sh/env.sh
 source ~/.config/sh/helpers.sh
 
@@ -115,11 +119,3 @@ __parse_git_branch() {
 
 # Load all ssh keys in keychain for MacOS.
 ssh-add -A &>/dev/null
-local arch=$(uname -p)
-if [ "$arch" = 'arm' ]; then
-  if [ -x /opt/homebrew/bin/brew ]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-  else
-    __print_warning "Couldn't find an ARM installation of Homebrew."
-  fi
-fi
