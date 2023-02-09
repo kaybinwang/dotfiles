@@ -519,6 +519,7 @@ lspconfig.pylsp.setup({
    capabilities = capabilities,
    on_attach = on_attach,
    settings = {
+      -- requires installing python-language-server, flake8, and pylint
       pylsp = {
          plugins = {
             flake8 = {
