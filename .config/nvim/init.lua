@@ -96,7 +96,7 @@ require("packer").startup(function(use)
    use "lewis6991/gitsigns.nvim" -- Show/stage/reset git hunks
 
    -- 1.2.8 Testing
-   use "janko-m/vim-test"
+   use "vim-test/vim-test"
 
    -- 1.2.9 Snippets
    use "L3MON4D3/LuaSnip"        -- Snippets
@@ -429,6 +429,15 @@ cmp.setup.cmdline(":", {
 --------------------------------------------------------------------------------
 -- 3.8 Testing
 --------------------------------------------------------------------------------
+
+vim.g["test#python#runner"] = "nose"
+vim.g["test#strategy"] = "neovim"
+vim.keymap.set("n", "<leader>tn", ":TestNearest<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>tl", ":TestLast<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>tf", ":TestFile<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>ts", ":TestSuite<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>tv", ":TestVisit<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>ti", ":TestInfo<cr>", { noremap = true, silent = true })
 
 
 --------------------------------------------------------------------------------
