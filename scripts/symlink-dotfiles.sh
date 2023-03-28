@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eo pipefail
+set -euo pipefail
 
 abs_path() {
   echo "$(cd "$(dirname "$1")"; pwd)/$(basename "$1")"
