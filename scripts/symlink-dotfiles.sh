@@ -25,6 +25,12 @@ echo "Installing dotfiles..."
 for dotfile in "${DOTFILES[@]}"; do
   src="$DOTFILES_PATH/$dotfile"
   dst="$HOME/$dotfile"
+
+  # first check if parent directory needs to be created
+  dst_dir=$(basename "$dst")
+  if [ ! -e "$dst_dir" ]; then
+    mkdir -p "$dst_dir"
+  fi
   if [ -L "$dst" ]; then
     # safe to delete symlink
     rm "$dst"
