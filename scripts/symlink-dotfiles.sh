@@ -2,11 +2,7 @@
 
 set -euo pipefail
 
-abs_path() {
-  echo "$(cd "$(dirname "$1")"; pwd)/$(basename "$1")"
-}
-
-DOTFILES_PATH="$(abs_path ".")"
+DOTFILES_PATH="$(pwd)"
 
 DOTFILES=(
   .bash_profile
@@ -27,7 +23,7 @@ for dotfile in "${DOTFILES[@]}"; do
   dst="$HOME/$dotfile"
 
   # first check if parent directory needs to be created
-  dst_dir=$(basename "$dst")
+  dst_dir=$(dirname "$dst")
   if [ ! -e "$dst_dir" ]; then
     mkdir -p "$dst_dir"
   fi
