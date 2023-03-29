@@ -24,3 +24,11 @@ with the dotfiles already installed.
 ```bash
 $ docker run -it --rm ghcr.io/kaybinwang/dotfiles zsh
 ```
+
+## Development
+Most dotfiles configure the user experience for terminal applications. As a
+result, we need a way to verify that there's no regression in this area. We use
+`expect` so that we can run each application in a terminal emulator and interact
+with the simulated terminal from the end user's perspective.
+
+To runs the tests, you can run `./run-tests.sh` from the project root directory.
