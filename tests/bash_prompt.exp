@@ -11,7 +11,7 @@ expect_before {
 set user $env(USER)
 set cwd [exec bash -c dirs +0]
 set hostname [exec hostname]
-set branch [exec git branch]
+set branch [exec git rev-parse --abbrev-ref HEAD]
 
 spawn bash
 expect -exact "\[?2004h\[0;32m\[✔\]\[0m \[0;33m$user\[0m@\[0;32m$hostname\[0m:\[0;34m$cwd\[0m \[0;35m($branch)\[0m \$ "
