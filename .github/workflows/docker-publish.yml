@@ -42,7 +42,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Run tests
-        run: ./run_tests.sh
+        run: ./run-tests.sh
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
