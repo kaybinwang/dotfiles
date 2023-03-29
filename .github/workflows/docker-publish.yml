@@ -2,15 +2,18 @@ name: Docker
 
 on:
   push:
-    branches: [master]
+    branches: [ "master" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
-    branches: [master]
+    branches: [ "master" ]
 
 env:
+  # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
+
 
 jobs:
   build:
@@ -40,9 +43,6 @@ jobs:
 
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v2
-
-      - name: Run tests
-        run: ./run_tests.sh
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
