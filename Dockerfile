@@ -9,31 +9,9 @@ RUN \
   echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
   apk upgrade --no-cache && \
   apk add --update --no-cache \
-    sudo \
-    autoconf \
-    automake \
-    libtool \
-    nasm \
-    ncurses \
-    ca-certificates \
-    libressl \
-    bash-completion \
-    cmake \
-    ctags \
-    file \
-    curl \
-    build-base \
-    gcc \
-    coreutils \
-    wget \
-    neovim \
-    git git-doc \
-    openssh-client \
-    zsh \
-    vim \
-    tmux \
     docker \
-    docker-compose
+    git \
+    sudo
 
 # create a password-less user and add to wheel group
 RUN \
