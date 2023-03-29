@@ -1,9 +1,8 @@
-FROM alpine:latest
+FROM tsl0922/ttyd:1.7.3-alpine
 
-ARG user=kevinwang
-ARG group=wheel
-ARG uid=1000
-ARG dotfiles_repo=https://github.com/kaybinwang/dotfiles.git
+ARG USER=kevinwang
+ARG DOTFILES_REPO=https://github.com/kaybinwang/dotfiles.git
+ARG DOTFILES_DIR=/home/$USER/dotfiles
 
 USER root
 RUN \
@@ -39,24 +38,16 @@ RUN \
 # create a password-less user and add to wheel group
 RUN \
   echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-  adduser -D -G wheel ${user} && \
-  addgroup ${user} docker
-WORKDIR /home/${user}
+  adduser -D -G wheel $USER && \
+  addgroup $USER docker
 
-ENV DOTFILES_DIR="/home/${user}/.dotfiles"
+# switch to the user
+USER $USER
+WORKDIR /home/$USER
 
-RUN git clone ${dotfiles_repo} ${DOTFILES_DIR}
-
-  # chown -R ${user}:${group} /home/${user}/dotfiles
-
-# RUN chmod u+x "${DOTFILES_DIR}/install.sh"
-
-USER ${user}
-
-RUN cd $DOTFILES_DIR && ./install.sh
-
-ENV HISTFILE=/home/${user}/.cache/.zsh_history
+RUN \
+  git clone $DOTFILES_REPO $DOTFILES_DIR && \
+  cd $DOTFILES_DIR && \
+  ./install.sh
 
 CMD []
-
-ENTRYPOINT [ "/bin/zsh" ]
