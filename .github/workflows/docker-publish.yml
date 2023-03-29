@@ -41,6 +41,9 @@ jobs:
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v2
 
+      - name: Setup expect
+        run: sudo apt-get install expect
+
       - name: Run tests
         run: ./run-tests.sh
 
