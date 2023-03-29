@@ -1,6 +1,5 @@
 # kaybinwang's dotfiles
-
-Personal development environment
+This repository contains the configuration for my dev environment.
 
 ## Installation
 ```bash
