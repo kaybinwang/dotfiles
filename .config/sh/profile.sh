@@ -35,10 +35,6 @@ source ~/.config/sh/helpers.sh
 
 __source_if_exists "$PERSONAL_PROJECTS/nav/nav.sh"
 
-# sourcing nvm and completions
-__source_if_exists "$NVM_DIR/nvm.sh"
-__source_if_exists "$NVM_DIR/bash_completion"
-
 __source_if_exists ~/.config/sh/work.sh
 
 # Source last since it might depend on the above scripts, e.g. __git_complete
