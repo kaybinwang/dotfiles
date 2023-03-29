@@ -61,7 +61,8 @@ jobs:
           flavor: |
             latest=auto
           tags: |
-            type=semver,pattern={{major}}.{{minor}}
+            type=ref,event=branch
+            type=ref,event=tag
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       # Build and push Docker image with Buildx (don't push on PR)
