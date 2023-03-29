@@ -26,7 +26,7 @@
 
 # this needs to happen first because certain env.sh depends on nvim being in the
 # PATH
-if [ "$(uname)" == "Darwin" ]; then
+if [ "$(uname)" = "Darwin" ]; then
   source ~/.config/sh/load_brew.sh
 fi
 
