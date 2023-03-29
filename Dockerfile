@@ -19,6 +19,9 @@ RUN \
   adduser -D -G wheel $USER && \
   addgroup $USER docker
 
+# update login shell to use zsh
+RUN sed -i 's/\/bin\/ash/\/bin\/zsh/g' /etc/passwd
+
 # switch to the user
 USER $USER
 WORKDIR /home/$USER
@@ -27,7 +30,5 @@ RUN \
   git clone $DOTFILES_REPO $DOTFILES_DIR && \
   cd $DOTFILES_DIR && \
   ./install.sh
-
-SHELL ["/bin/zsh", "-c"]
 
 CMD []
