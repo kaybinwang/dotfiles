@@ -14,6 +14,7 @@ DOTFILES=(
   .gitconfig
   .gitconfig-personal
   .gitconfig-work
+  .tmux.conf
   .zshrc
 )
 
