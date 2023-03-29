@@ -28,4 +28,6 @@ RUN \
   cd $DOTFILES_DIR && \
   ./install.sh
 
+SHELL ["/bin/zsh", "-c"]
+
 CMD []
