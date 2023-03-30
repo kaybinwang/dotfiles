@@ -101,9 +101,14 @@ install_nav() {
   # TODO: make `nav` a package formula and update shell profile to source brew path
   # this way we don't need to hardcode the personal projects path
   log_info "Installing nav..."
-  mkdir -p "$HOME/projects/personal/nav"
   git clone https://github.com/kaybinwang/nav "$HOME/projects/personal/nav"
 }
 
 install_packages
+
+# TODO: handle this better
+mkdir -p "$HOME/projects/personal"
+mkdir -p "$HOME/projects/work"
+touch "$HOME/dotfiles/config/sh/work.sh"
+
 install_nav
