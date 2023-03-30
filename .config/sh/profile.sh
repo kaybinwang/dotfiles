@@ -27,18 +27,18 @@
 # this needs to happen first because certain env.sh depends on nvim being in the
 # PATH
 if [ "$(uname)" = "Darwin" ]; then
-  source ~/.config/sh/load_brew.sh
+  source .config/sh/load_brew.sh
 fi
 
-source ~/.config/sh/env.sh
-source ~/.config/sh/helpers.sh
+source .config/sh/env.sh
+source .config/sh/helpers.sh
 
 __source_if_exists "$PERSONAL_PROJECTS/nav/nav.sh"
 
 __source_if_exists ~/.config/sh/work.sh
 
 # Source last since it might depend on the above scripts, e.g. __git_complete
-source ~/.config/sh/aliases.sh
+source .config/sh/aliases.sh
 
 #===============================================================================
 # 2. Key Bindings
