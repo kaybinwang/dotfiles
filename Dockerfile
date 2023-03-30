@@ -26,9 +26,7 @@ RUN sed -i 's/\/bin\/ash/\/bin\/zsh/g' /etc/passwd
 USER $USER
 WORKDIR /home/$USER
 
-RUN \
-  git clone $DOTFILES_REPO $DOTFILES_DIR && \
-  cd $DOTFILES_DIR && \
-  ./install.sh
+COPY . .
+RUN ./install.sh
 
 CMD []
