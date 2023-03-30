@@ -1,4 +1,4 @@
-# shellcheck shell=sh
+# shellcheck shell=bash
 
 if [ "$(uname)" = "Darwin" ]; then
   # setup Homebrew so that the packages are available in PATH

@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 #===============================================================================
 # .bashrc - bash configuration
 #===============================================================================
@@ -74,4 +75,4 @@ __save_and_reload_history() {
 
 PROMPT_COMMAND=__prompt_command
 
-source ~/.config/sh/profile.sh
+source .config/sh/profile.sh

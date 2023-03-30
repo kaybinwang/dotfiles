@@ -1,4 +1,4 @@
-# shellcheck shell=sh
+# shellcheck shell=bash
 # shellcheck disable=SC2139
 alias sudo='sudo '
 
@@ -62,14 +62,14 @@ alias ga='git add'
 alias gau='git add -u'
 alias gb='git branch'
 gbd() {
-  if [[ "$1" = "-" ]]; then
+  if [ "$1" = "-" ]; then
     git branch -d '@{-1}'
   else
     git branch -d "$@"
   fi
 }
 gbD() {
-  if [[ "$1" = "-" ]]; then
+  if [ "$1" = "-" ]; then
     git branch -D '@{-1}'
   else
     git branch -D "$@"
@@ -102,16 +102,16 @@ greplace() {
   local -r temp_ext=original
   local -r src="$1"
   local -r dst="$2"
-  if [[ -z "$src" ]]; then
+  if [ -z "$src" ]; then
     echo "Need to provide an input." >&2
     return 1
   fi
-  if [[ -z "$dst" ]]; then
+  if [ -z "$dst" ]; then
     echo "Need to provide a replacement for the input." >&2
     return 1
   fi
   local -r modified_files=$(git grep -l "$src" | tee >(xargs sed -i .$temp_ext "s/$src/$dst/g"))
   for file in $modified_files; do
-    rm $file.$temp_ext
+    rm "$file.$temp_ext"
   done
 }

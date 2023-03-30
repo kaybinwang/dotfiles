@@ -1,4 +1,4 @@
-# shellcheck shell=sh
+# shellcheck shell=bash
 
 __print_warning() {
   echo '[WARN]' "$@" 1>&2
