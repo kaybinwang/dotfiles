@@ -5,7 +5,7 @@ match_max 100000
 
 expect_before {
   timeout { puts "timeout"; exit 2 }
-  eof     { puts "eof";     exit 1 }
+  eof     { puts stderr "eof";     exit 1 }
 }
 
 set user $env(USER)
