@@ -1,4 +1,5 @@
 # shellcheck shell=sh
+# shellcheck disable=SC2139
 alias sudo='sudo '
 
 ## a quick way to get out of current directory ##
@@ -39,24 +40,11 @@ alias esc="$EDITOR $HOME/.ssh/config"
 
 alias c='clear'
 
-# tmux with 256 colors
-alias tmux='tmux -2'
-
-tmux-new() {
-  tmux -2 new-session -s main -n system \; \
-      split-window -dv htop \; \
-    new-window -n dotfiles -c "$DOTFILE_PATH" '$EDITOR ~/.config/nvim/init.vim' \; \
-      split-window -dv -c "$DOTFILE_PATH" -p 10 \; \
-    new-window -n dev -c "$PROJECT_PERSONAL" \; \
-    attach -t main \;
-}
-
 # default to neovim if it exists
-if command -v nvim &>/dev/null; then
-  alias vi='nvim'
-  alias vim='nvim'
-elif command -v vim &>/dev/null; then
-  alias vi='vim'
+nvim=$(__get_nvim_path_with_fallback)
+if [ -z "$nvim" ]; then
+  alias vim="$nvim"
+  alias vi="$nvim"
 fi
 
 # run brew using Intel

@@ -1,7 +1,8 @@
 # shellcheck shell=sh
 
-load_brew() {
-  local arch=$(uname -p)
+if [ "$(uname)" = "Darwin" ]; then
+  # setup Homebrew so that the packages are available in PATH
+  arch=$(uname -p)
   if [ "$arch" = 'arm' ] && [ -x /opt/homebrew/bin/brew ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
     return 0
@@ -11,6 +12,4 @@ load_brew() {
     return 0
   fi
   __print_warning "Couldn't find installation of Homebrew for $arch."
-}
-
-load_brew
+fi

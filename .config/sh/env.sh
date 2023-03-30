@@ -1,12 +1,11 @@
 # shellcheck shell=sh
+source .config/sh/helpers.sh
+
 export PERSONAL_PROJECTS="$HOME/projects/personal"
 export WORK_PROJECTS="$HOME/projects/work"
 
-if command -v nvim &>/dev/null; then
-  export VISUAL=nvim
-elif command -v vim &>/dev/null; then
-  export VISUAL=vim
-elif command -v vi &>/dev/null; then
-  export VISUAL=vi
+nvim="$(__get_nvim_path_with_fallback)"
+if [ -z "$nvim" ]; then
+  export VISUAL=$nvim
+  export EDITOR="$VISUAL"
 fi
-export EDITOR="$VISUAL"

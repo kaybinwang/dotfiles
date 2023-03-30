@@ -13,6 +13,7 @@
 # before sourcing.
 #
 # Sections:
+# 0. PATH Boostrap
 # 1. Source Scripts
 # 2. Key Bindings
 # 3. Settings
@@ -21,24 +22,30 @@
 #===============================================================================
 
 #===============================================================================
-# 1. Source Scripts
+# 0. Bootstrap
+#
+# Needs to be executed before everything else since it mucks w/ the environment.
+# For example, setting up Homebrew so that all installed packages are available
+# in the PATH.
 #===============================================================================
 
-# this needs to happen first because certain env.sh depends on nvim being in the
-# PATH
-if [ "$(uname)" = "Darwin" ]; then
-  source ~/.config/sh/load_brew.sh
-fi
+source .config/sh/bootstrap.sh
 
-source ~/.config/sh/env.sh
-source ~/.config/sh/helpers.sh
+#===============================================================================
+# 1. Source Scripts
+#
+# Source the required scripts, followed by optional scripts. Note that order
+# doesn't necessarily matter since each script should be self-contained.
+#===============================================================================
 
+source .config/sh/env.sh
+source .config/sh/aliases.sh
+source .config/sh/helpers.sh
+
+# TODO: figure out how to install nav beforehand if PERSONAL_PROJECTS is defined
+# in the config... probably need to have a release for nav.sh instead
 __source_if_exists "$PERSONAL_PROJECTS/nav/nav.sh"
-
 __source_if_exists ~/.config/sh/work.sh
-
-# Source last since it might depend on the above scripts, e.g. __git_complete
-source ~/.config/sh/aliases.sh
 
 #===============================================================================
 # 2. Key Bindings
