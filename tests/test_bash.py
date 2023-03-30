@@ -25,6 +25,7 @@ def test_prompt_on_startup() -> None:
     virtualenv = get_virtualenv()
 
     child = pexpect.spawn("bash --rcfile .bashrc", encoding="utf-8")
+    child.str_last_chars = 200
     prompt = "".join([
         f"\x1b[?2004h",
         (f"{RESET}({virtualenv}) " if virtualenv else ""),
