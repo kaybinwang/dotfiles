@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 #===============================================================================
 # .zshrc - zsh configuration
 #===============================================================================
@@ -39,10 +40,12 @@ __enable_shared_history() {
 }
 
 # __save_and_reload_history is a no-op since we enabled shared history
-__save_and_reload_history() {}
+__save_and_reload_history() {
+  true
+}
 
 precmd() {
   __prompt_command
 }
 
-source ~/.config/sh/profile.sh
+source .config/sh/profile.sh
