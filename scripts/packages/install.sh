@@ -109,6 +109,6 @@ install_packages
 # TODO: handle this better
 mkdir -p "$HOME/projects/personal"
 mkdir -p "$HOME/projects/work"
-touch "$HOME/dotfiles/config/sh/work.sh"
+touch "$HOME/dotfiles/.config/sh/work.sh"
 
 install_nav

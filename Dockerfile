@@ -23,7 +23,7 @@ RUN sed -i 's/\/bin\/ash/\/bin\/zsh/g' /etc/passwd
 USER $USER
 WORKDIR /home/$USER
 
-COPY . .
-RUN ./install.sh
+COPY . dotfiles
+RUN cd dotfiles && ./install.sh
 
 CMD []

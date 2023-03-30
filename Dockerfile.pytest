@@ -22,10 +22,11 @@ RUN sed -i 's/\/bin\/ash/\/bin\/zsh/g' /etc/passwd
 
 # switch to the user
 USER $USER
-WORKDIR /home/$USER
+WORKDIR /home/$USER/dotfiles
 
 COPY . .
 RUN ./install.sh
 
 RUN pip install -r requirements.txt
-CMD ["python", "-m", "pytest", "tests"]
+
+CMD ["python", "-m", "pytest", "dotfiles/tests"]
