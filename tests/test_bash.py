@@ -13,13 +13,19 @@ PURPLE = "\x1b[0;35m"
 RESET = "\x1b[0m"
 USER = os.environ["USER"]
 HOST = subprocess.run(['hostname'], capture_output=True, text=True).stdout.strip()
+CWD = os.getcwd()
+HOME = os.environ["HOME"]
+
 
 def test_prompt_on_startup() -> None:
+    cwd = CWD
+    if cwd.startswith(HOME):
+        cwd = "~" + CWD.removeprefix(HOME)
     child = pexpect.spawn("bash", encoding="utf-8")
     prompt = (
         f"\x1b[?2004h{RESET}(dotfiles) "
         f"{GREEN}[✔]{RESET} "
-        f"{YELLOW}{USER}{RESET}@{GREEN}{HOST}{RESET}:{BLUE}~/projects/personal/dotfiles{RESET} "
+        f"{YELLOW}{USER}{RESET}@{GREEN}{HOST}{RESET}:{BLUE}{cwd}{RESET} "
         f"{PURPLE}(fix-tests){RESET} $ "
     )
     child.expect_exact([prompt], timeout=5)
