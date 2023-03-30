@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 source scripts/utils/log.sh
 
 log_info "Running all tests..."
