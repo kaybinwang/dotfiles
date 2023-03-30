@@ -11,6 +11,7 @@ BLUE = "\x1b[0;34m"
 PURPLE = "\x1b[0;35m"
 RESET = "\x1b[0m"
 
+
 def test_prompt_on_startup() -> None:
     child = pexpect.spawn("bash", encoding="utf-8")
     prompt = (
