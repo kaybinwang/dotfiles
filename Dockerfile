@@ -1,8 +1,6 @@
 FROM tsl0922/ttyd:1.7.3-alpine
 
 ARG USER=kevinwang
-ARG DOTFILES_REPO=https://github.com/kaybinwang/dotfiles.git
-ARG DOTFILES_DIR=/home/$USER/dotfiles
 
 USER root
 RUN \
@@ -10,7 +8,6 @@ RUN \
   apk upgrade --no-cache && \
   apk add --update --no-cache \
     docker \
-    git \
     sudo
 
 # create a password-less user and add to wheel group
