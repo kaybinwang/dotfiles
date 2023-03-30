@@ -11,6 +11,7 @@ YELLOW = "\x1b[0;33m"
 BLUE = "\x1b[0;34m"
 PURPLE = "\x1b[0;35m"
 RESET = "\x1b[0m"
+
 USER = os.environ["USER"]
 HOST = subprocess.run(['hostname'], capture_output=True, text=True).stdout.strip()
 CWD = os.getcwd()
@@ -21,7 +22,7 @@ def test_prompt_on_startup() -> None:
     cwd = CWD
     if cwd.startswith(HOME):
         cwd = "~" + CWD.removeprefix(HOME)
-    child = pexpect.spawn("bash", encoding="utf-8")
+    child = pexpect.spawn("bash --rcfile .bashrc", encoding="utf-8")
     prompt = (
         f"\x1b[?2004h{RESET}(dotfiles) "
         f"{GREEN}[✔]{RESET} "
