@@ -16,6 +16,7 @@ USER = os.environ["USER"]
 HOST = subprocess.run(['hostname'], capture_output=True, text=True).stdout.strip()
 CWD = os.getcwd()
 HOME = os.environ["HOME"]
+BRANCH = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True).stdout.strip()
 
 
 def test_prompt_on_startup() -> None:
@@ -27,6 +28,6 @@ def test_prompt_on_startup() -> None:
         f"\x1b[?2004h{RESET}(dotfiles) "
         f"{GREEN}[✔]{RESET} "
         f"{YELLOW}{USER}{RESET}@{GREEN}{HOST}{RESET}:{BLUE}{cwd}{RESET} "
-        f"{PURPLE}(fix-tests){RESET} $ "
+        f"{PURPLE}({BRANCH}){RESET} $ "
     )
     child.expect_exact([prompt], timeout=5)
