@@ -1,4 +1,5 @@
-# shellcheck shell=sh
+# shellcheck shell=bash
+# shellcheck disable=SC2139
 alias sudo='sudo '
 
 ## a quick way to get out of current directory ##
@@ -39,24 +40,11 @@ alias esc="$EDITOR $HOME/.ssh/config"
 
 alias c='clear'
 
-# tmux with 256 colors
-alias tmux='tmux -2'
-
-tmux-new() {
-  tmux -2 new-session -s main -n system \; \
-      split-window -dv htop \; \
-    new-window -n dotfiles -c "$DOTFILE_PATH" '$EDITOR ~/.config/nvim/init.vim' \; \
-      split-window -dv -c "$DOTFILE_PATH" -p 10 \; \
-    new-window -n dev -c "$PROJECT_PERSONAL" \; \
-    attach -t main \;
-}
-
 # default to neovim if it exists
-if command -v nvim &>/dev/null; then
-  alias vi='nvim'
-  alias vim='nvim'
-elif command -v vim &>/dev/null; then
-  alias vi='vim'
+nvim=$(__get_nvim_path_with_fallback)
+if [ -z "$nvim" ]; then
+  alias vim="$nvim"
+  alias vi="$nvim"
 fi
 
 # run brew using Intel
@@ -74,14 +62,14 @@ alias ga='git add'
 alias gau='git add -u'
 alias gb='git branch'
 gbd() {
-  if [[ "$1" = "-" ]]; then
+  if [ "$1" = "-" ]; then
     git branch -d '@{-1}'
   else
     git branch -d "$@"
   fi
 }
 gbD() {
-  if [[ "$1" = "-" ]]; then
+  if [ "$1" = "-" ]; then
     git branch -D '@{-1}'
   else
     git branch -D "$@"
@@ -114,16 +102,16 @@ greplace() {
   local -r temp_ext=original
   local -r src="$1"
   local -r dst="$2"
-  if [[ -z "$src" ]]; then
+  if [ -z "$src" ]; then
     echo "Need to provide an input." >&2
     return 1
   fi
-  if [[ -z "$dst" ]]; then
+  if [ -z "$dst" ]; then
     echo "Need to provide a replacement for the input." >&2
     return 1
   fi
   local -r modified_files=$(git grep -l "$src" | tee >(xargs sed -i .$temp_ext "s/$src/$dst/g"))
   for file in $modified_files; do
-    rm $file.$temp_ext
+    rm "$file.$temp_ext"
   done
 }

@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 #===============================================================================
 # .bashrc - bash configuration
 #===============================================================================
@@ -50,7 +51,8 @@ __enable_command_completion() {
     __git_complete gm _git_merge
 
     __git_complete g __git_main
-    __git_complete gs _git_status __git_complete gd _git_diff
+    __git_complete gs _git_status
+    __git_complete gd _git_diff
     __git_complete gf _git_fetch
     __git_complete grb _git_rebase
     __git_complete grbi _git_rebase
