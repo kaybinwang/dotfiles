@@ -1,13 +1,18 @@
 # shellcheck shell=bash
 
 declare -r RED="\033[01;31m"
-declare -r BLUE="\033[01;34m"
+declare -r GREEN="\033[01;32m"
 declare -r YELLOW="\033[01;33m"
+declare -r BLUE="\033[01;34m"
 declare -r BOLD="\033[1m"
 declare -r RESET="\033[00m"
 
 log_info() {
   __log_message_with_time "$BLUE" INFO "$*"
+}
+
+log_success() {
+  __log_message_with_time "$GREEN" SUCCESS "$*"
 }
 
 log_warn() {
