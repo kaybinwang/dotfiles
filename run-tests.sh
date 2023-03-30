@@ -4,10 +4,10 @@ set -euo pipefail
 
 source scripts/utils/log.sh
 
-log_info "Running all tests..."
-for script in $(find tests -name '*.exp'); do
-  log_info "Executing expect script: $script"
-  expect "$script"
-done
+log_info "Creating docker container to run tests..."
+docker build -t kaybinwang/dotfiles.pytest -f Dockerfile.pytest .
+
+log_info "Running tests..."
+docker run --rm -t kaybinwang/dotfiles.pytest
 
 log_success "Tests passed!"
