@@ -99,7 +99,7 @@ install_nav() {
   # TODO: make `nav` a package formula and update shell profile to source brew path
   # this way we don't need to hardcode the personal projects path
   log_info "Installing nav..."
-  git clone https://github.com/kaybinwang/nav "$NAV_DIR"
+  sudo git clone https://github.com/kaybinwang/nav "$NAV_DIR"
 }
 
 install_packages
