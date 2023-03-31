@@ -1,11 +1,11 @@
-# shellcheck shell=bash
+# shellcheck shell=sh
 
-declare -r RED="\033[01;31m"
-declare -r GREEN="\033[01;32m"
-declare -r YELLOW="\033[01;33m"
-declare -r BLUE="\033[01;34m"
-declare -r BOLD="\033[1m"
-declare -r RESET="\033[00m"
+RED="\033[01;31m"
+GREEN="\033[01;32m"
+YELLOW="\033[01;33m"
+BLUE="\033[01;34m"
+BOLD="\033[1m"
+RESET="\033[00m"
 
 log_info() {
   __log_message_with_time "$BLUE" INFO "$*"
@@ -24,14 +24,14 @@ log_error() {
 }
 
 __log_message_with_time() {
-  local -r color="$1"
-  local -r log_level="$2"
-  local -r curr_time="$(__get_current_datetime)"
+  color="$1"
+  log_level="$2"
+  curr_time="$(__get_current_datetime)"
 
   shift
   shift
 
-  echo -e "${BOLD}${color}[$curr_time] [$log_level] $* $RESET"
+  printf "${BOLD}${color}[$curr_time] [$log_level] $* $RESET"
 }
 
 __get_current_datetime() {

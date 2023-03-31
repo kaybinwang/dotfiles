@@ -1,8 +1,8 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
-set -euo pipefail
+set -euo
 
-source scripts/utils/log.sh
+. scripts/utils/log.sh
 
 export PROJECTS_DIR="$HOME/projects"
 export DOTFILES_DIR="$PROJECTS_DIR/dotfiles"

@@ -1,59 +1,59 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
-set -euo pipefail
+set -euo
 
-source scripts/utils/log.sh
-source scripts/utils/system.sh
+. scripts/utils/log.sh
+. scripts/utils/system.sh
 
-declare -r REPOS=(
-  homebrew/cask-fonts
-)
+REPOS="
+homebrew/cask-fonts
+"
 
-declare -r SHARED_PACKAGES=(
-  bash
-  bash-completion
-  bat
-  coreutils
-  docker
-  fzf
-  git
-  jq
-  lua-language-server
-  neovim
-  ripgrep
-  shellcheck
-  tmux
-  yq
-  zsh
-)
+SHARED_PACKAGES="
+bash
+bash-completion
+bat
+coreutils
+docker
+fzf
+git
+jq
+lua-language-server
+neovim
+ripgrep
+shellcheck
+tmux
+yq
+zsh
+"
 
-declare -r BREW_PACKAGES=(
-  bash-language-server
-  kotlin-language-server
-)
+BREW_PACKAGES="
+bash-language-server
+kotlin-language-server
+"
 
-declare -r BREW_CASKS=(
-  font-fira-code-nerd-font
-)
+BREW_CASKS="
+font-fira-code-nerd-font
+"
 
-declare -r APK_PACKAGES=(
-  autoconf
-  automake
-  build-base
-  ca-certificates
-  cmake
-  ctags
-  curl
-  file
-  gcc
-  git-doc
-  libressl
-  libtool
-  nasm
-  ncurses
-  openssh-client
-  wget
-)
+APK_PACKAGES="
+autoconf
+automake
+build-base
+ca-certificates
+cmake
+ctags
+curl
+file
+gcc
+git-doc
+libressl
+libtool
+nasm
+ncurses
+openssh-client
+wget
+"
 
 install_packages_for_mac_os() {
   if ! command -v brew; then
@@ -66,21 +66,19 @@ install_packages_for_mac_os() {
   # TODO: automate installing Intel brew (only when using ARM)?
 
   echo "Tapping third-party repositories..."
-  brew tap "${REPOS[@]}"
+  echo "$REPOS" | xargs brew tap
 
   echo "Installing packages..."
-  brew install "${SHARED_PACKAGES[@]}"
-  brew install "${BREW_PACKAGES[@]}"
+  echo "$SHARED_PACKAGES" | xargs brew install
+  echo "$BREW_PACKAGES" | xargs brew install
 
   echo "Installing BREW_CASKS..."
-
-  brew install --cask "${BREW_CASKS[@]}"
+  echo "$BREW_CASKS" | xargs brew install --cask
 }
 
 install_packages_for_alpine() {
   sudo apk upgrade --no-cache
-  sudo apk add --update --no-cache "${SHARED_PACKAGES[@]}"
-  sudo apk add --update --no-cache "${APK_PACKAGES[@]}"
+  echo "$SHARED_PACKAGES $APK_PACKAGES" | xargs sudo apk add --update --no-cache
 }
 
 install_packages() {
