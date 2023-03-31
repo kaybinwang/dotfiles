@@ -122,4 +122,6 @@ __parse_git_branch() {
 #===============================================================================
 
 # Load all ssh keys in keychain for MacOS.
-ssh-add -A &>/dev/null
+if [ "$(uname)" = "Darwin" ]; then
+  ssh-add -A &>/dev/null
+fi
