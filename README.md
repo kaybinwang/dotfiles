@@ -1,5 +1,5 @@
 # kaybinwang's dotfiles
-![CI Status](https://github.com/github/docs/actions/workflows/docker-publish.yml/badge.svg)
+![CI Status](https://github.com/kaybinwang/dotfiles/actions/workflows/docker-publish.yml/badge.svg)
 
 This repository contains the configuration for my dev environment.
 
