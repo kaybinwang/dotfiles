@@ -5,7 +5,7 @@ __print_warning() {
 }
 
 __source_if_exists() {
-  if [ -s "$1" ]; then
+  if [ -f "$1" ]; then
     # shellcheck disable=SC1090
     source "$1"
   else
