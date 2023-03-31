@@ -1,4 +1,6 @@
 # kaybinwang's dotfiles
+![CI Status](https://github.com/kaybinwang/dotfiles/actions/workflows/docker-publish.yml/badge.svg)
+
 This repository contains the configuration for my dev environment.
 
 These dotfiles support the following operating systems:

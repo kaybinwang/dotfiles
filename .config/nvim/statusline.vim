@@ -59,4 +59,3 @@ endfunction
 function! statusline#Fileencoding()
   return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
 endfunction
-
