@@ -1,10 +1,8 @@
+import os
 import subprocess
-import os, sys, time, getopt
-import signal, fcntl, termios, struct
-import pexpect
-import time
 from typing import Optional
 
+import pexpect
 
 RED = b""
 GREEN = "\x1b[0;32m"
@@ -25,23 +23,25 @@ def test_prompt_on_startup() -> None:
 
     child = pexpect.spawn("bash --rcfile .bashrc", encoding="utf-8")
     child.str_last_chars = 400
-    prompt = "".join([
-        f"\x1b[?2004h",
-        (f"{RESET}({virtualenv}) " if virtualenv else ""),
-        f"{GREEN}[✔]{RESET} ",
-        f"{YELLOW}{user}{RESET}@{GREEN}{host}{RESET}:{BLUE}{cwd}{RESET} ",
-        (f"{PURPLE}({branch}){RESET} " if branch else ""),
-        "$ ",
-    ])
+    prompt = "".join(
+        [
+            "\x1b[?2004h",
+            (f"{RESET}({virtualenv}) " if virtualenv else ""),
+            f"{GREEN}[✔]{RESET} ",
+            f"{YELLOW}{user}{RESET}@{GREEN}{host}{RESET}:{BLUE}{cwd}{RESET} ",
+            (f"{PURPLE}({branch}){RESET} " if branch else ""),
+            "$ ",
+        ]
+    )
     child.expect_exact([prompt], timeout=5)
 
 
 def get_host() -> str:
-    return subprocess.run(['hostname'], capture_output=True, text=True).stdout.strip()
+    return subprocess.run(["hostname"], capture_output=True, text=True).stdout.strip()
 
 
 def get_user() -> str:
-    return subprocess.run(['whoami'], capture_output=True, text=True).stdout.strip()
+    return subprocess.run(["whoami"], capture_output=True, text=True).stdout.strip()
 
 
 def get_cwd(expand_home: bool = True) -> str:
@@ -54,7 +54,9 @@ def get_cwd(expand_home: bool = True) -> str:
 
 
 def get_git_branch() -> Optional[str]:
-    branch = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True).stdout.strip()
+    branch = subprocess.run(
+        ["git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True
+    ).stdout.strip()
     if not branch:
         return None
     return branch

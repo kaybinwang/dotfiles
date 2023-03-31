@@ -31,7 +31,8 @@ __log_message_with_time() {
   shift
   shift
 
-  printf "${BOLD}${color}[$curr_time] [$log_level] $* $RESET"
+  printf "%b%b[%s] [%s] %s %b\n" \
+    "$BOLD" "$color" "$curr_time" "$log_level" "$*" "$RESET"
 }
 
 __get_current_datetime() {
