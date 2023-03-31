@@ -1,4 +1,4 @@
-FROM tsl0922/ttyd:1.7.3-alpine
+FROM python:3.10-alpine
 
 ARG USER=kevinwang
 ARG GROUP=wheel
@@ -29,4 +29,8 @@ ARG DOTFILE_DIR=/home/$USER/projects/dotfiles
 COPY --chown=$USER:$GROUP . $DOTFILE_DIR
 RUN cd $DOTFILE_DIR && ./install.sh
 
-CMD []
+# TODO: how do we layer this on top of the previous dockerfile?
+WORKDIR $DOTFILE_DIR
+RUN pip install -r requirements.txt
+
+CMD ["python", "-m", "pytest", "tests"]

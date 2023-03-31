@@ -42,10 +42,9 @@ source .config/sh/env.sh
 source .config/sh/aliases.sh
 source .config/sh/helpers.sh
 
-# TODO: figure out how to install nav beforehand if PERSONAL_PROJECTS is defined
-# in the config... probably need to have a release for nav.sh instead
-__source_if_exists "$PERSONAL_PROJECTS/nav/nav.sh"
-__source_if_exists ~/.config/sh/work.sh
+# TODO: install nav to a hardcoded place
+__source_if_exists "$HOME/projects/nav/nav.sh"
+__source_if_exists .config/sh/work.sh
 
 #===============================================================================
 # 2. Key Bindings
@@ -123,4 +122,6 @@ __parse_git_branch() {
 #===============================================================================
 
 # Load all ssh keys in keychain for MacOS.
-ssh-add -A &>/dev/null
+if [ "$(uname)" = "Darwin" ]; then
+  ssh-add -A &>/dev/null
+fi

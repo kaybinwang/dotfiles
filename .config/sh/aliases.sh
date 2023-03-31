@@ -42,7 +42,7 @@ alias c='clear'
 
 # default to neovim if it exists
 nvim=$(__get_nvim_path_with_fallback)
-if [ -z "$nvim" ]; then
+if [ -n "$nvim" ]; then
   alias vim="$nvim"
   alias vi="$nvim"
 fi

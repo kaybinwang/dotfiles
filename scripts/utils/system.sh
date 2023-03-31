@@ -1,4 +1,4 @@
-# shellcheck shell=bash
+# shellcheck shell=sh
 
 is_mac_os() {
   test "$(uname)" = Darwin

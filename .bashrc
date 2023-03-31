@@ -34,11 +34,18 @@ __bind_key_for_history_prefix_search_forward() {
 }
 
 __enable_command_completion() {
+  # TODO: minimize branching.. consider passing this down from a top level layer
+  # that configures the bash completion path
   if command -v brew &>/dev/null; then
     __source_if_exists "$(brew --prefix)/etc/profile.d/bash_completion.sh"
   else
-    __print_warning "bash-completion is not installed."
+    __source_if_exists /etc/profile.d/bash_completion.sh
   fi
+
+  if [ -e /usr/share/bash-completion/completions/git ]; then
+    __source_if_exists /usr/share/bash-completion/completions/git
+  fi
+
   if command -v __git_complete &>/dev/null; then
     # Add git completion to aliases
     __git_complete gm _git_merge
