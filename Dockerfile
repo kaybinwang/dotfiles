@@ -1,4 +1,4 @@
-FROM tsl0922/ttyd:1.7.3-alpine
+FROM tsl0922/ttyd:alpine
 
 ARG USER=kevinwang
 ARG GROUP=wheel

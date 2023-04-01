@@ -1,15 +1,16 @@
 repos:
+# GitHub Actions linter
+- repo: https://github.com/rhysd/actionlint
+  rev: v1.6.23
+  hooks:
+  - id: actionlint-docker
+
 # yaml linter
 - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
   rev: v2.7.0
   hooks:
   - id: pretty-format-yaml
     args: [--autofix, --indent, '2', --line-width, '80']
-    exclude: |
-      (?x)^(
-        clusters/prod/flux-system/gotk-components.yaml|
-        clusters/prod/flux-system/gotk-sync.yaml|
-      )$
 
 # shell script linter
 - repo: https://github.com/shellcheck-py/shellcheck-py
