@@ -33,4 +33,4 @@ RUN cd $DOTFILE_DIR && ./install.sh
 WORKDIR $DOTFILE_DIR
 RUN pip install -r requirements.txt
 
-CMD ["pytest", "-r", "tests"]
+CMD ["python", "-m", "pytest", "-r", "tests"]
