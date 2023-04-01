@@ -90,4 +90,4 @@ jobs:
       if: ${{ github.event_name != 'pull_request' }}
       env:
         TAGS: ${{ steps.meta.outputs.tags }}
-      run: cosign sign --yes $TAGS
+      run: cosign sign --yes "$TAGS"
