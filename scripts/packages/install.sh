@@ -6,7 +6,6 @@ set -euo
 . scripts/utils/system.sh
 
 REPOS="
-homebrew/cask-fonts
 "
 
 SHARED_PACKAGES="
@@ -30,10 +29,11 @@ zsh
 BREW_PACKAGES="
 bash-language-server
 kotlin-language-server
+font-fira-code-nerd-font
 "
 
 BREW_CASKS="
-font-fira-code-nerd-font
+kitty
 "
 
 APK_PACKAGES="
@@ -72,7 +72,7 @@ install_packages_for_mac_os() {
   echo "$SHARED_PACKAGES" | xargs brew install
   echo "$BREW_PACKAGES" | xargs brew install
 
-  echo "Installing BREW_CASKS..."
+  echo "Installing casks..."
   echo "$BREW_CASKS" | xargs brew install --cask
 }
 
