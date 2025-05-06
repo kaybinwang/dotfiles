@@ -166,9 +166,7 @@ vim.api.nvim_create_autocmd({"FocusGained", "BufEnter"}, {   -- auto write
 --------------------------------------------------------------------------------
 
 -- 2.2.1 Theme
-require("github-theme").setup({
-   theme_style = "light"
-})
+vim.cmd('colorscheme github_light_default')
 -- vim.cmd "colorscheme onehalflight"
 -- vim.opt.background = "light"
 
