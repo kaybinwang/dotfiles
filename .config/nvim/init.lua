@@ -56,6 +56,7 @@ require("packer").startup(function(use)
    -- 1.2.1 User Interface
    use "projekt0n/github-nvim-theme"
    use "kyazdani42/nvim-web-devicons"     -- accessors for dev icons
+   use "f-person/auto-dark-mode.nvim"     -- automatically change light/dark
 
    -- 1.2.2 Text Editing & Navigation
    use "tpope/vim-surround"      -- wrap text objects with ({[
@@ -166,9 +167,23 @@ vim.api.nvim_create_autocmd({"FocusGained", "BufEnter"}, {   -- auto write
 --------------------------------------------------------------------------------
 
 -- 2.2.1 Theme
-vim.cmd('colorscheme github_light_default')
--- vim.cmd "colorscheme onehalflight"
+-- vim.cmd('colorscheme github_dark_dimmed')
 -- vim.opt.background = "light"
+require("auto-dark-mode").setup({
+   "f-person/auto-dark-mode.nvim",     -- automatically change light/dark
+   set_dark_mode = function()
+      -- vim.api.nvim_set_option_value("background", "dark", {})
+      vim.opt.background = "dark"
+      vim.cmd.colorscheme("github_dark_dimmed")
+   end,
+   set_light_mode = function()
+      vim.opt.background = "light"
+      -- vim.api.nvim_set_option_value("background", "light", {})
+      vim.cmd.colorscheme("github_light")
+   end,
+   update_interval = 3000,
+   fallback = "dark"
+})
 
 -- 2.2.2 Buffers
 vim.opt.number = true                         -- line numbers
