@@ -30,6 +30,7 @@ BREW_PACKAGES="
 bash-language-server
 kotlin-language-server
 font-fira-code-nerd-font
+pre-commit
 "
 
 BREW_CASKS="
