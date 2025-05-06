@@ -47,6 +47,11 @@ if [ -n "$nvim" ]; then
   alias vi="$nvim"
 fi
 
+# default to neovim if it exists
+if command -v bat &>/dev/null; then
+  alias cat=bat
+fi
+
 # run brew using Intel
 alias brow='arch --x86_64 /usr/local/Homebrew/bin/brew'
 
