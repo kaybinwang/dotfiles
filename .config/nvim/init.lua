@@ -491,9 +491,6 @@ vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
 vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist, opts)
 
--- nvim-cmp almost supports LSP capabilities so we advertise it to LSP servers
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
@@ -520,56 +517,25 @@ local on_attach = function(client, bufnr)
    vim.keymap.set("n", "<space>f", vim.lsp.buf.formatting, bufopts)
 end
 
-local lspconfig = require("lspconfig")
-
-lspconfig.bashls.setup({capabilities = capabilities, on_attach = on_attach})
-
-lspconfig.kotlin_language_server.setup({capabilities = capabilities, on_attach = on_attach})
-
-lspconfig.pylsp.setup({
-   capabilities = capabilities,
-   on_attach = on_attach,
-   settings = {
-      -- requires installing python-language-server, flake8, and pylint
-      pylsp = {
-         plugins = {
-            flake8 = {
-               enabled = false,
-            },
-            pycodestyle = {
-               enabled = true,
-               -- ignore = {'W391'},
-               maxLineLength = 120,
-            },
-            pylint = {
-               enabled = true,
-               args = {"py3k", "score=n", "disable=F0001", "--max-line-length=120"},
-            },
+vim.lsp.enable("lua_ls")
+vim.lsp.enable("bashls")
+vim.lsp.enable("kotlin_language_server")
+vim.lsp.enable("pyright")
+vim.lsp.config("pylsp", {
+   -- requires installing python-language-server, flake8, and pylint
+   pylsp = {
+      plugins = {
+         flake8 = {
+            enabled = false,
          },
-      },
-   },
-})
-
-lspconfig.sumneko_lua.setup({
-   capabilities = capabilities,
-   on_attach = on_attach,
-   settings = {
-      Lua = {
-         runtime = {
-            -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-            version = "LuaJIT",
+         pycodestyle = {
+            enabled = true,
+            -- ignore = {'W391'},
+            maxLineLength = 120,
          },
-         diagnostics = {
-            -- Get the language server to recognize the `vim` global
-            globals = {"vim"},
-         },
-         workspace = {
-            -- Make the server aware of Neovim runtime files
-            library = vim.api.nvim_get_runtime_file("", true),
-         },
-         -- Do not send telemetry data containing a randomized but unique identifier
-         telemetry = {
-            enable = false,
+         pylint = {
+            enabled = true,
+            args = {"py3k", "score=n", "disable=F0001", "--max-line-length=120"},
          },
       },
    },
