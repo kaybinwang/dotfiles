@@ -29,7 +29,7 @@
 # in the PATH.
 #===============================================================================
 
-source .config/sh/bootstrap.sh
+source ~/.config/sh/bootstrap.sh
 
 #===============================================================================
 # 1. Source Scripts
@@ -38,13 +38,13 @@ source .config/sh/bootstrap.sh
 # doesn't necessarily matter since each script should be self-contained.
 #===============================================================================
 
-source .config/sh/env.sh
-source .config/sh/aliases.sh
-source .config/sh/helpers.sh
+source ~/.config/sh/env.sh
+source ~/.config/sh/aliases.sh
+source ~/.config/sh/helpers.sh
 
 # TODO: install nav to a hardcoded place
 __source_if_exists "$HOME/projects/nav/nav.sh"
-__source_if_exists .config/sh/work.sh
+__source_if_exists ~/.config/sh/work.sh
 
 #===============================================================================
 # 2. Key Bindings

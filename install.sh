@@ -4,6 +4,7 @@ set -euo
 
 . scripts/utils/log.sh
 
+# TODO: fix how this doesn't work if the CWD isn't ~/projects/dotfiles
 export PROJECTS_DIR="$HOME/projects"
 export DOTFILES_DIR="$PROJECTS_DIR/dotfiles"
 export NAV_DIR="$PROJECTS_DIR/nav"

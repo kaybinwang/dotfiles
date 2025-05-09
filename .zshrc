@@ -48,4 +48,4 @@ precmd() {
   __prompt_command
 }
 
-source .config/sh/profile.sh
+source ~/.config/sh/profile.sh
