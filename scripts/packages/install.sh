@@ -29,6 +29,7 @@ zsh
 BREW_PACKAGES="
 bash-language-server
 kotlin-language-server
+pyright
 pre-commit
 "
 
