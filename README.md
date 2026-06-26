@@ -1,6 +1,6 @@
 # kaybinwang's dotfiles
-![Pre-commit](https://github.com/kaybinwang/dotfiles/actions/workflows/pre-commit.yml/badge.svg)
-![Build](https://github.com/kaybinwang/dotfiles/actions/workflows/build.yml/badge.svg)
+![Lint](https://github.com/kaybinwang/dotfiles/actions/workflows/lint.yml/badge.svg)
+![Publish](https://github.com/kaybinwang/dotfiles/actions/workflows/publish.yml/badge.svg)
 
 This repository contains the configuration for my dev environment.
 

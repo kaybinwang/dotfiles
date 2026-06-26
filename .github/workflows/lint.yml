@@ -1,4 +1,4 @@
-name: Pre-commit
+name: Lint
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [master]
 
 jobs:
-  pre-commit:
+  lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
