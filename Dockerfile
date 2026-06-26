@@ -1,6 +1,6 @@
 FROM debian:bookworm-slim
 
-ARG USER=kevinwang
+ARG USER=kaybinwang
 ARG TTYD_VERSION=1.7.7
 
 # Bootstrap packages needed before install.sh can run
