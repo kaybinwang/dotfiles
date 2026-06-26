@@ -1,32 +1,47 @@
-FROM tsl0922/ttyd:alpine
+FROM debian:bookworm-slim
 
 ARG USER=kevinwang
-ARG GROUP=wheel
+ARG TTYD_VERSION=1.7.7
 
-USER root
-RUN \
-  echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
-  apk upgrade --no-cache && \
-  apk add --update --no-cache \
-    docker \
-    sudo
+# Bootstrap packages needed before install.sh can run
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    gnupg \
+    sudo \
+    zsh \
+    && rm -rf /var/lib/apt/lists/*
 
-# create a password-less user and add to wheel group
-RUN \
-  echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-  adduser -D -G $GROUP $USER && \
-  addgroup $USER docker
+# ttyd is Docker-specific (exposes the terminal over HTTP) so it lives here
+# rather than in install.sh
+RUN ARCH=$(dpkg --print-architecture) \
+    && case "$ARCH" in \
+         amd64) TTYD_ARCH="x86_64" ;; \
+         arm64) TTYD_ARCH="aarch64" ;; \
+       esac \
+    && curl -fsSL "https://github.com/tsl0922/ttyd/releases/download/${TTYD_VERSION}/ttyd.${TTYD_ARCH}" \
+         -o /usr/local/bin/ttyd \
+    && chmod +x /usr/local/bin/ttyd
 
-# update login shell to use zsh
-RUN sed -i 's/\/bin\/ash/\/bin\/zsh/g' /etc/passwd
+RUN groupadd -r ${USER} \
+    && groupadd -f docker \
+    && useradd -m -g ${USER} -G sudo,docker -s /usr/bin/zsh ${USER} \
+    && echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-# switch to the user
-USER $USER
-WORKDIR /home/$USER
-# TODO: figure out how to avoid hardcoding this path
-ARG DOTFILE_DIR=/home/$USER/projects/dotfiles
+USER ${USER}
+WORKDIR /home/${USER}
 
-COPY --chown=$USER:$GROUP . $DOTFILE_DIR
-RUN cd $DOTFILE_DIR && ./install.sh
+ARG DOTFILE_DIR=/home/${USER}/projects/dotfiles
 
-CMD []
+COPY --chown=${USER}:${USER} . ${DOTFILE_DIR}
+RUN cd ${DOTFILE_DIR} && ./install.sh
+
+# Pre-install neovim plugins (packer).
+# Clone packer manually so init.lua skips bootstrap mode and PackerSync runs
+# cleanly with the PackerComplete autocmd to wait for it.
+RUN git clone --depth=1 https://github.com/wbthomason/packer.nvim \
+      /home/${USER}/.local/share/nvim/site/pack/packer/start/packer.nvim \
+    && nvim --headless -c "autocmd User PackerComplete quitall" -c "PackerSync" 2>/dev/null || true
+
+EXPOSE 7681
+CMD ["ttyd", "-W", "zsh"]
