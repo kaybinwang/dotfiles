@@ -154,7 +154,7 @@ install_yq() {
 install_docker_cli() {
   log_info "Installing Docker CLI..."
   ARCH=$(dpkg --print-architecture)
-  CODENAME=$(. /etc/os-release && echo "$VERSION_CODENAME")
+  CODENAME=$(grep '^VERSION_CODENAME=' /etc/os-release | cut -d'=' -f2)
   sudo install -m 0755 -d /etc/apt/keyrings
   sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
   sudo chmod a+r /etc/apt/keyrings/docker.asc
